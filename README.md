@@ -3,6 +3,8 @@ opennebula-puppet-module
 
 The one (short for OpenNebula) module allows to install and manage your OpenNebula cloud.
 
+[![Build Status](https://travis-ci.org/epost-dev/opennebula-puppet-module.png)](https://travis-ci.org/epost-dev/opennebula-puppet-module)
+
 Running tests
 -------------
 To run the rspec-puppet tests for this module install the needed gems with [bundler](http://bundler.io):
