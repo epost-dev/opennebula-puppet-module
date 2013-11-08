@@ -1,0 +1,14 @@
+---
+one::node::ssh_pub_key: 'ssh pub key'
+one::node::ssh_priv_key: 'ssh-dsa priv key'
+
+one::oned::db: oned
+one::oned::db_user: oned
+one::oned::db_password: oned
+one::oned::db_host: localhost
+
+one::oned::ldap_user: 'cn=user'
+one::oned::ldap_pass: 'secure_password'
+one::oned::ldap_host: 'localhost'
+one::oned::ldap_base: 'cn=base'
+

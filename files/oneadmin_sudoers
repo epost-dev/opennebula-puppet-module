@@ -1,0 +1,3 @@
+Defaults:oneadmin !requiretty
+Cmnd_Alias ONEADMIN = /sbin/vconfig, /usr/sbin/brctl, /sbin/ip, /sbin/iptables, /sbin/ebtables, /sbin/brctl
+oneadmin ALL = NOPASSWD: ONEADMIN

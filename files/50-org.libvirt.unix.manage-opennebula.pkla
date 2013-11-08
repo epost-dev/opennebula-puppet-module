@@ -1,0 +1,7 @@
+[Allow oneadmin user to manage virtual machines]
+Identity=unix-user:oneadmin
+Action=org.libvirt.unix.manage
+#Action=org.libvirt.unix.monitor
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes

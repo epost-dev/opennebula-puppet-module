@@ -1,0 +1,1 @@
+KERNEL=="kvm", GROUP="oneadmin", MODE="0660"

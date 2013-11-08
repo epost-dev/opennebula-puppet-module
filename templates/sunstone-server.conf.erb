@@ -1,0 +1,141 @@
+# -------------------------------------------------------------------------- #
+# Copyright 2002-2013, OpenNebula Project (OpenNebula.org), C12G Labs        #
+#                                                                            #
+# Licensed under the Apache License, Version 2.0 (the "License"); you may    #
+# not use this file except in compliance with the License. You may obtain    #
+# a copy of the License at                                                   #
+#                                                                            #
+# http://www.apache.org/licenses/LICENSE-2.0                                 #
+#                                                                            #
+# Unless required by applicable law or agreed to in writing, software        #
+# distributed under the License is distributed on an "AS IS" BASIS,          #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+# See the License for the specific language governing permissions and        #
+# limitations under the License.                                             #
+#--------------------------------------------------------------------------- #
+
+################################################################################
+# Server Configuration
+################################################################################
+
+# Directory to store temp files when uploading images
+#
+:tmpdir: /var/tmp
+
+# OpenNebula sever contact information
+#
+:one_xmlrpc: http://localhost:2633/RPC2
+
+# Server Configuration
+#
+:host: 127.0.0.1
+:port: 9869
+
+# Place where to store sessions, this value can be memory or memcache
+# Use memcache when starting multiple server processes, for example,
+# with passenger
+#
+# NOTE. memcache needs a separate memcached server to be configured. Refer
+# to memcached documentation to configure the server.
+:sessions: memory
+
+# Memcache configuration
+:memcache_host: localhost
+:memcache_port: 11211
+:memcache_namespace: opennebula.sunstone
+
+################################################################################
+# Log
+################################################################################
+
+# Log debug level
+#   0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
+#
+:debug_level: 3
+
+################################################################################
+# Auth
+################################################################################
+
+# Authentication driver for incomming requests
+#   sunstone, for OpenNebula's user-password scheme
+#   x509, for x509 certificates based authentication
+#   opennebula, the authentication will be done by the opennebula core using the
+#   driver defined for the user
+#
+<% if scope.lookupvar('one::oned::ldap') -%>
+:auth: opennebula
+<% else -%>
+:auth: sunstone
+<% end -%>
+
+# Authentication driver to communicate with OpenNebula core
+#   cipher, for symmetric cipher encryption of tokens
+#   x509, for x509 certificate encryption of tokens
+#
+:core_auth: cipher
+
+################################################################################
+# UI Settings
+################################################################################
+# :vnc_proxy_
+#   port:           port where the vnc proxy will listen
+#   support_wss:    no | yes | only. For yes and only, provide path to
+#                   cert and key. "yes" means both ws and wss connections will be
+#                   supported.
+#   vnc_proxy_cert: Certificate to encrypt wss connections.
+#   vnc_proxy_key:  Key for wss connections. Only necessary if not included in cert.
+:vnc_proxy_port: 29876
+:vnc_proxy_support_wss: no
+:vnc_proxy_cert:
+:vnc_proxy_key:
+
+
+# Default language setting
+:lang: en_US
+
+################################################################################
+# Marketplace
+################################################################################
+
+# Marketplace username and password
+# If no credentials are provided, an anonymous client will be used
+#
+#:marketplace_username:
+#:marketplace_password:
+
+# Marketplace endpoint
+#
+:marketplace_url: http://marketplace.c12g.com/appliance
+
+################################################################################
+# OneFlow
+################################################################################
+
+# OneFlow endpoint
+#
+:oneflow_server: http://localhost:2474/
+
+################################################################################
+# Routes
+################################################################################
+
+# Array of files containing ruby code to extend the default sunstone-server
+#   routes. These files must be placed inside the custom_routes directory
+#   in the sunstone root dir (/usr/lib/one/sunstone/routes)
+#
+# Example:
+#   $ ls /usr/lib/one/sunstone/routes
+#   custom.rb  other.rb
+#
+#   $ cat /usr/lib/one/sunstone/routes/example.rb
+#   get '/custom' do
+#       body "It works"
+#   end
+#
+#:routes:
+#    - custom
+#    - other
+
+:routes:
+    - oneflow

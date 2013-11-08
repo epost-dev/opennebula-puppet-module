@@ -1,0 +1,29 @@
+---
+logo: images/opennebula-sunstone-v4.0.png
+available_tabs:
+    - dashboard-tab
+    - system-tab
+    - users-tab
+    - groups-tab
+    - acls-tab
+    - vresources-tab
+    - vms-tab
+    - templates-tab
+    - images-tab
+    - files-tab
+    - infra-tab
+    - clusters-tab
+    - hosts-tab
+    - datastores-tab
+    - vnets-tab
+    - oneflow-dashboard
+    - oneflow-services
+    - oneflow-templates
+groups:
+    oneadmin:
+        - admin
+        - vdcadmin
+        - user
+        - cloud
+default:
+    - user
