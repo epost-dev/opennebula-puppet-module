@@ -18,7 +18,7 @@ And run the tests and puppet-lint:
 Support
 -------
 
-Please log tickets and issues at GitHub issue tracker for epost-one project.
+For questions or bugs [create an issue on Github](https://github.com/epost-dev/opennebula-puppet-module/issues/new).
 
 License
 -------
