@@ -11,7 +11,7 @@
 #
 # Contributors:
 # - Martin Alfke
-# - Achim Ledermüller (Netways GmbH)
+# - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
 #
 # === License
