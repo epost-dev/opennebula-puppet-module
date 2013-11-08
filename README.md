@@ -5,7 +5,7 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 Running tests
 -------------
-To run the rspec-puppet tests for this module install the needed gems with bundler (http://bundler.io):
+To run the rspec-puppet tests for this module install the needed gems with [bundler](http://bundler.io):
 
      bundle install --path=vendor
 
