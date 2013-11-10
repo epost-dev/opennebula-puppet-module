@@ -17,19 +17,26 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::service {
-  service { 'libvirtd':
+  service { $one::params::libvirtd_srv:
     ensure    => 'running',
     hasstatus => true,
     enable    => true,
   }
-  service { 'ksmtuned':
-    ensure    => 'stopped',
-    enable    => false,
-    hasstatus => true,
-  }
-  service { 'ksm':
-    ensure    => running,
-    enable    => true,
-    hasstatus => true,
+  case $::osfamily {
+      'RedHat': {
+          service { 'ksmtuned':
+            ensure    => 'stopped',
+            enable    => false,
+            hasstatus => true,
+          }
+          service { 'ksm':
+            ensure    => running,
+            enable    => true,
+            hasstatus => true,
+          }
+      }
+      default: {
+          notice('we need to check how to enable ksm.')
+      }
   }
 }

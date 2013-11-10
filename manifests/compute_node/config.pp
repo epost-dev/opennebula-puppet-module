@@ -37,21 +37,21 @@ class one::compute_node::config (
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
-    notify => Service['libvirtd'],
+    notify => Service[$one::params::libvirtd_srv],
   }
   case $::osfamily {
       'RedHat': {
         file { '/etc/sysconfig/libvirtd':
             source => 'puppet:///modules/one/libvirtd.sysconfig',
             owner  => 'root',
-            notify => Service['libvirtd'],
+            notify => Service[$one::params::libvirtd_srv],
         }
       }
       'Debian': {
-          file { '/etc/default/libvirtd':
-              source => 'puppet:///modules/one/libvirtd.default',
+          file { '/etc/default/libvirt-bin':
+              source => 'puppet:///modules/one/libvirt-bin.debian',
               owner  => 'root',
-              notify => Service['libvirtd'],
+              notify => Service[$one::params::libvirtd_srv],
           }
       }
       default: {

@@ -54,6 +54,7 @@ class one::params {
                                 ]
       # params for onegate (optional, needs one::onegate set to true)
       $oned_onegate_packages = ['opennebula-gate', 'rubygem-parse-cron']
+      $libvirtd_srv = 'libvirtd'
     }
     'Debian': {
       $node_packages   = ['libvirt-bin',
@@ -72,7 +73,8 @@ class one::params {
                                 'ruby-polyglot',
                                 ]
       $oned_onegate_packages = ['opennebula-gate']
-      fail("Your OS (${::osfamily} is not yet fully supported.")
+      $libvirtd_srv = 'libvirt-bin'
+      # fail("Your OS (${::osfamily} is not yet fully supported.")
     }
     default: {
       fail("Your OS - ${::osfamily} - is not yet supported.
