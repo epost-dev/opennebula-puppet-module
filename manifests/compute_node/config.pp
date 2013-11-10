@@ -39,10 +39,24 @@ class one::compute_node::config (
     owner  => 'root',
     notify => Service['libvirtd'],
   }
-  file { '/etc/sysconfig/libvirtd':
-    source => 'puppet:///modules/one/libvirtd.sysconfig',
-    owner  => 'root',
-    notify => Service['libvirtd'],
+  case $::osfamily {
+      'RedHat': {
+        file { '/etc/sysconfig/libvirtd':
+            source => 'puppet:///modules/one/libvirtd.sysconfig',
+            owner  => 'root',
+            notify => Service['libvirtd'],
+        }
+      }
+      'Debian': {
+          file { '/etc/default/libvirtd':
+              source => 'puppet:///modules/one/libvirtd.default',
+              owner  => 'root',
+              notify => Service['libvirtd'],
+          }
+      }
+      default: {
+          notice('We do not know how to configure libvirtd.')
+      }
   }
   file { '/etc/udev/rules.d/80-kvm.rules':
     source => 'puppet:///modules/one/udev-kvm-rules',
