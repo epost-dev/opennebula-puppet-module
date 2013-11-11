@@ -21,7 +21,7 @@
 class one::prerequisites {
     case $::osfamily {
         'RedHat': {
-            if ( hiera(one::enable_opennebula__repo, false ) == true ) {
+            if ( $one::params::one_repo_enable == 'true' ) {
                 yumrepo { 'opennebula':
                     baseurl  => 'http://opennebula.org/repo/CentOS/6/stable/$basearch/',
                     descr    => 'OpenNebula',
