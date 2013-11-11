@@ -36,4 +36,30 @@ describe 'one::compute_node' do
             }
         end
     end
+    context "with hiera config on Debian" do
+        let(:hiera_config) { hiera_config }
+        let (:facts) { {
+            :osfamily => 'Debian'
+        } }
+        context 'as compute node' do
+            hiera = Hiera.new(:config => hiera_config)
+            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
+            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
+            it { should contain_package("opennebula-node") }
+            it { should contain_package("qemu-kvm") }
+            it { should contain_package("libvirt-bin") }
+            it { should contain_package("bridge-utils") }
+            it { should contain_package("sudo") }
+            it { should contain_group("oneadmin") }
+            it { should contain_user("oneadmin") }
+            it { should contain_file("/etc/libvirt/libvirtd.conf") }
+            it { should contain_file("/etc/default/libvirt-bin") }
+            it { should contain_file("/var/lib/one/.ssh/id_dsa")\
+                .with_content(sshprivkey)
+            }
+            it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
+                .with_content(sshpubkey)
+            }
+        end
+    end
 end

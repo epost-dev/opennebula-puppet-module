@@ -22,27 +22,16 @@ class one::compute_node::config (
   $ssh_priv_key = $one::params::ssh_priv_key,
   $ssh_pub_key = $one::params::ssh_pub_key,
 ){
-  group { 'oneadmin':
-    ensure => present,
-    gid    => $one::params::onegid,
-  }
-  user { 'oneadmin':
-    ensure      => present,
-    uid         => $one::params::oneuid,
-    gid         => $one::params::onegid,
-    home        => '/var/lib/one',
-    managehome  => true,
-    shell       => '/bin/bash'
-  }
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
-    notify => Service['libvirtd'],
+    notify => Service[$one::params::libvirtd_srv],
   }
-  file { '/etc/sysconfig/libvirtd':
-    source => 'puppet:///modules/one/libvirtd.sysconfig',
+  file { $one::params::libvirtd_cfg:
+    ensure => 'file',
+    source => $one::params::libvirtd_source,
     owner  => 'root',
-    notify => Service['libvirtd'],
+    notify => Service[$one::params::libvirtd_srv],
   }
   file { '/etc/udev/rules.d/80-kvm.rules':
     source => 'puppet:///modules/one/udev-kvm-rules',
