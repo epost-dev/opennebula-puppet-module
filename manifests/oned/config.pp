@@ -23,7 +23,14 @@ class one::oned::config {
     group   => 'oneadmin',
     mode    => '0640',
   }
+  file { '/usr/share/one':
+      ensure => 'directory',
+      owner  => 'oneadmin',
+      group  => 'oneadmin',
+      mode   => '0755',
+  }
   file { '/usr/share/one/hooks':
+    ensure  => 'directory',
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0750',

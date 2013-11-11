@@ -63,7 +63,7 @@ class one::params {
                           'opennebula-node',
                           'sudo',
                           ]
-      $oned_packages   = ['opennebula', 'opennebula-tools', 'opennebula-ruby']
+      $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
       $oned_sunstone_packages = 'opennebula-sunstone'

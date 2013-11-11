@@ -167,7 +167,7 @@ describe 'one' do
                 it { should contain_class('one::oned') }
                 it { should contain_package("dbus") }
                 it { should contain_package("opennebula") }
-                it { should contain_package("opennebula-ruby") }
+                it { should contain_package("ruby-opennebula") }
                 it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
                 it { should contain_file("/var/lib/one").with({
                     'owner' => 'oneadmin'
@@ -182,7 +182,7 @@ describe 'one' do
                 it { should contain_class('one::oned') }
                 it { should contain_package("dbus") }
                 it { should contain_package("opennebula") }
-                it { should contain_package("opennebula-ruby") }
+                it { should contain_package("ruby-opennebula") }
                 it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"mysql\"/) }
                 it { should contain_file("/var/lib/one").with({
                     'owner' => 'oneadmin'

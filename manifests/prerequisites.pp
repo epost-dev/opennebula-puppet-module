@@ -34,4 +34,16 @@ class one::prerequisites {
             notice('We use opennebula from default OS repositories.')
         }
     }
+    group { 'oneadmin':
+        ensure => present,
+        gid    => $one::params::onegid,
+    }
+    user { 'oneadmin':
+        ensure      => present,
+        uid         => $one::params::oneuid,
+        gid         => $one::params::onegid,
+        home        => '/var/lib/one',
+        managehome  => true,
+        shell       => '/bin/bash'
+    }
 }

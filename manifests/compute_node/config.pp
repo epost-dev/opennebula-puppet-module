@@ -22,18 +22,6 @@ class one::compute_node::config (
   $ssh_priv_key = $one::params::ssh_priv_key,
   $ssh_pub_key = $one::params::ssh_pub_key,
 ){
-  group { 'oneadmin':
-    ensure => present,
-    gid    => $one::params::onegid,
-  }
-  user { 'oneadmin':
-    ensure      => present,
-    uid         => $one::params::oneuid,
-    gid         => $one::params::onegid,
-    home        => '/var/lib/one',
-    managehome  => true,
-    shell       => '/bin/bash'
-  }
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
