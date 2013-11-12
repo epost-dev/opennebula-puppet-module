@@ -20,6 +20,25 @@
 # $node true|false - default true
 #  defines whether the host is node (virtualization host/worker)
 #
+# $vtype - default kvm
+#  set virtualization type for opennebula compute node
+#  supported vtypes:
+#   - kvm
+#   - xen3
+#   - xen4
+#   - vmware
+#   - ec2
+#   - dummy
+#
+# $ntype - default 802.1Q
+#  set network type for opennebula compute node
+#  supported tyes
+#   - 802.1Q
+#   - ebtables
+#   - firewall
+#   - ovswitch
+#   - vmware
+#
 # $oned true|false - default false
 #   defines whether OpenNebula-Daemon should be installed.
 #   OpenNebula-Daemon needs to run on the system where you want to manage your
@@ -75,6 +94,8 @@
 #
 class one ( $oneid      = 'one-cloud',
             $node       = true,
+            $vtype      = 'kvm',
+            $ntype      = '802.1Q',
             $oned       = false,
             $sunstone   = false,
             $ldap       = false,
@@ -87,7 +108,15 @@ class one ( $oneid      = 'one-cloud',
   include one::params
 
   if ($oned) {
-    include one::oned
+    if ( member(['kvm','xen3','xen4','vmware','ec2'], $vtype) ) {
+      if ( member(['802.1Q','ebtables','firewall','ovswitch'], $ntype) ) {
+        include one::oned
+      } else {
+        fail("Network Type: ${ntype} is not supported.")
+      }
+    } else {
+      fail("Virtualization type: ${vtype} is not supported")
+    }
   }
   if ($node) {
     include one::compute_node
