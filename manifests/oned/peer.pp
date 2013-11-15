@@ -17,7 +17,13 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-define one::oned::peer (){
-  oned_peer { $name : }
+define one::oned::peer (
+    $vtype = $one::vtype,
+    $ntype = $one::ntype,
+){
+  oned_peer { $name:
+    vtype => $vtype,
+    ntype => $ntype,
+  }
 }
 
