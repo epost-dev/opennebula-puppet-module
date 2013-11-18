@@ -24,9 +24,4 @@ class one::oned::service {
     require   => Class['one::oned::install'],
     subscribe => Class['one::oned::config'],
   }
-  service { $one::params::dbus_srv:
-    ensure    => running,
-    enable    => true,
-    hasstatus => true,
-  }
 }

@@ -21,8 +21,4 @@ class one::oned::install {
     ensure  => present,
     require => Class['one::prerequisites'],
   }
-  package{ $one::params::dbus_pkg:
-    ensure  => present,
-    require => Class['one::prerequisites'],
-  }
 }

@@ -22,11 +22,6 @@ class one::compute_node::service {
     hasstatus => true,
     enable    => true,
   }
-  service { $one::params::dbus_srv:
-      ensure    => running,
-      haststaus => true,
-      enable    => true,
-  }
   case $::osfamily {
       'RedHat': {
           service { 'ksmtuned':

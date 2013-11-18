@@ -131,4 +131,6 @@ class one ( $oneid      = 'one-cloud',
   if($onegate) {
     class {'one::oned::onegate': }
   }
+  include one::install
+  include one::service
 }

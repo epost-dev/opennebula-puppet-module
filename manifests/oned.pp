@@ -35,13 +35,16 @@ class one::oned (
 ) {
   include one::prerequisites
   include one::params
+  include one::install
+  include one::service
   include one::oned::install
   include one::oned::config
   include one::oned::service
 
   Class['one::prerequisites'] -> Class['one::params'] ->
+  Class['one::install'] ->
   Class['one::oned::install'] -> Class['one::oned::config'] ->
-  Class['one::oned::service']
+  Class['one::oned::service'] -> Class['one::service']
 
   if ( $backend != 'mysql' and $backend != 'sqlite') {
     fail ( "Class one::oned need to get called with proper DB backend
