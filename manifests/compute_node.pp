@@ -28,12 +28,15 @@
 class one::compute_node {
   include one::prerequisites
   include one::params
+  include one::install
+  include one::service
   include one::compute_node::config
   include one::compute_node::service
   include one::compute_node::install
   Class['one::prerequisites'] -> Class['one::params'] ->
+    Class['one::install'] ->
     Class['one::compute_node::install'] -> Class['one::compute_node::config'] ->
-      Class['one::compute_node::service']
+      Class['one::compute_node::service'] -> Class['one::service']
 
     # Register the node in the puppetdb
     @@one::oned::peer { $::fqdn :
