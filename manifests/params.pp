@@ -43,6 +43,7 @@ class one::params {
                         'bridge-utils',
                         'vconfig',
                         'opennebula-node-kvm',
+                        'dbus',
                         'sudo',
                         ]
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
@@ -66,6 +67,7 @@ class one::params {
                           'qemu-kvm',
                           'bridge-utils',
                           'opennebula-node',
+                          'dbus',
                           'sudo',
                           ]
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
