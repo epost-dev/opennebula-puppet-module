@@ -7,18 +7,14 @@ configdir = '/etc/one'
 oned_config = "#{configdir}/oned.conf"
 sunstone_config = "#{configdir}/sunstone-server.conf"
 ldap_config = "#{configdir}/auth/ldap_auth.conf"
-hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 
 describe 'one' do
+    include_context "hieradata"
     context "with hiera config on RedHat" do
-        let(:hiera_config) { hiera_config }
         let (:facts) { {
             :osfamily => 'RedHat'
         } }
         context 'as compute node' do
-            hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
             it { should contain_package("opennebula-node-kvm") }
@@ -32,14 +28,13 @@ describe 'one' do
             it { should contain_file("/etc/libvirt/libvirtd.conf") }
             it { should contain_file("/etc/sysconfig/libvirtd") }
             it { should contain_file("/var/lib/one/.ssh/id_dsa")\
-                .with_content(sshprivkey)
+                .with_content('ssh-dsa priv key')
             }
             it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
-                .with_content(sshpubkey)
+                .with_content('ssh pub key')
             }
         end # fin context 'as compute node'
         context 'as mgmt node' do
-            let(:hiera_config) { hiera_config }
             let (:facts) { {
                 :osfamily => 'RedHat'
             } }
@@ -48,7 +43,6 @@ describe 'one' do
                     :oned => true,
                     :backend => 'sqlite' 
                 } }
-                hiera = Hiera.new(:config => hiera_config)
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
                 it { should contain_package("dbus") }
@@ -100,7 +94,6 @@ describe 'one' do
                     :sunstone => true,
                     :ldap => true
                 }}
-                hiera = Hiera.new(:config => hiera_config)
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
                 it { should contain_class('one::oned::sunstone') }
@@ -126,14 +119,10 @@ describe 'one' do
         end # fin context 'as mgmt node'
     end # fin context "with hiera config on RedHat"
     context "with hiera config on Debian" do
-        let(:hiera_config) { hiera_config }
         let (:facts) { {
             :osfamily => 'Debian'
         } }
         context 'as compute node' do
-            hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
             it { should contain_package("opennebula-node") }
@@ -146,14 +135,13 @@ describe 'one' do
             it { should contain_file("/etc/libvirt/libvirtd.conf") }
             it { should contain_file("/etc/default/libvirt-bin") }
             it { should contain_file("/var/lib/one/.ssh/id_dsa")\
-                .with_content(sshprivkey)
+                .with_content('ssh-dsa priv key')
             }
             it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
-                .with_content(sshpubkey)
+                .with_content('ssh pub key')
             }
         end # fin context 'as compute node'
         context 'as mgmt node' do
-            let(:hiera_config) { hiera_config }
             let (:facts) { {
                 :osfamily => 'Debian'
             } }
@@ -162,7 +150,6 @@ describe 'one' do
                     :oned => true,
                     :backend => 'sqlite' 
                 } }
-                hiera = Hiera.new(:config => hiera_config)
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
                 it { should contain_package("dbus") }
@@ -212,7 +199,6 @@ describe 'one' do
                     :sunstone => true,
                     :ldap => true
                 }}
-                hiera = Hiera.new(:config => hiera_config)
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
                 it { should contain_class('one::oned::sunstone') }
