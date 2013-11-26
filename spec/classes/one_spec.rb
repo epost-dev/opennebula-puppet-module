@@ -17,8 +17,8 @@ describe 'one' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
+            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
+            sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
             it { should contain_package("opennebula-node-kvm") }
@@ -135,8 +135,8 @@ describe 'one' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
+            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
+            sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
             it { should contain_package("opennebula-node") }

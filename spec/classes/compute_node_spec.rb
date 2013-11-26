@@ -16,8 +16,8 @@ describe 'one::compute_node' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
+            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
+            sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_package("opennebula-node-kvm") }
             it { should contain_package("qemu-kvm") }
             it { should contain_package("libvirt") }
@@ -43,8 +43,8 @@ describe 'one::compute_node' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::node::ssh_priv_key", nil, nil)
-            sshpubkey = hiera.lookup("one::node::ssh_pub_key", nil, nil)
+            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
+            sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_package("opennebula-node") }
             it { should contain_package("qemu-kvm") }
             it { should contain_package("libvirt-bin") }

@@ -29,8 +29,8 @@ class one::params {
   $oneuid = '9869'
   $onegid = '9869'
 
-  $ssh_priv_key = hiera('one::node::ssh_priv_key', '....')
-  $ssh_pub_key = hiera('one::node::ssh_pub_key', '....')
+  $ssh_priv_key = hiera('one::head::ssh_priv_key', '....')
+  $ssh_pub_key = hiera('one::head::ssh_pub_key', '....')
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
   $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)

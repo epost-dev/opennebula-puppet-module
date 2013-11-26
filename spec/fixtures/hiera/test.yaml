@@ -1,6 +1,6 @@
 ---
-one::node::ssh_pub_key: 'ssh pub key'
-one::node::ssh_priv_key: 'ssh-dsa priv key'
+one::head::ssh_pub_key: 'ssh pub key'
+one::head::ssh_priv_key: 'ssh-dsa priv key'
 
 one::oned::db: oned
 one::oned::db_user: oned
