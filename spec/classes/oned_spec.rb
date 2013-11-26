@@ -6,11 +6,10 @@ require 'facter'
 configdir = '/etc/one'
 oned_config = "#{configdir}/oned.conf"
 sunstone_config = "#{configdir}/sunstone-server.conf"
-hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 
 describe 'one::oned' do
+    include_context "hieradata"
     context "with hiera config on RedHat" do
-        let(:hiera_config) { hiera_config }
         let (:facts) { {
             :osfamily => 'RedHat'
         } }
@@ -19,7 +18,6 @@ describe 'one::oned' do
                 :backend => 'sqlite',
                 :ldap => false
             } }
-            hiera = Hiera.new(:config => hiera_config)
             it { should contain_package("dbus") }
             it { should contain_package("opennebula") }
             it { should contain_package("opennebula-server") }
@@ -45,7 +43,6 @@ describe 'one::oned' do
         end
     end
     context "with hiera config on Debian" do
-        let(:hiera_config) { hiera_config }
         let (:facts) { {
             :osfamily => 'Debian'
         } }
@@ -54,7 +51,6 @@ describe 'one::oned' do
                 :backend => 'sqlite',
                 :ldap => false
             } }
-            hiera = Hiera.new(:config => hiera_config)
             it { should contain_package("dbus") }
             it { should contain_package("opennebula") }
             it { should contain_package("ruby-opennebula") }
