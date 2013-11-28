@@ -93,6 +93,7 @@ describe 'one' do
                 it { should contain_class('one::oned::sunstone') }
                 it { should contain_package("opennebula-sunstone") }
                 it { should contain_file(sunstone_config) }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone'
             context 'with sunstone and ldap' do
                 let(:params) {{
@@ -106,6 +107,7 @@ describe 'one' do
                 it { should contain_class('one::oned::sunstone') }
                 it { should contain_class('one::oned::sunstone::ldap') }
                 it { should contain_file(ldap_config).with_content(/secure_password/) }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone and ldap'
             context 'with sunstone and ldap set wrong' do
                 let(:params) {{
@@ -122,6 +124,7 @@ describe 'one' do
                     :ha_setup => true,
                 }}
                 it { should contain_service('opennebula').with_enable('false') }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone and ha'
         end # fin context 'as mgmt node'
     end # fin context "with hiera config on RedHat"
@@ -205,6 +208,7 @@ describe 'one' do
                 it { should contain_class('one::oned::sunstone') }
                 it { should contain_package("opennebula-sunstone") }
                 it { should contain_file(sunstone_config) }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone'
             context 'with sunstone and ldap' do
                 let(:params) {{
@@ -218,6 +222,7 @@ describe 'one' do
                 it { should contain_class('one::oned::sunstone') }
                 it { should contain_class('one::oned::sunstone::ldap') }
                 it { should contain_file(ldap_config).with_content(/secure_password/) }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone and ldap'
             context 'with sunstone and ldap set wrong' do
                 let(:params) {{
@@ -234,6 +239,7 @@ describe 'one' do
                     :ha_setup => true,
                 }}
                 it { should contain_service('opennebula').with_enable('false') }
+                it { should contain_service('opennebula-sunstone').with_ensure('running') }
             end # fin context 'as mgmt node | with sunstone and ha'
         end # fin context 'as mgmt node'
     end # fin context "with hiera config on Debian"
