@@ -94,8 +94,9 @@ class one::params {
   $oned_db_password   = hiera('one::oned::db_password', 'oned')
   $oned_db_host   = hiera('one::oned::db_host', 'localhost')
 
+  $ha_setup = hiera('one::ha_setup', true)
   # ha stuff (optional, needs one::ha_setup set to true)
-  if($one::ha_setup) {
+  if ($ha_setup) {
     $oned_enable = false
     $oned_ensure = undef
   } else {
