@@ -32,6 +32,7 @@ class one::oned::oneflow::service {
     start      => '/bin/su -c "/usr/bin/oneflow-server start" oneadmin',
     stop       => '/bin/su -c "/usr/bin/oneflow-server stop" oneadmin',
     enable     => true,
-    path       => '/usr/bin/'
+    path       => '/usr/bin/',
+    require    => Service['opennebula']
   }
 }
