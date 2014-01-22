@@ -72,14 +72,6 @@ class one::compute_node::config (
     ensure => link,
     target => '/usr/sbin/brctl',
   }
-  # sudoers for other os? default on RedHat
-  file { '/etc/sudoers.d/10_oneadmin':
-    ensure => file,
-    source => 'puppet:///modules/one/oneadmin_sudoers',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0640',
-  }
 
   if($::osfamiliy == 'RedHat') {
     file { '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla':
