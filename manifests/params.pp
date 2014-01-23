@@ -24,7 +24,7 @@ class one::params {
   $oneid = $one::oneid
 
   # should we enable opennebula repos?
-  $one_repo_enable = hiera('one::enable_opennebula_repo', 'false' )
+  $one_repo_enable = hiera('one::enable_opennebula_repo', false )
 
   $oneuid = '9869'
   $onegid = '9869'
