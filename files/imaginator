@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+###
+### clear screen
+clear
+
+function install(){
+echo "Instanciate Bootstrap-VM!"
+
+qemu-img create -f qcow2 $pool/$name.img $size"G" 2>&1> /dev/null
+
+chmod 660 $pool/$name.img
+chgrp oneadmin $pool/$name.img
+
+sudo -u oneadmin virt-install \
+    --connect="qemu:///system" \
+    --initrd-inject="$ksfilepath" \
+    --extra-args="ks=file:/$ksfile" \
+    --name="$name" \
+    --location="$repo" \
+    --disk path="$pool/$name.img",format="qcow2",bus="virtio",cache="none" \
+    --ram="1024" \
+    --vcpus="1" \
+    --network="bridge:$bridge" \
+    --hvm \
+    --os-type="linux" \
+    --graphics="vnc" \
+    --noreboot  2>&1> /dev/null
+
+    if [ $? = "0" ]; then
+        echo "Affirmative, Dave. I read you."
+        echo "I'm completely operational, and all my circuits are functioning perfectly."
+    else
+        echo "I'm sorry Dave, I'm afraid I can't do that!"
+        echo "Are you sure you're making the right decision? I think we should stop."
+        exit 1
+    fi
+}
+
+## M_A_I_N
+
+if [ "$#" -ne "0" ]; then
+    while getopts "k:n:r:p:s:b:" options; do
+        case $options in
+            k) ksfilepath="$OPTARG"; ksfile=$(basename $ksfilepath) ;;
+            n) name="$OPTARG"     ;;
+            r) repo="$OPTARG"     ;;
+            p) pool="$OPTARG"     ;;
+            s) size="$OPTARG"     ;;
+            b) bridge="$OPTARG"   ;;
+        esac
+    done
+else
+    echo "I'm sorry Dave, I'm afraid I can't do that!"
+    echo "It can only be attributable to human error."
+    exit 1
+fi
+
+# kickstart a vm to bootstrap an image
+install
+
+regex='^[0-9]+$'
+while true; do
+    if ! [[ $(virsh domid $name) =~ $regex ]];then
+        echo "Image ready..."
+        break
+    else
+        echo "Installing ... waiting 30 seconds"
+        sleep 30
+    fi
+done
+
+# delete the vm from the hypervisor
+echo "Deactivate Bootstrap-VM!"
+virsh undefine $name 2>&1> /dev/null
+
+if [ $? = "0" ]; then
+    echo "Affirmative, Dave. I read you."
+    echo "Dave, this conversation can serve no purpose anymore. Goodbye."
+else
+    echo "I'm sorry Dave, I'm afraid I can't do that!"
+    exit 1
+fi
+
+echo "Runtime: $SECONDS sec."

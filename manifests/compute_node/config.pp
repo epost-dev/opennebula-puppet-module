@@ -96,4 +96,35 @@ class one::compute_node::config (
     mode   => '0644',
     source => 'puppet:///modules/one/qemu.conf'
   }
+
+  # Imaginator
+  file { '/var/lib/one/.virtinst':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0700',
+  }
+
+  file { '/var/lib/one/.libvirt':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0700',
+  }
+
+  file { '/var/lib/one/bin':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0700',
+  }
+
+  file { '/var/lib/one/bin/imaginator':
+  ensure => 'file',
+  owner  => 'oneadmin',
+  group  => 'oneadmin',
+  mode   => '0700',
+  source => 'puppet:///modules/one/imaginator'
+  }
+
 }
