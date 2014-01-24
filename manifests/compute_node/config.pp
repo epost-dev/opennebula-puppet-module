@@ -67,6 +67,13 @@ class one::compute_node::config (
     group  => 'oneadmin',
     mode   => '0600',
   }
+ 
+  file {'/etc/sudoers.d/20_imaginator':
+    content => 'puppet:///modules/one/sudoers_imaginator',
+    owner  => 'root',
+    owner  => 'root',
+    mode   => '0644',
+  }
 
   file { '/sbin/brctl':
     ensure => link,
