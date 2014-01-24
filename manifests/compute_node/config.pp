@@ -71,7 +71,7 @@ class one::compute_node::config (
   file {'/etc/sudoers.d/20_imaginator':
     content => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',
-    owner  => 'root',
+    group  => 'root',
     mode   => '0644',
   }
 
