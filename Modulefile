@@ -1,8 +1,8 @@
 name 'epost-one'
 version '0.0.2'
-author 'ePost Development GmbH'
+author 'Deutsche Post E-Post Development GmbH'
 license 'Apache License, Version 2.0'
 summary 'OpenNebula management module'
-description 'Manage OPenNebula nodes, management oned, sunstone webinterface'
+description 'Manage OpenNebula nodes, management oned, sunstone webinterface'
 
 
