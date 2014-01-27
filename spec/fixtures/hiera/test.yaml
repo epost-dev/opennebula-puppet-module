@@ -12,3 +12,15 @@ one::oned::ldap_pass: 'secure_password'
 one::oned::ldap_host: 'localhost'
 one::oned::ldap_base: 'cn=base'
 
+one::node::kickstart_network:
+  type:         'static'
+  device:       'eth0'
+  ip:           '10.0.0.0'
+  gateway:      '10.0.0.1'
+  netmask:      '255.255.255.0'
+  nameserver:   '10.0.0.1'
+
+# hint: insert crypted rootpw!
+one::node::kickstart::rootpw: ''
+one::node::kickstart::yumreposerver_puppet: 'http://yum-repo.localdomain.de/puppet/'
+one::node::kickstart::opennebula_context_rpm: 'http://yum-repo.localdomain.de/context/opennebula-context-4.2.0-1.x86_64.rpm'

@@ -125,5 +125,8 @@ class one::params {
   #     can be set to the user field that is in the group group_field
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
 
-
+  $kickstart_network                = hiera ('one::node::kickstart_network', undef)
+  $kickstart_rootpw                 = hiera ('one::node::kickstart_rootpw', undef)
+  $kickstart_yumreposerver_puppet   = hiera ('one::node::kickstart::yumreposerver_puppet', undef)
+  $kickstart_opennebula_context_rpm = hiera ('one::node::kickstart::opennebula_context_rpm', undef)
 }

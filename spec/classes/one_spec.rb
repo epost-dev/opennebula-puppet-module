@@ -31,19 +31,21 @@ describe 'one' do
             it { should contain_user('oneadmin') }
             it { should contain_file('/etc/libvirt/libvirtd.conf') }
             it { should contain_file('/etc/sysconfig/libvirtd') }
-            it { should contain_file('/var/lib/one/.ssh/id_dsa')\
-                .with_content(sshprivkey)
-            }
-            it { should contain_file('/var/lib/one/.ssh/id_dsa.pub')\
-                .with_content(sshpubkey)
-            }
+            it { should contain_file('/var/lib/one/.ssh/id_dsa').with_content(sshprivkey)}
+            it { should contain_file('/var/lib/one/.ssh/id_dsa.pub').with_content(sshpubkey)}
         end # fin context 'as compute node'
 
         context 'as compute node with imaginator' do
+          hiera = Hiera.new(:config => hiera_config)
+          networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
+
           it { should contain_file('/var/lib/one/bin').with_ensure('directory')}
+          it { should contain_file('/var/lib/one/etc').with_ensure('directory')}
+          it { should contain_file('/var/lib/one/etc/kickstart.d').with_ensure('directory')}
           it { should contain_file('/var/lib/one/.virtinst').with_ensure('directory')}
           it { should contain_file('/var/lib/one/.libvirt').with_ensure('directory')}
           it { should contain_file('/var/lib/one/bin/imaginator').with_source('puppet:///modules/one/imaginator')}
+          it { should contain_file('/var/lib/one/etc/kickstart.d/kickstart.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
         end # fin context 'as compute node with imaginator'
 
         context 'as mgmt node' do

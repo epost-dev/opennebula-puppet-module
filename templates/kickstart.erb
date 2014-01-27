@@ -1,0 +1,38 @@
+install
+cmdline
+poweroff
+
+lang en_US.utf8
+keyboard de
+timezone --utc Europe/Berlin
+
+<% if @networkconfig['type'] == "dhcp" %>
+network --bootproto=dhcp
+<% else %>
+network --bootproto=static --hostname=basisimage.local --device=<%= @networkconfig['device'] %> --ip=<%= @networkconfig['ip'] %> --gateway=<%= @networkconfig['gateway'] %> --netmask=<%= @networkconfig['netmask'] %> --nameserver=<%= @networkconfig['nameserver'] %>
+<% end %>
+
+authconfig  --enableshadow --passalgo=sha512
+rootpw      --iscrypted <%= @rootpw %>
+
+firstboot --disable
+firewall  --disabled
+selinux   --disabled
+services  --disabled iscsi,iscsid,bluetooth,pcscd,microcode_ctl,cpuspeed,mdmonitor,lvm2-monitor,yum-updatesd,haldaemon,messagebus,smartd,xfs,readahead_early,readahead_later,netfs,nfslock,rpcgssd,rpcidmapd,portmap,mcstrans,kudzu,anacron,hidd,rawdevices,firstboot,atd
+
+bootloader  --driveorder=vda --location=mbr --append="clocksource_failover=acpi_pm"
+zerombr
+clearpart   --all
+part /      --fstype=ext4 --size=5 --grow
+part /var   --fstype=ext4 --size=5 --grow
+
+repo --name="puppet" --baseurl=<%= @yumreposerver_puppet %>
+
+%packages --nobase
+@core
+puppet
+ntpdate
+
+%post --log=/root/post-install.log
+rm -v /etc/yum.repos.d/CentOS-*
+yum -y localinstall "<%= @opennebula_context_rpm %>"

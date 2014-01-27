@@ -21,7 +21,9 @@
 class one::compute_node::config (
   $ssh_priv_key = $one::params::ssh_priv_key,
   $ssh_pub_key = $one::params::ssh_pub_key,
+  $networkconfig = $one::params::kickstart_network,
 ){
+
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
@@ -67,7 +69,7 @@ class one::compute_node::config (
     group  => 'oneadmin',
     mode   => '0600',
   }
- 
+
   file {'/etc/sudoers.d/20_imaginator':
     source => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',
@@ -102,21 +104,42 @@ class one::compute_node::config (
     ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
-    mode   => '0700',
+    mode   => '0755',
   }
 
   file { '/var/lib/one/.libvirt':
     ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
-    mode   => '0700',
+    mode   => '0755',
   }
 
   file { '/var/lib/one/bin':
     ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
-    mode   => '0700',
+    mode   => '0755',
+  }
+
+  file { '/var/lib/one/etc':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+  }
+
+  file { '/var/lib/one/etc/kickstart.d':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    require => File['/var/lib/one/etc'],
+  }
+
+  file { '/var/lib/one/etc/kickstart.d/kickstart.ks':
+    ensure => present,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    content => template('one/kickstart.erb'),
+    require => File['/var/lib/one/etc/kickstart.d'],
   }
 
   file { '/var/lib/one/bin/imaginator':
