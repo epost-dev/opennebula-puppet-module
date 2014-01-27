@@ -7,7 +7,7 @@ require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint'
 
 desc "Run the tests"
-RSpec::Core::RakeTask.new(:test) do |t|
+RSpec::Core::RakeTask.new(:do_test) do |t|
   t.rspec_opts = ['--color', '-f d']
   t.pattern = 'spec/*/*_spec.rb'
 end
@@ -39,4 +39,5 @@ end
 
 
 
-task :default => [:spec_prep, :test, :onelint, :spec_clean]
+task :default => [:spec_prep, :do_test, :onelint, :spec_clean]
+task  :test => [:default]
