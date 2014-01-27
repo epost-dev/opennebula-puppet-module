@@ -16,7 +16,6 @@ describe 'one::compute_node' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
             sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_package("opennebula-node-kvm") }
             it { should contain_package("qemu-kvm") }
@@ -28,11 +27,8 @@ describe 'one::compute_node' do
             it { should contain_user("oneadmin") }
             it { should contain_file("/etc/libvirt/libvirtd.conf") }
             it { should contain_file("/etc/sysconfig/libvirtd") }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa")\
-                .with_content(sshprivkey)
-            }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
-                .with_content(sshpubkey)
+            it { should contain_file("/var/lib/one/.ssh/authorized_keys")\
+            .with_content(/#{sshpubkey}/m)
             }
         end
     end
@@ -43,7 +39,6 @@ describe 'one::compute_node' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
             sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_package("opennebula-node") }
             it { should contain_package("qemu-kvm") }
@@ -54,11 +49,8 @@ describe 'one::compute_node' do
             it { should contain_user("oneadmin") }
             it { should contain_file("/etc/libvirt/libvirtd.conf") }
             it { should contain_file("/etc/default/libvirt-bin") }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa")\
-                .with_content(sshprivkey)
-            }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
-                .with_content(sshpubkey)
+            it { should contain_file("/var/lib/one/.ssh/authorized_keys")\
+            .with_content(/#{sshpubkey}/m)
             }
         end
     end

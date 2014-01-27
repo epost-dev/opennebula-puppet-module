@@ -19,8 +19,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $ssh_priv_key = $one::params::ssh_priv_key,
-  $ssh_pub_key = $one::params::ssh_pub_key,
+  $head_ssh_pub_key = $one::params::ssh_pub_key,
   $networkconfig = $one::params::kickstart_network,
 ){
 
@@ -39,26 +38,8 @@ class one::compute_node::config (
     source => 'puppet:///modules/one/udev-kvm-rules',
     owner  => 'root',
   }
-  file { '/var/lib/one/.ssh':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-    mode   => '0700',
-  }
-  file { '/var/lib/one/.ssh/id_dsa':
-    content => $ssh_priv_key,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0600',
-  }
-  file { '/var/lib/one/.ssh/id_dsa.pub':
-    content => $ssh_pub_key,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0644',
-  }
   file { '/var/lib/one/.ssh/authorized_keys':
-    content => $ssh_pub_key,
+    content => $head_ssh_pub_key,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0600',

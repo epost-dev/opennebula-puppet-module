@@ -17,7 +17,6 @@ describe 'one' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup('one::head::ssh_priv_key', nil, nil)
             sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
@@ -31,14 +30,13 @@ describe 'one' do
             it { should contain_user('oneadmin') }
             it { should contain_file('/etc/libvirt/libvirtd.conf') }
             it { should contain_file('/etc/sysconfig/libvirtd') }
-            it { should contain_file('/var/lib/one/.ssh/id_dsa').with_content(sshprivkey)}
-            it { should contain_file('/var/lib/one/.ssh/id_dsa.pub').with_content(sshpubkey)}
+            it { should contain_file("/var/lib/one/.ssh/authorized_keys")\
+            .with_content(/#{sshpubkey}/m)}
         end # fin context 'as compute node'
 
         context 'as compute node with imaginator' do
           hiera = Hiera.new(:config => hiera_config)
           networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
-
           it { should contain_file('/var/lib/one/bin').with_ensure('directory')}
           it { should contain_file('/var/lib/one/etc').with_ensure('directory')}
           it { should contain_file('/var/lib/one/etc/kickstart.d').with_ensure('directory')}
@@ -145,7 +143,6 @@ describe 'one' do
         } }
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
-            sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
             sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
             it { should contain_class('one') }
             it { should contain_class('one::compute_node') }
@@ -158,18 +155,28 @@ describe 'one' do
             it { should contain_user("oneadmin") }
             it { should contain_file("/etc/libvirt/libvirtd.conf") }
             it { should contain_file("/etc/default/libvirt-bin") }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa")\
-                .with_content(sshprivkey)
-            }
-            it { should contain_file("/var/lib/one/.ssh/id_dsa.pub")\
-                .with_content(sshpubkey)
-            }
+            it { should contain_file("/var/lib/one/.ssh/authorized_keys")\
+            .with_content(/#{sshpubkey}/m)}
         end # fin context 'as compute node'
         context 'as mgmt node' do
             let(:hiera_config) { hiera_config }
             let (:facts) { {
                 :osfamily => 'Debian'
             } }
+            context 'with ssh config no node' do
+              let(:params) { {
+                  :oned     => true,
+                  :node     => false,
+              } }
+              hiera = Hiera.new(:config => hiera_config)
+              sshprivkey = hiera.lookup("one::head::ssh_priv_key", nil, nil)
+              sshpubkey = hiera.lookup("one::head::ssh_pub_key", nil, nil)
+              it { should contain_class('one') }
+              it { should contain_class('one::oned') }
+              it { should_not contain_class('one::compute_node') }
+              it { should contain_file('/var/lib/one/.ssh/id_dsa').with_content(sshprivkey)}
+              it { should contain_file('/var/lib/one/.ssh/id_dsa.pub').with_content(sshpubkey)}
+            end
             context 'with sqlite' do
                 let(:params) { { 
                     :oned => true,
