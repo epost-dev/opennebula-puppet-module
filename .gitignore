@@ -5,3 +5,4 @@ Gemfile.lock
 spec/fixtures/modules
 spec/fixtures/manifests
 .idea
+/.project
