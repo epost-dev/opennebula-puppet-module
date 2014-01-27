@@ -95,6 +95,13 @@ class one::compute_node::config (
     mode   => '0755',
   }
 
+  file { '/var/lib/libvirt/boot':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0771',
+  }
+
   file { '/var/lib/one/bin':
     ensure => directory,
     owner  => 'oneadmin',
