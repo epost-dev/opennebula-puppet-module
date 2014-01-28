@@ -16,7 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::config {
+class one::oned::config(
+  $ssh_priv_key = $one::params::ssh_priv_key,
+  $ssh_pub_key = $one::params::ssh_pub_key
+  ) {
   file { '/etc/one/oned.conf':
     content => template('one/oned.conf.erb'),
     owner   => 'root',
@@ -37,9 +40,18 @@ class one::oned::config {
     recurse => true,
     source  => 'puppet:///modules/one/hookscripts',
   }
-  file { '/var/lib/one':
+  file { '/var/lib/one/.ssh/id_dsa':
+    content => $ssh_priv_key,
     owner   => 'oneadmin',
     group   => 'oneadmin',
-    recurse => true,
+    mode    => '0600',
+    require => File['/var/lib/one/.ssh'],
+  }
+  file { '/var/lib/one/.ssh/id_dsa.pub':
+    content => $ssh_pub_key,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
+    mode    => '0644',
+    require => File['/var/lib/one/.ssh'],
   }
 }

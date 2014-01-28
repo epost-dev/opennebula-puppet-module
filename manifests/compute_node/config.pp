@@ -19,9 +19,10 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $ssh_priv_key = $one::params::ssh_priv_key,
-  $ssh_pub_key = $one::params::ssh_pub_key,
+  $head_ssh_pub_key = $one::params::ssh_pub_key,
+  $networkconfig = $one::params::kickstart_network,
 ){
+
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
@@ -37,26 +38,8 @@ class one::compute_node::config (
     source => 'puppet:///modules/one/udev-kvm-rules',
     owner  => 'root',
   }
-  file { '/var/lib/one/.ssh':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-    mode   => '0700',
-  }
-  file { '/var/lib/one/.ssh/id_dsa':
-    content => $ssh_priv_key,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0600',
-  }
-  file { '/var/lib/one/.ssh/id_dsa.pub':
-    content => $ssh_pub_key,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0644',
-  }
   file { '/var/lib/one/.ssh/authorized_keys':
-    content => $ssh_pub_key,
+    content => $head_ssh_pub_key,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0600',
@@ -68,17 +51,16 @@ class one::compute_node::config (
     mode   => '0600',
   }
 
+  file {'/etc/sudoers.d/20_imaginator':
+    source => 'puppet:///modules/one/sudoers_imaginator',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
+  }
+
   file { '/sbin/brctl':
     ensure => link,
     target => '/usr/sbin/brctl',
-  }
-  # sudoers for other os? default on RedHat
-  file { '/etc/sudoers.d/10_oneadmin':
-    ensure => file,
-    source => 'puppet:///modules/one/oneadmin_sudoers',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0640',
   }
 
   if($::osfamiliy == 'RedHat') {
@@ -97,4 +79,63 @@ class one::compute_node::config (
     mode   => '0644',
     source => 'puppet:///modules/one/qemu.conf'
   }
+
+  # Imaginator
+  file { '/var/lib/one/.virtinst':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
+  }
+
+  file { '/var/lib/one/.libvirt':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
+  }
+
+  file { '/var/lib/libvirt/boot':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0771',
+  }
+
+  file { '/var/lib/one/bin':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
+  }
+
+  file { '/var/lib/one/etc':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+  }
+
+  file { '/var/lib/one/etc/kickstart.d':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    require => File['/var/lib/one/etc'],
+  }
+
+  file { '/var/lib/one/etc/kickstart.d/kickstart.ks':
+    ensure => present,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    content => template('one/kickstart.erb'),
+    require => File['/var/lib/one/etc/kickstart.d'],
+  }
+
+  file { '/var/lib/one/bin/imaginator':
+  ensure => 'file',
+  owner  => 'oneadmin',
+  group  => 'oneadmin',
+  mode   => '0700',
+  source => 'puppet:///modules/one/imaginator'
+  }
+
 }

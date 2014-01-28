@@ -24,13 +24,13 @@ class one::params {
   $oneid = $one::oneid
 
   # should we enable opennebula repos?
-  $one_repo_enable = hiera('one::enable_opennebula_repo', 'false' )
+  $one_repo_enable = hiera('one::enable_opennebula_repo', false )
 
   $oneuid = '9869'
   $onegid = '9869'
 
-  $ssh_priv_key = hiera('one::node::ssh_priv_key', '....')
-  $ssh_pub_key = hiera('one::node::ssh_pub_key', '....')
+  $ssh_priv_key = hiera('one::head::ssh_priv_key', '....')
+  $ssh_pub_key = hiera('one::head::ssh_pub_key', '....')
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
   $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)
@@ -94,8 +94,9 @@ class one::params {
   $oned_db_password   = hiera('one::oned::db_password', 'oned')
   $oned_db_host   = hiera('one::oned::db_host', 'localhost')
 
+  $ha_setup = hiera('one::ha_setup', true)
   # ha stuff (optional, needs one::ha_setup set to true)
-  if($one::ha_setup) {
+  if ($ha_setup) {
     $oned_enable = false
     $oned_ensure = undef
   } else {
@@ -124,5 +125,8 @@ class one::params {
   #     can be set to the user field that is in the group group_field
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
 
-
+  $kickstart_network                = hiera ('one::node::kickstart_network', undef)
+  $kickstart_rootpw                 = hiera ('one::node::kickstart_rootpw', undef)
+  $kickstart_yum_repo_puppet        = hiera ('one::node::kickstart::yum_repo_puppet', undef)
+  $kickstart_ohd_repo_puppet        = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
 }

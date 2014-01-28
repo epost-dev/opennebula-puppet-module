@@ -1,6 +1,6 @@
 ---
-one::node::ssh_pub_key: 'ssh pub key'
-one::node::ssh_priv_key: 'ssh-dsa priv key'
+one::head::ssh_pub_key: 'ssh pub key'
+one::head::ssh_priv_key: 'ssh-dsa priv key'
 
 one::oned::db: oned
 one::oned::db_user: oned
@@ -12,3 +12,15 @@ one::oned::ldap_pass: 'secure_password'
 one::oned::ldap_host: 'localhost'
 one::oned::ldap_base: 'cn=base'
 
+one::node::kickstart_network:
+  type:         'static'
+  device:       'eth0'
+  ip:           '10.0.0.0'
+  gateway:      '10.0.0.1'
+  netmask:      '255.255.255.0'
+  nameserver:   '10.0.0.1'
+
+# hint: insert crypted rootpw!
+one::node::kickstart::rootpw: ''
+one::node::kickstart::yum_repo_puppet: 'http://yum-repo.localdomain.de/puppet/'
+one::node::kickstart::ohd_repo_puppet: 'http://yum-repo.localdomain.de/ohd/'
