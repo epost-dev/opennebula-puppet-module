@@ -127,6 +127,6 @@ class one::params {
 
   $kickstart_network                = hiera ('one::node::kickstart_network', undef)
   $kickstart_rootpw                 = hiera ('one::node::kickstart_rootpw', undef)
-  $kickstart_yumreposerver_puppet   = hiera ('one::node::kickstart::yumreposerver_puppet', undef)
-  $kickstart_opennebula_context_rpm = hiera ('one::node::kickstart::opennebula_context_rpm', undef)
+  $kickstart_yum_repo_puppet        = hiera ('one::node::kickstart::yum_repo_puppet', undef)
+  $kickstart_ohd_repo_puppet        = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
 }

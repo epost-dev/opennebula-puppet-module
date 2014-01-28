@@ -27,12 +27,13 @@ part /      --fstype=ext4 --size=5 --grow
 part /var   --fstype=ext4 --size=5 --grow
 
 repo --name="puppet" --baseurl=<%= @yumreposerver_puppet %>
+repo --name="context"    --baseurl=<%= @ohd_repo_puppet %>
 
 %packages --nobase
 @core
 puppet
 ntpdate
+opennebula-context
 
 %post --log=/root/post-install.log
 rm -v /etc/yum.repos.d/CentOS-*
-yum -y localinstall "<%= @opennebula_context_rpm %>"
