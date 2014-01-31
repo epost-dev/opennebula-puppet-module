@@ -50,6 +50,13 @@ class one::compute_node::config (
     group  => 'oneadmin',
     mode   => '0600',
   }
+  
+  file { '/etc/sudoers.d/10_oneadmin':
+    source => 'puppet:///modules/one/oneadmin_sudoers',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',  
+  }
 
   file {'/etc/sudoers.d/20_imaginator':
     source => 'puppet:///modules/one/sudoers_imaginator',

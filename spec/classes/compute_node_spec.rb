@@ -25,6 +25,7 @@ describe 'one::compute_node' do
             it { should contain_file('/etc/libvirt/libvirtd.conf') }
             it { should contain_file('/etc/sysconfig/libvirtd') }
             it { should contain_file('/var/lib/one/.ssh/authorized_keys').with_content(/#{sshpubkey}/m) }
+            it { should contain_file('/etc/sudoers.d/10_oneadmin') }
             # imaginator checks
             it { should contain_file('/var/lib/one/.virtinst').with_ensure('directory') }
             it { should contain_file('/var/lib/one/.libvirt').with_ensure('directory') }
@@ -57,6 +58,7 @@ describe 'one::compute_node' do
             it { should contain_file('/etc/libvirt/libvirtd.conf') }
             it { should contain_file('/etc/default/libvirt-bin') }
             it { should contain_file('/var/lib/one/.ssh/authorized_keys').with_content(/#{sshpubkey}/m) }
+            it { should contain_file('/etc/sudoers.d/10_oneadmin') }
             # imaginator checks
             it { should contain_file('/var/lib/one/.virtinst').with_ensure('directory') }
             it { should contain_file('/var/lib/one/.libvirt').with_ensure('directory') }
