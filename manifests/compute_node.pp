@@ -42,10 +42,12 @@ class one::compute_node {
   Class['one::compute_node::service'] ->
   Class['one::service']
 
+  if ($one::puppetdb == true) {
     # Register the node in the puppetdb
     @@one::oned::peer { $::fqdn :
       tag   => $one::params::oneid,
       vtype => $one::vtype,
       ntype => $one::ntype,
     }
+  }
 }

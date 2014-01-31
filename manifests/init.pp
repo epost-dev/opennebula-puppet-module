@@ -103,6 +103,7 @@ class one ( $oneid      = 'one-cloud',
             $onegate    = false,
             $backend    = 'sqlite',
             $ha_setup   = false,
+            $puppetdb   = true,
             ) {
 
   include one::params
