@@ -15,3 +15,6 @@ RSpec.configure do |c|
   c.manifest_dir = File.join(fixture_path, 'manifests')
   c.mock_with :mocha
 end
+
+at_exit { RSpec::Puppet::Coverage.report! }
+
