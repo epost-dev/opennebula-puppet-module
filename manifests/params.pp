@@ -38,13 +38,7 @@ class one::params {
   # params for nodes
   case $::osfamily {
     'RedHat': {
-      $node_packages = ['libvirt',
-                        'qemu-kvm',
-                        'bridge-utils',
-                        'vconfig',
-                        'opennebula-node-kvm',
-                        'sudo',
-                        ]
+      $node_packages = 'opennebula-node-kvm'
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
       $dbus_pkg        = 'dbus'
@@ -62,12 +56,7 @@ class one::params {
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
     }
     'Debian': {
-      $node_packages   = ['libvirt-bin',
-                          'qemu-kvm',
-                          'bridge-utils',
-                          'opennebula-node',
-                          'sudo',
-                          ]
+      $node_packages   = 'opennebula-node'
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
