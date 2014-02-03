@@ -26,8 +26,8 @@ clearpart   --all
 part /      --fstype=ext4 --size=5 --grow
 part /var   --fstype=ext4 --size=5 --grow
 
-repo --name="puppet" --baseurl=<%= @yumreposerver_puppet %>
-repo --name="context"    --baseurl=<%= @ohd_repo_puppet %>
+repo --name="puppet"  --baseurl=<%= @yum_repo_puppet %>
+repo --name="context" --baseurl=<%= @ohd_repo_puppet %>
 
 %packages --nobase
 @core
