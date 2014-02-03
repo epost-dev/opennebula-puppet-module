@@ -20,7 +20,10 @@
 #
 class one::compute_node::config (
   $head_ssh_pub_key = $one::params::ssh_pub_key,
-  $networkconfig    = $one::params::kickstart_network,) {
+  $networkconfig = $one::params::kickstart_network,
+  $partitions   = $one::params::kickstart_partition,
+){
+
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',

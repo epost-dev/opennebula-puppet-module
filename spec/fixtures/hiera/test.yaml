@@ -20,6 +20,11 @@ one::node::kickstart_network:
   netmask:      '255.255.255.0'
   nameserver:   '10.0.0.1'
 
+one::node::kickstart_partition:
+  root: '12288'
+  var:  '8192'
+  swap: '1024'
+
 # hint: insert crypted rootpw!
 one::node::kickstart::rootpw: ''
 one::node::kickstart::yum_repo_puppet: 'http://yum-repo.localdomain.de/puppet/'
