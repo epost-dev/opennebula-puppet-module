@@ -13,8 +13,8 @@ class one::install {
   file { '/var/lib/one':
     owner   => 'oneadmin',
     group   => 'oneadmin',
-    recurse => true,
   }
+
   file { '/var/lib/one/.ssh':
     ensure  => directory,
     recurse => true,
