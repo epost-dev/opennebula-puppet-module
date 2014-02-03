@@ -20,45 +20,47 @@
 #
 class one::compute_node::config (
   $head_ssh_pub_key = $one::params::ssh_pub_key,
-  $networkconfig = $one::params::kickstart_network,
-){
-
+  $networkconfig    = $one::params::kickstart_network,) {
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
     notify => Service[$one::params::libvirtd_srv],
   }
+
   file { $one::params::libvirtd_cfg:
     ensure => 'file',
     source => $one::params::libvirtd_source,
     owner  => 'root',
     notify => Service[$one::params::libvirtd_srv],
   }
+
   file { '/etc/udev/rules.d/80-kvm.rules':
     source => 'puppet:///modules/one/udev-kvm-rules',
     owner  => 'root',
   }
+
   file { '/var/lib/one/.ssh/authorized_keys':
     content => $head_ssh_pub_key,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0600',
   }
+
   file { '/var/lib/one/.ssh/config':
     source => 'puppet:///modules/one/ssh_one_config',
     owner  => 'oneadmin',
     group  => 'oneadmin',
     mode   => '0600',
   }
-  
+
   file { '/etc/sudoers.d/10_oneadmin':
     source => 'puppet:///modules/one/oneadmin_sudoers',
     owner  => 'root',
     group  => 'root',
-    mode   => '0644',  
+    mode   => '0644',
   }
 
-  file {'/etc/sudoers.d/20_imaginator':
+  file { '/etc/sudoers.d/20_imaginator':
     source => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',
     group  => 'root',
@@ -70,7 +72,7 @@ class one::compute_node::config (
     target => '/usr/sbin/brctl',
   }
 
-  if($::osfamiliy == 'RedHat') {
+  if ($::osfamiliy == 'RedHat') {
     file { '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla':
       ensure => file,
       owner  => 'root',
@@ -79,7 +81,8 @@ class one::compute_node::config (
       source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
     }
   }
-  file {'/etc/libvirt/qemu.conf':
+
+  file { '/etc/libvirt/qemu.conf':
     ensure => file,
     owner  => 'root',
     group  => 'root',
@@ -123,26 +126,26 @@ class one::compute_node::config (
   }
 
   file { '/var/lib/one/etc/kickstart.d':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
+    ensure  => directory,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
     require => File['/var/lib/one/etc'],
   }
 
   file { '/var/lib/one/etc/kickstart.d/kickstart.ks':
-    ensure => present,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
+    ensure  => present,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
     content => template('one/kickstart.erb'),
     require => File['/var/lib/one/etc/kickstart.d'],
   }
 
   file { '/var/lib/one/bin/imaginator':
-  ensure => 'file',
-  owner  => 'oneadmin',
-  group  => 'oneadmin',
-  mode   => '0700',
-  source => 'puppet:///modules/one/imaginator'
+    ensure => 'file',
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0700',
+    source => 'puppet:///modules/one/imaginator'
   }
 
 }
