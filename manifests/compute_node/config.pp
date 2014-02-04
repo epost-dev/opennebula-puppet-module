@@ -13,6 +13,7 @@
 # - Martin Alfke
 # - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
+# - Robert Waffen
 #
 # === License
 # Apache License Version 2.0
@@ -20,8 +21,11 @@
 #
 class one::compute_node::config (
   $head_ssh_pub_key = $one::params::ssh_pub_key,
-  $networkconfig = $one::params::kickstart_network,
-  $partitions   = $one::params::kickstart_partition,
+  $networkconfig    = $one::params::kickstart_network,
+  $partitions       = $one::params::kickstart_partition,
+  $rootpw           = $one::params::kickstart_rootpw,
+  $yum_repo_puppet  = $one::params::kickstart_yum_repo_puppet,
+  $ohd_repo_puppet  = $one::params::kickstart_ohd_repo_puppet
 ){
 
   file { '/etc/libvirt/libvirtd.conf':
@@ -150,5 +154,4 @@ class one::compute_node::config (
     mode   => '0700',
     source => 'puppet:///modules/one/imaginator'
   }
-
 }
