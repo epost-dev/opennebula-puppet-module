@@ -29,3 +29,7 @@ one::node::kickstart_partition:
 one::node::kickstart::rootpw: ''
 one::node::kickstart::yum_repo_puppet: 'http://yum-repo.localdomain.de/puppet/'
 one::node::kickstart::ohd_repo_puppet: 'http://yum-repo.localdomain.de/ohd/'
+
+one::node::kickstart::data:
+  foo:  'bar'
+  rnr:  'highschool'

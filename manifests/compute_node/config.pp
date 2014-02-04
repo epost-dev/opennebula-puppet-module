@@ -25,7 +25,8 @@ class one::compute_node::config (
   $partitions       = $one::params::kickstart_partition,
   $rootpw           = $one::params::kickstart_rootpw,
   $yum_repo_puppet  = $one::params::kickstart_yum_repo_puppet,
-  $ohd_repo_puppet  = $one::params::kickstart_ohd_repo_puppet
+  $ohd_repo_puppet  = $one::params::kickstart_ohd_repo_puppet,
+  $data             = $one::params::kickstart_data
 ){
 
   file { '/etc/libvirt/libvirtd.conf':
@@ -136,16 +137,14 @@ class one::compute_node::config (
     ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
+    purge   => true,
+    recurse => true,
+    force   => true,
     require => File['/var/lib/one/etc'],
   }
 
-  file { '/var/lib/one/etc/kickstart.d/kickstart.ks':
-    ensure  => present,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    content => template('one/kickstart.erb'),
-    require => File['/var/lib/one/etc/kickstart.d'],
-  }
+  $data_keys = keys ($data)
+  compute_node::add_kickstart { $data_keys: }
 
   file { '/var/lib/one/bin/imaginator':
     ensure => 'file',

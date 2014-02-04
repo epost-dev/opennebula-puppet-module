@@ -42,7 +42,8 @@ describe 'one' do
           it { should contain_file('/var/lib/one/.virtinst').with_ensure('directory')}
           it { should contain_file('/var/lib/one/.libvirt').with_ensure('directory')}
           it { should contain_file('/var/lib/one/bin/imaginator').with_source('puppet:///modules/one/imaginator')}
-          it { should contain_file('/var/lib/one/etc/kickstart.d/kickstart.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
+          it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
+          it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
         end # fin context 'as compute node with imaginator'
 
         context 'as mgmt node' do

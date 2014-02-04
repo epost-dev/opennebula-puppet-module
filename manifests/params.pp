@@ -130,4 +130,5 @@ class one::params {
   $kickstart_rootpw          = hiera ('one::node::kickstart_rootpw', undef)
   $kickstart_yum_repo_puppet = hiera ('one::node::kickstart::yum_repo_puppet', undef)
   $kickstart_ohd_repo_puppet = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
+  $kickstart_data            = hiera ('one::node::kickstart::data', undef)
 }
