@@ -1,4 +1,4 @@
-define compute_node::add_kickstart() {
+define one::compute_node::add_kickstart() {
 
   file { "/var/lib/one/etc/kickstart.d/${name}.ks":
     ensure  => present,

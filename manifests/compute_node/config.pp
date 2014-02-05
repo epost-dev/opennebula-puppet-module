@@ -144,7 +144,7 @@ class one::compute_node::config (
   }
 
   $data_keys = keys ($data)
-  compute_node::add_kickstart { $data_keys: }
+  one::compute_node::add_kickstart { $data_keys: }
 
   file { '/var/lib/one/bin/imaginator':
     ensure => 'file',
