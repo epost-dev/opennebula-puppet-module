@@ -37,9 +37,15 @@ describe 'one::compute_node' do
             it { should contain_file('/var/lib/one/bin/imaginator').with_source('puppet:///modules/one/imaginator') }
             it { should contain_file('/var/lib/one/etc').with_ensure('directory') }
             it { should contain_file('/var/lib/one/etc/kickstart.d').with_ensure('directory') }
+            it { should contain_file('/var/lib/one/etc/preseed.d').with_ensure('directory') }
             # check if there ist content in the kickstart files
             it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/context/m) }
             it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/context/m) }
+            it { should contain_file('/var/lib/one/etc/preseed.d/does.cfg').with ( {
+              'content' => /ftp.us.debian.org/,
+              'owner'   => 'oneadmin',
+              'group'   => 'oneadmin',
+            } ) }
         end
     end
     context 'with hiera config on Debian' do
