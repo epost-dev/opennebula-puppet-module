@@ -1,5 +1,5 @@
 install
-cmdline
+text
 poweroff
 
 lang en_US.utf8
@@ -23,15 +23,18 @@ services  --disabled iscsi,iscsid,bluetooth,pcscd,microcode_ctl,cpuspeed,mdmonit
 bootloader  --driveorder=vda --location=mbr --append="clocksource_failover=acpi_pm"
 zerombr
 clearpart   --all
-part /      --fstype=ext4 --size=5 --grow
-part /var   --fstype=ext4 --size=5 --grow
 
-repo --name="puppet" --baseurl=<%= @yumreposerver_puppet %>
-repo --name="context"    --baseurl=<%= @ohd_repo_puppet %>
+part /      --fstype=ext3 --size=<%= @partitions['root'] %>
+part /var   --fstype=ext3 --size=<%= @partitions['var'] %>
+part swap   --fstype=swap --size=<%= @partitions['swap'] %>
 
-%packages --nobase
+repo --name="puppet"  --baseurl=<%= @yum_repo_puppet %>
+repo --name="context" --baseurl=<%= @ohd_repo_puppet %>
+
+%packages --nobase --ignoremissing
 @core
 puppet
+ntp
 ntpdate
 opennebula-context
 

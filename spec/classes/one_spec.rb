@@ -15,35 +15,6 @@ describe 'one' do
         let (:facts) { {
             :osfamily => 'RedHat'
         } }
-        context 'as compute node' do
-            hiera = Hiera.new(:config => hiera_config)
-            sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
-            it { should contain_class('one') }
-            it { should contain_class('one::compute_node') }
-            it { should contain_package('opennebula-node-kvm') }
-            it { should contain_package('qemu-kvm') }
-            it { should contain_package('libvirt') }
-            it { should contain_package('bridge-utils') }
-            it { should contain_package('vconfig') }
-            it { should contain_package('sudo') }
-            it { should contain_group('oneadmin') }
-            it { should contain_user('oneadmin') }
-            it { should contain_file('/etc/libvirt/libvirtd.conf') }
-            it { should contain_file('/etc/sysconfig/libvirtd') }
-            it { should contain_file('/var/lib/one/.ssh/authorized_keys').with_content(/#{sshpubkey}/m) }
-        end # fin context 'as compute node'
-
-        context 'as compute node with imaginator' do
-          hiera = Hiera.new(:config => hiera_config)
-          networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
-          it { should contain_file('/var/lib/one/bin').with_ensure('directory')}
-          it { should contain_file('/var/lib/one/etc').with_ensure('directory')}
-          it { should contain_file('/var/lib/one/etc/kickstart.d').with_ensure('directory')}
-          it { should contain_file('/var/lib/one/.virtinst').with_ensure('directory')}
-          it { should contain_file('/var/lib/one/.libvirt').with_ensure('directory')}
-          it { should contain_file('/var/lib/one/bin/imaginator').with_source('puppet:///modules/one/imaginator')}
-          it { should contain_file('/var/lib/one/etc/kickstart.d/kickstart.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
-        end # fin context 'as compute node with imaginator'
 
         context 'as mgmt node' do
             let(:hiera_config) { hiera_config }
@@ -134,22 +105,6 @@ describe 'one' do
         let (:facts) { {
             :osfamily => 'Debian'
         } }
-        context 'as compute node' do
-            hiera = Hiera.new(:config => hiera_config)
-            sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
-            it { should contain_class('one') }
-            it { should contain_class('one::compute_node') }
-            it { should contain_package('opennebula-node') }
-            it { should contain_package('qemu-kvm') }
-            it { should contain_package('libvirt-bin') }
-            it { should contain_package('bridge-utils') }
-            it { should contain_package('sudo') }
-            it { should contain_group('oneadmin') }
-            it { should contain_user('oneadmin') }
-            it { should contain_file('/etc/libvirt/libvirtd.conf') }
-            it { should contain_file('/etc/default/libvirt-bin') }
-            it { should contain_file('/var/lib/one/.ssh/authorized_keys').with_content(/#{sshpubkey}/m) }
-        end # fin context 'as compute node'
         context 'as mgmt node' do
             let(:hiera_config) { hiera_config }
             let (:facts) { {

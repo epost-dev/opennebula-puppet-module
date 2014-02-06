@@ -13,14 +13,30 @@
 # - Martin Alfke
 # - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
+# - Robert Waffen
 #
 # === License
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $head_ssh_pub_key = $one::params::ssh_pub_key,
-  $networkconfig    = $one::params::kickstart_network,) {
+  $head_ssh_pub_key  = $one::params::ssh_pub_key,
+  $networkconfig     = $one::params::kickstart_network,
+  $partitions        = $one::params::kickstart_partition,
+  $rootpw            = $one::params::kickstart_rootpw,
+  $yum_repo_puppet   = $one::params::kickstart_yum_repo_puppet,
+  $ohd_repo_puppet   = $one::params::kickstart_ohd_repo_puppet,
+  $data              = $one::params::kickstart_data,
+  $kickstart_tmpl    = $one::params::kickstart_tmpl,
+  $preseed_data      = $one::params::preseed_data,
+  $ohd_deb_repo      = $one::params::preseed_ohd_deb_repo,
+  $debian_mirror_url = $one::params::preseed_debian_mirror_url,
+  $preseed_tmpl      = $one::params::preseed_tmpl,
+){
+
+  validate_string ($debian_mirror_url)
+  validate_hash   ($preseed_data)
+
   file { '/etc/libvirt/libvirtd.conf':
     source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
@@ -125,19 +141,25 @@ class one::compute_node::config (
     group  => 'oneadmin',
   }
 
-  file { '/var/lib/one/etc/kickstart.d':
+  file { ['/var/lib/one/etc/kickstart.d',
+          '/var/lib/one/etc/preseed.d']:
     ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
+    purge   => true,
+    recurse => true,
+    force   => true,
     require => File['/var/lib/one/etc'],
   }
 
-  file { '/var/lib/one/etc/kickstart.d/kickstart.ks':
-    ensure  => present,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    content => template('one/kickstart.erb'),
-    require => File['/var/lib/one/etc/kickstart.d'],
+  $data_keys = keys ($data)
+  one::compute_node::add_kickstart { $data_keys:
+    data => $data,
+  }
+
+  $preseed_keys = keys ($preseed_data)
+  one::compute_node::add_preseed { $preseed_keys:
+    data => $preseed_data,
   }
 
   file { '/var/lib/one/bin/imaginator':
@@ -147,5 +169,4 @@ class one::compute_node::config (
     mode   => '0700',
     source => 'puppet:///modules/one/imaginator'
   }
-
 }

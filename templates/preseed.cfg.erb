@@ -1,0 +1,75 @@
+### Localization
+# Preseeding only locale sets language, country and locale.
+d-i debian-installer/locale string en_US
+
+d-i console-keymaps-at/keymap select de
+d-i keyboard-configuration/xkb-keymap select de
+
+d-i netcfg/choose_interface select auto
+
+d-i netcfg/get_hostname string basisimage
+d-i netcfg/get_domain string local
+
+d-i netcfg/wireless_wep string
+
+d-i hw-detect/load_firmware boolean true
+
+d-i mirror/country string manual
+<% uri=URI(@debian_mirror_url) %>
+d-i mirror/http/hostname string  <%= uri.host %>
+d-i mirror/http/directory string <%= uri.path %>
+d-i mirror/http/proxy string
+
+# Aua, but same for RH/Centos
+d-i debian-installer/allow_unauthenticated boolean true
+
+d-i apt-setup/local0/repository string <%= @ohd_deb_repo %>
+d-i apt-setup/local0/comment string One Context
+
+d-i passwd/make-user boolean false
+
+d-i passwd/root-password-crypted password <%= @rootpw %>
+
+d-i clock-setup/utc boolean true
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string Europe/Berlin
+
+d-i clock-setup/ntp boolean true
+
+d-i partman-auto/method string lvm
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-md/device_remove_md boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+
+d-i partman-auto/choose_recipe select atomic
+
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman-partitioning/unknown_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+d-i grub-installer/only_debian boolean true
+
+d-i apt-setup/non-free boolean true
+d-i apt-setup/contrib boolean true
+
+### Package selection
+tasksel tasksel/first multiselect standard
+
+d-i pkgsel/include string \
+              ntp \
+              ntpdate \
+              openssh-server \
+              one-context \
+              puppet
+
+popularity-contest popularity-contest/participate boolean false
+
+d-i finish-install/reboot_in_progress note
+
+d-i debian-installer/exit/poweroff boolean true
+

@@ -44,6 +44,7 @@ class one::params {
                         'vconfig',
                         'opennebula-node-kvm',
                         'sudo',
+                        'python-virtinst'
                         ]
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
@@ -53,7 +54,7 @@ class one::params {
       # params for oneflow (optional, needs one::oneflow set to true)
       $oned_oneflow_packages = ['opennebula-flow',
                                 'rubygem-treetop',
-                                'rubygem-polyglot',
+                                'rubygem-polyglot'
                                 ]
       # params for onegate (optional, needs one::onegate set to true)
       $oned_onegate_packages = ['opennebula-gate', 'rubygem-parse-cron']
@@ -67,6 +68,7 @@ class one::params {
                           'bridge-utils',
                           'opennebula-node',
                           'sudo',
+                          'virtinst'
                           ]
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
@@ -75,7 +77,7 @@ class one::params {
       $oned_sunstone_ldap_pkg = ['ruby-ldap','ruby-net-ldap']
       $oned_oneflow_packages = ['opennebula-flow',
                                 'ruby-treetop',
-                                'ruby-polyglot',
+                                'ruby-polyglot'
                                 ]
       $oned_onegate_packages = ['opennebula-gate']
       $libvirtd_srv = 'libvirt-bin'
@@ -125,8 +127,17 @@ class one::params {
   #     can be set to the user field that is in the group group_field
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
 
-  $kickstart_network                = hiera ('one::node::kickstart_network', undef)
-  $kickstart_rootpw                 = hiera ('one::node::kickstart_rootpw', undef)
-  $kickstart_yum_repo_puppet        = hiera ('one::node::kickstart::yum_repo_puppet', undef)
-  $kickstart_ohd_repo_puppet        = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
+  $kickstart_network         = hiera ('one::node::kickstart_network', undef)
+  $kickstart_partition       = hiera ('one::node::kickstart_partition', undef)
+  $kickstart_rootpw          = hiera ('one::node::kickstart_rootpw', undef)
+  $kickstart_yum_repo_puppet = hiera ('one::node::kickstart::yum_repo_puppet', undef)
+  $kickstart_ohd_repo_puppet = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
+  $kickstart_data            = hiera ('one::node::kickstart::data', undef)
+  $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
+
+  $preseed_data              = hiera ('one::node::preseed::data', {})
+  $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url',
+                                      'http://ftp.debian.org/debian')
+  $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
+  $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 }

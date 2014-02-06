@@ -24,7 +24,7 @@ sudo -u oneadmin virt-install \
     --network="bridge:$bridge" \
     --hvm \
     --os-type="linux" \
-    --graphics="vnc" \
+    --graphics="vnc",keymap="de-de" \
     --noreboot  2>&1> /dev/null
 
     if [ $? = "0" ]; then

@@ -20,7 +20,22 @@ one::node::kickstart_network:
   netmask:      '255.255.255.0'
   nameserver:   '10.0.0.1'
 
+one::node::kickstart_partition:
+  root: '12288'
+  var:  '8192'
+  swap: '1024'
+
 # hint: insert crypted rootpw!
 one::node::kickstart::rootpw: ''
 one::node::kickstart::yum_repo_puppet: 'http://yum-repo.localdomain.de/puppet/'
 one::node::kickstart::ohd_repo_puppet: 'http://yum-repo.localdomain.de/ohd/'
+
+one::node::kickstart::data:
+  foo:  'bar'
+  rnr:  'highschool'
+
+one::node::preseed::debian_mirror_url: 'http://ftp.us.debian.org/debian'
+one::node::preseed::ohd_deb_repo: 'deb http://example.com/debian/ one/'
+
+one::node::preseed::data:
+  does: 'notmatter'
