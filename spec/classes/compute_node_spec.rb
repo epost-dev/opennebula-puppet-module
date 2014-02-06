@@ -14,6 +14,8 @@ describe 'one::compute_node' do
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
             sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
+            networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
+            it { should contain_class('one::compute_node') }
             it { should contain_package('opennebula-node-kvm') }
             it { should contain_package('qemu-kvm') }
             it { should contain_package('libvirt') }
@@ -41,6 +43,8 @@ describe 'one::compute_node' do
             # check if there ist content in the kickstart files
             it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/context/m) }
             it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/context/m) }
+            it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
+            it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
             it { should contain_file('/var/lib/one/etc/preseed.d/does.cfg').with ( {
               'content' => /ftp.us.debian.org/,
               'owner'   => 'oneadmin',
@@ -56,6 +60,7 @@ describe 'one::compute_node' do
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
             sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
+            it { should contain_class('one::compute_node') }
             it { should contain_package('opennebula-node') }
             it { should contain_package('qemu-kvm') }
             it { should contain_package('libvirt-bin') }

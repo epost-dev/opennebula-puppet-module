@@ -133,8 +133,11 @@ class one::params {
   $kickstart_yum_repo_puppet = hiera ('one::node::kickstart::yum_repo_puppet', undef)
   $kickstart_ohd_repo_puppet = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
   $kickstart_data            = hiera ('one::node::kickstart::data', undef)
+  $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
+
   $preseed_data              = hiera ('one::node::preseed::data', {})
   $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url',
                                       'http://ftp.debian.org/debian')
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
+  $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 }
