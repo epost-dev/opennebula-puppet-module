@@ -44,6 +44,7 @@ class one::params {
                         'vconfig',
                         'opennebula-node-kvm',
                         'sudo',
+                        'python-virtinst'
                         ]
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
@@ -53,7 +54,7 @@ class one::params {
       # params for oneflow (optional, needs one::oneflow set to true)
       $oned_oneflow_packages = ['opennebula-flow',
                                 'rubygem-treetop',
-                                'rubygem-polyglot',
+                                'rubygem-polyglot'
                                 ]
       # params for onegate (optional, needs one::onegate set to true)
       $oned_onegate_packages = ['opennebula-gate', 'rubygem-parse-cron']
@@ -67,6 +68,7 @@ class one::params {
                           'bridge-utils',
                           'opennebula-node',
                           'sudo',
+                          'virtinst'
                           ]
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
@@ -75,7 +77,7 @@ class one::params {
       $oned_sunstone_ldap_pkg = ['ruby-ldap','ruby-net-ldap']
       $oned_oneflow_packages = ['opennebula-flow',
                                 'ruby-treetop',
-                                'ruby-polyglot',
+                                'ruby-polyglot'
                                 ]
       $oned_onegate_packages = ['opennebula-gate']
       $libvirtd_srv = 'libvirt-bin'
