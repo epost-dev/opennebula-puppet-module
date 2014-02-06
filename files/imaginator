@@ -12,10 +12,16 @@ qemu-img create -f qcow2 $pool/$name.img $size"G" 2>&1> /dev/null
 chmod 660 $pool/$name.img
 chgrp oneadmin $pool/$name.img
 
+if [ -n "$ksfile" ]; then
+  extra_args="ks=file:/$ksfile"
+else
+  extra_args="auto"
+fi
+
 sudo -u oneadmin virt-install \
     --connect="qemu:///system" \
     --initrd-inject="$ksfilepath" \
-    --extra-args="ks=file:/$ksfile" \
+    --extra-args="$extra_args" \
     --name="$name" \
     --location="$repo" \
     --disk path="$pool/$name.img",format="qcow2",bus="virtio",cache="none" \
@@ -40,9 +46,12 @@ sudo -u oneadmin virt-install \
 ## M_A_I_N
 
 if [ "$#" -ne "0" ]; then
-    while getopts "k:n:r:p:s:b:" options; do
+    while getopts "k:n:r:p:P:s:b:" options; do
         case $options in
+            # Kickstart file
             k) ksfilepath="$OPTARG"; ksfile=$(basename $ksfilepath) ;;
+            # Preseed file
+            P) ksfilepath="$OPTARG" ;;
             n) name="$OPTARG"     ;;
             r) repo="$OPTARG"     ;;
             p) pool="$OPTARG"     ;;
