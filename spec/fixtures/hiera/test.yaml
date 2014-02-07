@@ -32,7 +32,11 @@ one::node::kickstart::ohd_repo_puppet: 'http://yum-repo.localdomain.de/ohd/'
 
 one::node::kickstart::data:
   foo:  'bar'
-  rnr:  'highschool'
+  rnr:
+    partitions:
+      '/foo':
+        size: 10000
+        fstype: ext4
 
 one::node::preseed::debian_mirror_url: 'http://ftp.us.debian.org/debian'
 one::node::preseed::ohd_deb_repo: 'deb http://example.com/debian/ one/'

@@ -27,6 +27,10 @@ clearpart   --all
 part /      --fstype=ext3 --size=<%= @partitions['root'] %>
 part /var   --fstype=ext3 --size=<%= @partitions['var'] %>
 part swap   --fstype=swap --size=<%= @partitions['swap'] %>
+<% partitions = (@data[@name] || {})['partitions'] || {}
+partitions.each do |k,v| -%>
+part <%= k %> --fstype=<%= v['fstype'] %> --size=<%= v['size'] %>
+<% end -%>
 
 repo --name="puppet"  --baseurl=<%= @yum_repo_puppet %>
 repo --name="context" --baseurl=<%= @ohd_repo_puppet %>
