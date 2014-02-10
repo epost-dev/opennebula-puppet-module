@@ -37,6 +37,16 @@ describe 'one::oned' do
             it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"mysql\"/) }
             it { should contain_file('/var/lib/one').with({'owner' => 'oneadmin'}) }
         end
+        context 'as mgmt node check hookscript rollout' do
+          let(:params) {{
+              :backend => 'mysql',
+              :ldap => false
+            }}
+          it { should contain_class('one::oned::config') }
+          it { should contain_file('/usr/share/one/hooks').with({
+              'source' => 'puppet:///modules/one/hookscripts'
+            })}
+        end # fin context 'as mgmt node | as mgmt node check hookscript rollout'
     end
     context 'with hiera config on Debian' do
         let(:hiera_config) { hiera_config }
