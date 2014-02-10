@@ -17,8 +17,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::config(
-  $ssh_priv_key = $one::params::ssh_priv_key,
-  $ssh_pub_key = $one::params::ssh_pub_key
+  $ssh_priv_key       = $one::params::ssh_priv_key,
+  $ssh_pub_key        = $one::params::ssh_pub_key,
+  $hook_scripts_path  = $one::params::hook_scripts_path,
   ) {
   file { '/etc/one/oned.conf':
     content => template('one/oned.conf.erb'),
@@ -38,7 +39,7 @@ class one::oned::config(
     group   => 'oneadmin',
     mode    => '0750',
     recurse => true,
-    source  => 'puppet:///modules/one/hookscripts',
+    source  => "$hook_scripts_path",
   }
   file { '/var/lib/one/.ssh/id_dsa':
     content => $ssh_priv_key,
