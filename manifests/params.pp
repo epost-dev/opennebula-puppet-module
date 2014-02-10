@@ -33,7 +33,7 @@ class one::params {
   $ssh_pub_key = hiera('one::head::ssh_pub_key', '....')
 
   #Allows it to be overwritten by custom puppet profile
-  #Shozuld be the path to the folder which should be the source on the master
+  #Should be the path to the folder which should be the source on the master
   $hook_scripts_path = hiera('one::head::hook_script_path', 'puppet:///modules/one/hookscripts')
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
