@@ -1,3 +1,8 @@
+#
+# Define one::compute_node::add_preseed
+#
+# configure Debian preseed file
+#
 define one::compute_node::add_preseed($preseed_tmpl = 'one/preseed.cfg.erb', $data = undef) {
 
   validate_string ($preseed_tmpl)
