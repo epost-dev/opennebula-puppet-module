@@ -39,7 +39,7 @@ class one::oned::config(
     group   => 'oneadmin',
     mode    => '0750',
     recurse => true,
-    source  => "$hook_scripts_path",
+    source  => $hook_scripts_path,
   }
   file { '/var/lib/one/.ssh/id_dsa':
     content => $ssh_priv_key,
