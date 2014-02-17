@@ -57,6 +57,7 @@ if [ "$#" -ne "0" ]; then
             p) pool="$OPTARG"     ;;
             s) size="$OPTARG"     ;;
             b) bridge="$OPTARG"   ;;
+            ?) exit 1             ;;
         esac
     done
 else
