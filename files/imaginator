@@ -16,6 +16,10 @@ if [ -n "$ksfile" ]; then
   extra_args="ks=file:/$ksfile"
 else
   extra_args="auto"
+  TMPDIR=$(mktemp -d)
+  ksfilepath=$TMPDIR/preseed.cfg
+  cp $preseedfilepath $ksfilepath
+  chown oneadmin $TMPDIR $ksfilepath
 fi
 
 sudo -u oneadmin virt-install \
@@ -41,6 +45,8 @@ sudo -u oneadmin virt-install \
         echo "Are you sure you're making the right decision? I think we should stop."
         exit 1
     fi
+
+    [ -z $preseedfilepath ] || rm -f $ksfilepath
 }
 
 ## M_A_I_N
@@ -51,7 +57,7 @@ if [ "$#" -ne "0" ]; then
             # Kickstart file
             k) ksfilepath="$OPTARG"; ksfile=$(basename $ksfilepath) ;;
             # Preseed file
-            P) ksfilepath="$OPTARG" ;;
+            P) preseedfilepath="$OPTARG" ;;
             n) name="$OPTARG"     ;;
             r) repo="$OPTARG"     ;;
             p) pool="$OPTARG"     ;;
