@@ -44,3 +44,8 @@ one-context
 
 %post --log=/root/post-install.log
 rm -v /etc/yum.repos.d/CentOS-*
+# Centos5 excludes external media from persistent net rules but this is needed
+# for ONEs contextualization via /dev/disk/by-label/CONTEXT
+[ ! -f /etc/udev/rules.d/50-udev.rules ] || \
+  sed -i 's/^KERNEL==".*, SYSFS{removable}=="1", GOTO="persistent_end"$//' /etc/udev/rules.d/50-udev.rules
+
