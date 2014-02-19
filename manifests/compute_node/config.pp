@@ -24,8 +24,6 @@ class one::compute_node::config (
   $networkconfig     = $one::params::kickstart_network,
   $partitions        = $one::params::kickstart_partition,
   $rootpw            = $one::params::kickstart_rootpw,
-  $yum_repo_puppet   = $one::params::kickstart_yum_repo_puppet,
-  $ohd_repo_puppet   = $one::params::kickstart_ohd_repo_puppet,
   $data              = $one::params::kickstart_data,
   $kickstart_tmpl    = $one::params::kickstart_tmpl,
   $preseed_data      = $one::params::preseed_data,

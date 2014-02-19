@@ -134,8 +134,6 @@ class one::params {
   $kickstart_network         = hiera ('one::node::kickstart_network', undef)
   $kickstart_partition       = hiera ('one::node::kickstart_partition', undef)
   $kickstart_rootpw          = hiera ('one::node::kickstart_rootpw', undef)
-  $kickstart_yum_repo_puppet = hiera ('one::node::kickstart::yum_repo_puppet', undef)
-  $kickstart_ohd_repo_puppet = hiera ('one::node::kickstart::ohd_repo_puppet', undef)
   $kickstart_data            = hiera ('one::node::kickstart::data', undef)
   $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
 
