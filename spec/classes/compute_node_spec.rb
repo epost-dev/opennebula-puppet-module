@@ -17,10 +17,6 @@ describe 'one::compute_node' do
             networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
             it { should contain_class('one::compute_node') }
             it { should contain_package('opennebula-node-kvm') }
-            it { should contain_package('qemu-kvm') }
-            it { should contain_package('libvirt') }
-            it { should contain_package('bridge-utils') }
-            it { should contain_package('vconfig') }
             it { should contain_package('sudo') }
             it { should contain_package('python-virtinst') }
             it { should contain_group('oneadmin') }
@@ -65,9 +61,6 @@ describe 'one::compute_node' do
             sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
             it { should contain_class('one::compute_node') }
             it { should contain_package('opennebula-node') }
-            it { should contain_package('qemu-kvm') }
-            it { should contain_package('libvirt-bin') }
-            it { should contain_package('bridge-utils') }
             it { should contain_package('sudo') }
             it { should contain_package('virtinst') }
             it { should contain_group('oneadmin') }
