@@ -14,7 +14,7 @@ describe 'one::compute_node' do
         context 'as compute node' do
             hiera = Hiera.new(:config => hiera_config)
             sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
-            networkconfig = hiera.lookup('one::node::kickstart_network',nil,nil)
+            networkconfig = hiera.lookup('one::node::kickstart::network',nil,nil)
             it { should contain_class('one::compute_node') }
             it { should contain_package('opennebula-node-kvm') }
             it { should contain_package('sudo') }
