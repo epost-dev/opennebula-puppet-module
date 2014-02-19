@@ -12,7 +12,7 @@ one::oned::ldap_pass: 'secure_password'
 one::oned::ldap_host: 'localhost'
 one::oned::ldap_base: 'cn=base'
 
-one::node::kickstart_network:
+one::node::kickstart::network:
   type:         'static'
   device:       'eth0'
   ip:           '10.0.0.0'
@@ -20,7 +20,7 @@ one::node::kickstart_network:
   netmask:      '255.255.255.0'
   nameserver:   '10.0.0.1'
 
-one::node::kickstart_partition:
+one::node::kickstart::partition:
   root: '12288'
   var:  '8192'
   swap: '1024'

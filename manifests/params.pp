@@ -124,9 +124,9 @@ class one::params {
   #     can be set to the user field that is in the group group_field
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
 
-  $kickstart_network         = hiera ('one::node::kickstart_network', undef)
-  $kickstart_partition       = hiera ('one::node::kickstart_partition', undef)
-  $kickstart_rootpw          = hiera ('one::node::kickstart_rootpw', undef)
+  $kickstart_network         = hiera ('one::node::kickstart::network', undef)
+  $kickstart_partition       = hiera ('one::node::kickstart::partition', undef)
+  $kickstart_rootpw          = hiera ('one::node::kickstart::rootpw', undef)
   $kickstart_data            = hiera ('one::node::kickstart::data', undef)
   $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
 
