@@ -32,8 +32,10 @@ partitions.each do |k,v| -%>
 part <%= k %> --fstype=<%= v['fstype'] %> --size=<%= v['size'] %>
 <% end -%>
 
-repo --name="puppet"  --baseurl=<%= @yum_repo_puppet %>
-repo --name="context" --baseurl=<%= @ohd_repo_puppet %>
+<% repos = (@data[@name] || {})['repos'] || {}
+repos.each do |k,v| -%>
+repo --name="<%= k %>" --baseurl=<%= v['url'] %>
+<% end -%>
 
 %packages --nobase --ignoremissing
 @core

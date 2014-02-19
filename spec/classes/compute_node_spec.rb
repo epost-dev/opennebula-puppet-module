@@ -46,6 +46,8 @@ describe 'one::compute_node' do
             it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
             it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/device\s*=\s*#{networkconfig['device']}/m)}
             it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/part \/foo --fstype=ext4 --size=10000/) }
+            it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/repo --name="puppet" --baseurl=http:\/\/yum-repo.example.com\/puppet\//).
+                                                                            with_content(/repo --name="one" --baseurl=http:/) }
             it { should contain_file('/var/lib/one/etc/preseed.d/does.cfg').with ( {
               'content' => /ftp.us.debian.org/,
               'owner'   => 'oneadmin',
