@@ -55,8 +55,10 @@ class one::oned (
             (true or false). ${ldap} is not supported.")
   }
 
+  # temporarly deactivated
+
   # Realize all the known nodes
-  One::Oned::Peer <<| tag == $one::params::oneid |>> {
-    require => Class[one::oned::service],
-  }
+  #One::Oned::Peer <<| tag == $one::params::oneid |>> {
+  #  require => Class[one::oned::service],
+  #}
 }
