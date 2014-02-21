@@ -54,9 +54,4 @@ class one::oned (
       fail( "Class one::oned need to get called with proper ldap value
             (true or false). ${ldap} is not supported.")
   }
-
-  # Realize all the known nodes
-  One::Oned::Peer <<| tag == $one::params::oneid |>> {
-    require => Class[one::oned::service],
-  }
 }
