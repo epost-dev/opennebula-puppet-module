@@ -48,6 +48,7 @@ one-context
 rm -v /etc/yum.repos.d/CentOS-*
 # Centos5 excludes external media from persistent net rules but this is needed
 # for ONEs contextualization via /dev/disk/by-label/CONTEXT
-[ ! -f /etc/udev/rules.d/50-udev.rules ] || \
+if [ -f /etc/udev/rules.d/50-udev.rules ]; then
   sed -i 's/^KERNEL==".*, SYSFS{removable}=="1", GOTO="persistent_end"$//' /etc/udev/rules.d/50-udev.rules
-
+  echo '/sbin/blkid /dev/disk/by-label/CONTEXT' >> /etc/rc.local
+fi
