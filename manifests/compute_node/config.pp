@@ -20,7 +20,6 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $head_ssh_pub_key  = $one::params::ssh_pub_key,
   $networkconfig     = $one::params::kickstart_network,
   $partitions        = $one::params::kickstart_partition,
   $rootpw            = $one::params::kickstart_rootpw,
@@ -51,20 +50,6 @@ class one::compute_node::config (
   file { '/etc/udev/rules.d/80-kvm.rules':
     source => 'puppet:///modules/one/udev-kvm-rules',
     owner  => 'root',
-  }
-
-  file { '/var/lib/one/.ssh/authorized_keys':
-    content => $head_ssh_pub_key,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0600',
-  }
-
-  file { '/var/lib/one/.ssh/config':
-    source => 'puppet:///modules/one/ssh_one_config',
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-    mode   => '0600',
   }
 
   file { '/etc/sudoers.d/10_oneadmin':

@@ -24,7 +24,7 @@ describe 'one' do
             context 'with sqlite' do
                 let(:params) { {
                     :oned => true,
-                    :backend => 'sqlite' 
+                    :backend => 'sqlite'
                 } }
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
@@ -36,9 +36,9 @@ describe 'one' do
                 it { should contain_file('/var/lib/one').with({'owner' => 'oneadmin'}) }
             end # fin context 'as mgmt node | with sqlite'
             context 'with mysql' do
-                let(:params) {{ 
+                let(:params) {{
                     :oned => true,
-                    :backend => 'mysql' 
+                    :backend => 'mysql'
                 }}
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
@@ -123,11 +123,12 @@ describe 'one' do
               it { should_not contain_class('one::compute_node') }
               it { should contain_file('/var/lib/one/.ssh/id_dsa').with_content(sshprivkey) }
               it { should contain_file('/var/lib/one/.ssh/id_dsa.pub').with_content(sshpubkey) }
+              it { should contain_file('/var/lib/one/.ssh/authorized_keys').with_content(sshpubkey) }
             end
             context 'with sqlite' do
                 let(:params) { {
                     :oned => true,
-                    :backend => 'sqlite' 
+                    :backend => 'sqlite'
                 } }
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }
@@ -138,9 +139,9 @@ describe 'one' do
                 it { should contain_file('/var/lib/one').with({'owner' => 'oneadmin'}) }
             end # fin context 'as mgmt node | with sqlite'
             context 'with mysql' do
-                let(:params) {{ 
+                let(:params) {{
                     :oned => true,
-                    :backend => 'mysql' 
+                    :backend => 'mysql'
                 }}
                 it { should contain_class('one') }
                 it { should contain_class('one::oned') }

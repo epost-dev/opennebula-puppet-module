@@ -29,6 +29,7 @@ class one::compute_node {
   include one::prerequisites
   include one::params
   include one::install
+  include one::config
   include one::service
   include one::compute_node::config
   include one::compute_node::service
@@ -37,6 +38,7 @@ class one::compute_node {
   Class['one::prerequisites'] ->
   Class['one::params'] ->
   Class['one::install'] ->
+  Class['one::config'] ->
   Class['one::compute_node::install'] ->
   Class['one::compute_node::config'] ->
   Class['one::compute_node::service'] ->
