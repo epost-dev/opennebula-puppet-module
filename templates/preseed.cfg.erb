@@ -73,3 +73,8 @@ d-i finish-install/reboot_in_progress note
 
 d-i debian-installer/exit/poweroff boolean true
 
+# This command is run just before the install finishes, but when there is still
+# a usable /target directory. Get rid of dhcp client 
+d-i preseed/late_command \
+              string in-target dpkg --purge isc-dhcp-client;
+
