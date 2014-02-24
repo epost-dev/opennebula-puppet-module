@@ -61,8 +61,11 @@
 # $ha_setup true | false - default false
 #   defines whether the oned should be run on boot
 #
-# $sunflow true|false - default false
+# $oneflow true|false - default false
 #   defines whether the oneflow service should be installed
+#
+# $puppetdb true|false - default false
+#   defines to use puppetDB to discover peer nodes
 #
 # === Usage
 #
@@ -103,6 +106,7 @@ class one ( $oneid      = 'one-cloud',
             $onegate    = false,
             $backend    = 'sqlite',
             $ha_setup   = false,
+            $puppetdb   = false,
             ) {
 
   include one::params
