@@ -28,10 +28,10 @@ class one::oned::config(
     mode    => '0640',
   }
   file { '/usr/share/one':
-      ensure => 'directory',
-      owner  => 'oneadmin',
-      group  => 'oneadmin',
-      mode   => '0755',
+    ensure => 'directory',
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
   }
   file { '/usr/share/one/hooks':
     ensure  => 'directory',
@@ -46,13 +46,11 @@ class one::oned::config(
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0600',
-    require => File['/var/lib/one/.ssh'],
   }
   file { '/var/lib/one/.ssh/id_dsa.pub':
     content => $ssh_pub_key,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0644',
-    require => File['/var/lib/one/.ssh'],
   }
 }
