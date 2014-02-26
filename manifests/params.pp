@@ -88,10 +88,10 @@ class one::params {
   }
 
   # mysql stuff (optional, need one::mysql set to true)
-  $oned_db     = hiera('one::oned::db', 'oned')
-  $oned_db_user   = hiera('one::oned::db_user', 'oned')
+  $oned_db            = hiera('one::oned::db', 'oned')
+  $oned_db_user       = hiera('one::oned::db_user', 'oned')
   $oned_db_password   = hiera('one::oned::db_password', 'oned')
-  $oned_db_host   = hiera('one::oned::db_host', 'localhost')
+  $oned_db_host       = hiera('one::oned::db_host', 'localhost')
 
   $ha_setup = hiera('one::ha_setup', true)
   # ha stuff (optional, needs one::ha_setup set to true)
@@ -135,4 +135,8 @@ class one::params {
                                       'http://ftp.debian.org/debian')
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
   $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
+
+  $backup_script_path        = hiera ('one::oned::backup::script_path', undef)
+  $backup_dir                = hiera ('one::oned::backup::dir', undef)
+  $backup_opts               = hiera ('one::oned::backup::opts', undef)
 }
