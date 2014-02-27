@@ -1,9 +1,9 @@
 #!/bin/bash
 
-DB_USER='<%= oned_db_user %>'
-DB_PASSWORD='<%= oned_db_password %>>'
-DB_HOST='<%= oned_db_host %>'
-DB_BACKUP='<%= oned_db %>'
+DB_USER='<%= backup_db_user %>'
+DB_PASSWORD='<%= backup_db_password %>'
+DB_HOST='<%= backup_db_host %>'
+DB_BACKUP='<%= backup_db %>'
 
 BACKUP_DIR='<%= backup_dir %>'
 BACKUP_FILE=$(hostname)-$(date +%F).sql
