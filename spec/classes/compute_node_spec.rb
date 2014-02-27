@@ -81,7 +81,10 @@ describe 'one::compute_node' do
             it { should contain_file('/var/lib/one/etc/kickstart.d').with_ensure('directory') }
             # check if there ist content in the kickstart files
             it { should contain_file('/var/lib/one/etc/kickstart.d/foo.ks').with_content(/context/m) }
-            it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/context/m) }
+            it { should contain_file('/var/lib/one/etc/kickstart.d/rnr.ks').with_content(/context/m).
+                                                                            with_content(/^new/).
+                                                                            with_content(/^noise/)
+            }
         end
     end
 end
