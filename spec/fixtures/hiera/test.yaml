@@ -9,7 +9,11 @@ one::oned::db_host: localhost
 
 one::oned::backup::script_path: '/var/lib/one/bin/one_db_backup.sh'
 one::oned::backup::dir: '/srv/backup/oned'
-one::oned::backup::opts: '-C -q -e --ignore-table=oneadmin.vm_monitoring --ignore-table=oneadmin.host_monitoring'
+one::oned::backup::opts: '-C -q -e'
+one::oned::backup::db: oned
+one::oned::backup::db_user: onebackup
+one::oned::backup::db_password: onebackup
+one::oned::backup::db_host: localhost
 
 one::oned::ldap_user: 'cn=user'
 one::oned::ldap_pass: 'secure_password'

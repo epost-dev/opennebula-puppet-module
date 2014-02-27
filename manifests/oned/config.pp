@@ -26,7 +26,11 @@ class one::oned::config(
   $oned_db_host       = $one::params::oned_db_host,
   $backup_script_path = $one::params::backup_script_path,
   $backup_opts        = $one::params::backup_opts,
-  $backup_dir         = $one::params::backup_dir
+  $backup_dir         = $one::params::backup_dir,
+  $backup_db          = $one::params::backup_db,
+  $backup_db_user     = $one::params::backup_db_user,
+  $backup_db_password = $one::params::backup_db_password,
+  $backup_db_host     = $one::params::backup_db_host
   ) {
 
   File {

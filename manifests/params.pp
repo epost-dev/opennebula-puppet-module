@@ -136,7 +136,11 @@ class one::params {
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
   $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 
-  $backup_script_path        = hiera ('one::oned::backup::script_path', undef)
-  $backup_dir                = hiera ('one::oned::backup::dir', undef)
-  $backup_opts               = hiera ('one::oned::backup::opts', undef)
+  $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh')
+  $backup_dir                = hiera ('one::oned::backup::dir', '/srv/backup')
+  $backup_opts               = hiera ('one::oned::backup::opts', '-C -q -e')
+  $backup_db                 = hiera ('one::oned::backup::db', 'oned')
+  $backup_db_user            = hiera ('one::oned::backup::db_user', 'onebackup')
+  $backup_db_password        = hiera ('one::oned::backup::db_password', 'onebackup')
+  $backup_db_host            = hiera ('one::oned::backup::db_host', 'localhost')
 }
