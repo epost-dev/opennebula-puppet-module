@@ -37,11 +37,10 @@ repos.each do |k,v| -%>
 repo --name="<%= k %>" --baseurl=<%= v['url'] %>
 <% end -%>
 
-%packages --nobase --ignoremissing
+%packages --nobase
 @core
 puppet
 ntp
-ntpdate
 one-context
 <% pkgs = (@data[@name] || {})['pkgs'] || []
 pkgs.each do |p| -%>
