@@ -40,7 +40,9 @@ one::node::kickstart::data:
         url: 'http://yum-repo.example.com/puppet/'
       one:
         url: 'http://yum-repo.example.com/ohd/'
-
+    pkgs:
+      - 'new'
+      - 'noise'
 
 one::node::preseed::debian_mirror_url: 'http://ftp.us.debian.org/debian'
 one::node::preseed::ohd_deb_repo: 'deb http://example.com/debian/ one/'

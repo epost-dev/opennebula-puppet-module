@@ -43,6 +43,10 @@ puppet
 ntp
 ntpdate
 one-context
+<% pkgs = (@data[@name] || {})['pkgs'] || []
+pkgs.each do |p| -%>
+<%= p %>
+<% end -%>
 
 %post --log=/root/post-install.log
 rm -v /etc/yum.repos.d/CentOS-*
