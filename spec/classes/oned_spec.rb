@@ -38,12 +38,12 @@ describe 'one::oned' do
       it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"mysql\"/) }
       it { should contain_file('/var/lib/one').with({'owner' => 'oneadmin'}) }
       it { should contain_file('/var/lib/one/bin/one_db_backup.sh').with_content(/mysqldump/m) }
-      it { should contain_cron('one_db_backup').with(
+      it { should contain_cron('one_db_backup').with({
                                                       'command' => hiera.lookup('one::oned::backup::script_path', nil, nil),
                                                       'user'    => hiera.lookup('one::oned::backup::db_user', nil, nil),
                                                       'target'  => hiera.lookup('one::oned::backup::db_user', nil, nil),
                                                       'minute'  => hiera.lookup('one::oned::backup::intervall', nil, nil),
-                                                    ) }
+                                                     }) }
     end
     context 'as mgmt node check hookscript rollout' do
       let(:params) {{
