@@ -30,7 +30,9 @@ class one::oned::config(
   $backup_db          = $one::params::backup_db,
   $backup_db_user     = $one::params::backup_db_user,
   $backup_db_password = $one::params::backup_db_password,
-  $backup_db_host     = $one::params::backup_db_host
+  $backup_db_host     = $one::params::backup_db_host,
+  $backup_intervall   = $one::params::backup_intervall,
+  $backup_keep        = $one::params::backup_keep
   ) {
 
   File {
@@ -70,5 +72,12 @@ class one::oned::config(
     ensure  => present,
     mode    => '0700',
     content => template('one/one_db_backup.sh.erb'),
+  }
+
+  cron { 'one_db_backup':
+    command => "${backup_script_path}",
+    user    => $backup_db_user,
+    target  => $backup_db_user,
+    minute  => "${backup_db_intervall}",
   }
 }

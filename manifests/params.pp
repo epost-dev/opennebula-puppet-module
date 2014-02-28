@@ -143,4 +143,6 @@ class one::params {
   $backup_db_user            = hiera ('one::oned::backup::db_user', 'onebackup')
   $backup_db_password        = hiera ('one::oned::backup::db_password', 'onebackup')
   $backup_db_host            = hiera ('one::oned::backup::db_host', 'localhost')
+  $backup_intervall          = hiera ('one::oned::backup::intervall', '*/10')
+  $backup_keep               = hiera ('one::oned::backup::keep', '-mtime +15')
 }
