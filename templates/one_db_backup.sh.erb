@@ -6,12 +6,12 @@ DB_HOST='<%= backup_db_host %>'
 DB_BACKUP='<%= backup_db %>'
 
 BACKUP_DIR='<%= backup_dir %>'
-BACKUP_FILE=$(hostname)-$(date +%F).sql
+BACKUP_FILE=$(hostname)-$(date +%F_%H-%M-%S).sql
 BACKUP_OPTS='<%= backup_opts %>'
 
 # check if backup dir exits, if not create it or die.
-[ ! -d $BACKUP_DIR ] && mkdir -p $BACKUP_DIR || :
+[ ! -d $BACKUP_DIR ] && mkdir -p $BACKUP_DIR || exit 1
 
-mysqldump -h $DB_HOST -u $DB_USER -p "$DB_PASSWORD" $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
+mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
 bzip2 -9 $BACKUP_DIR/$BACKUP_FILE
-find $BACKUP_DIR -mtime +15 -exec rm {} +
+find $BACKUP_DIR <%= backup_keep %> -exec rm {} +
