@@ -75,9 +75,9 @@ class one::oned::config(
   }
 
   cron { 'one_db_backup':
-    command => "${backup_script_path}",
+    command => $backup_script_path,
     user    => $backup_db_user,
     target  => $backup_db_user,
-    minute  => "${backup_db_intervall}",
+    minute  => "$backup_intervall",
   }
 }
