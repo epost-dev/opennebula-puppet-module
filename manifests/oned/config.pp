@@ -68,6 +68,11 @@ class one::oned::config(
     mode    => '0644',
   }
 
+  file { $backup_dir:
+    ensure => 'directory',
+    mode   => '0700'
+  }
+
   file { $backup_script_path:
     ensure  => present,
     mode    => '0700',
