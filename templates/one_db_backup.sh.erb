@@ -9,9 +9,11 @@ BACKUP_DIR='<%= backup_dir %>'
 BACKUP_FILE=$(hostname)-$(date +%F_%H-%M-%S).sql
 BACKUP_OPTS='<%= backup_opts %>'
 
-# check if backup dir exits, if not create it or die.
-[ ! -d $BACKUP_DIR ] && mkdir -p $BACKUP_DIR || exit 1
-
-mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
-bzip2 -9 $BACKUP_DIR/$BACKUP_FILE
-find $BACKUP_DIR <%= backup_keep %> -exec rm {} +
+if [ -d $BACKUP_DIR ]; then
+    mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
+    bzip2 -9 $BACKUP_DIR/$BACKUP_FILE
+    find $BACKUP_DIR -mtime +15 -exec rm {} +
+else
+    echo 'Backup directory does not exist.'
+    exit 1
+fi
