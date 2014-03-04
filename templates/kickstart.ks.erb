@@ -53,5 +53,5 @@ rm -v /etc/yum.repos.d/CentOS-*
 # for ONEs contextualization via /dev/disk/by-label/CONTEXT
 if [ -f /etc/udev/rules.d/50-udev.rules ]; then
   sed -i 's/^KERNEL==".*, SYSFS{removable}=="1", GOTO="persistent_end"$//' /etc/udev/rules.d/50-udev.rules
-  echo '/sbin/blkid /dev/disk/by-label/CONTEXT' >> /etc/rc.local
+  sed -i 's,mount -t iso9660 -L CONTEXT,mount -t iso9660 /dev/disk/by-label/CONTEXT,' /etc/init.d/vmcontext
 fi
