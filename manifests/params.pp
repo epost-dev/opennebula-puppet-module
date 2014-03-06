@@ -29,10 +29,12 @@ class one::params {
   $oneuid = '9869'
   $onegid = '9869'
 
+  # the priv key is mandatory on the head.
   if (!$one::node) {
     $ssh_priv_key = hiera('one::head::ssh_priv_key')
-    $ssh_pub_key  = hiera('one::head::ssh_pub_key')
   }
+  # The pub key should be available on both hosts.
+    $ssh_pub_key  = hiera('one::head::ssh_pub_key')
 
   #Allows it to be overwritten by custom puppet profile
   #Should be the path to the folder which should be the source on the master
