@@ -5,7 +5,7 @@ class one::config (
 ){
 
   File {
-    ensure  => 'present'
+    ensure  => 'present',
     owner   => 'oneadmin',
     group   => 'oneadmin',
     mode    => '0600',
@@ -15,7 +15,7 @@ class one::config (
   #
   file { '/var/lib/one/.ssh':
     ensure  => directory,
-    mode    => '0700'
+    mode    => '0700',
     recurse => true,
   }
 
