@@ -9,7 +9,8 @@ class one::install {
   }
 
   file { '/var/lib/one':
-    owner => 'oneadmin',
-    group => 'oneadmin',
+    ensure  => 'directory',
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
   }
 }
