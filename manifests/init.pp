@@ -108,9 +108,7 @@ class one ( $oneid      = 'one-cloud',
             $ha_setup   = false,
             $puppetdb   = false,
             ) {
-
   include one::params
-
   if ($oned) {
     if ( member(['kvm','xen3','xen4','vmware','ec2'], $vtype) ) {
       if ( member(['802.1Q','ebtables','firewall','ovswitch'], $ntype) ) {
@@ -125,7 +123,6 @@ class one ( $oneid      = 'one-cloud',
   if ($node) {
     include one::compute_node
   }
-
   if ($sunstone) {
     include one::oned::sunstone
   }
