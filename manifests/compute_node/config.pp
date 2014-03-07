@@ -31,39 +31,42 @@ class one::compute_node::config (
   $preseed_tmpl      = $one::params::preseed_tmpl,
 ){
 
+  File {
+    ensure => 'present',
+  }
+
   validate_string ($debian_mirror_url)
   validate_hash   ($preseed_data)
 
   file { '/etc/libvirt/libvirtd.conf':
-    source => 'puppet:///modules/one/libvirtd.conf',
     owner  => 'root',
+    source => 'puppet:///modules/one/libvirtd.conf',
     notify => Service[$one::params::libvirtd_srv],
   }
 
   file { $one::params::libvirtd_cfg:
-    ensure => 'file',
-    source => $one::params::libvirtd_source,
     owner  => 'root',
+    source => $one::params::libvirtd_source,
     notify => Service[$one::params::libvirtd_srv],
   }
 
   file { '/etc/udev/rules.d/80-kvm.rules':
-    source => 'puppet:///modules/one/udev-kvm-rules',
     owner  => 'root',
+    source => 'puppet:///modules/one/udev-kvm-rules',
   }
 
   file { '/etc/sudoers.d/10_oneadmin':
-    source => 'puppet:///modules/one/oneadmin_sudoers',
     owner  => 'root',
     group  => 'root',
     mode   => '0644',
+    source => 'puppet:///modules/one/oneadmin_sudoers',
   }
 
   file { '/etc/sudoers.d/20_imaginator':
-    source => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',
     group  => 'root',
     mode   => '0644',
+    source => 'puppet:///modules/one/sudoers_imaginator',
   }
 
   file { '/sbin/brctl':
@@ -73,7 +76,6 @@ class one::compute_node::config (
 
   if ($::osfamiliy == 'RedHat') {
     file { '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla':
-      ensure => file,
       owner  => 'root',
       group  => 'root',
       mode   => '0644',
@@ -82,7 +84,6 @@ class one::compute_node::config (
   }
 
   file { '/etc/libvirt/qemu.conf':
-    ensure => file,
     owner  => 'root',
     group  => 'root',
     mode   => '0644',
@@ -146,7 +147,6 @@ class one::compute_node::config (
   }
 
   file { '/var/lib/one/bin/imaginator':
-    ensure => 'file',
     owner  => 'oneadmin',
     group  => 'oneadmin',
     mode   => '0700',
