@@ -21,10 +21,11 @@ class one::oned::sunstone::ldap {
     ensure => present,
   }
   file { '/etc/one/auth/ldap_auth.conf':
-    content => template('one/ldap_auth.conf.erb'),
+    ensure  => 'present',
     owner   => 'root',
     group   => 'oneadmin',
     mode    => '0640',
+    content => template('one/ldap_auth.conf.erb'),
     notify  => Service['opennebula'],
   }
   file { '/var/lib/one/remotes/auth/default':

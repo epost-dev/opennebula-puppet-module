@@ -68,21 +68,23 @@ class one::oned::config(
     mode    => '0644',
   }
 
-  file { $backup_dir:
-    ensure => 'directory',
-    mode   => '0700'
-  }
+  if ($one::backend == 'mysql') {
+    file { $backup_dir:
+      ensure => 'directory',
+      mode   => '0700'
+    }
 
-  file { $backup_script_path:
-    ensure  => present,
-    mode    => '0700',
-    content => template('one/one_db_backup.sh.erb'),
-  }
+    file { $backup_script_path:
+      ensure  => present,
+      mode    => '0700',
+      content => template('one/one_db_backup.sh.erb'),
+    }
 
-  cron { 'one_db_backup':
-    command => $backup_script_path,
-    user    => $backup_db_user,
-    target  => $backup_db_user,
-    minute  => "$backup_intervall",
+    cron { 'one_db_backup':
+      command => $backup_script_path,
+      user    => $backup_db_user,
+      target  => $backup_db_user,
+      minute  => "$backup_intervall",
+    }
   }
 }
