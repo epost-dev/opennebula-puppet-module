@@ -84,7 +84,7 @@ class one::oned::config(
       command => $backup_script_path,
       user    => $backup_db_user,
       target  => $backup_db_user,
-      minute  => "$backup_intervall",
+      minute  => $backup_intervall,
     }
   }
 }
