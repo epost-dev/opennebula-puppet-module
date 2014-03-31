@@ -54,6 +54,7 @@ class one::oned::config(
 
   file { '/usr/share/one/hooks':
     ensure  => 'directory',
+    ignore  => 'tests/*',
     mode    => '0750',
     recurse => true,
     source  => $hook_scripts_path,

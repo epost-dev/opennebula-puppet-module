@@ -119,6 +119,7 @@ describe 'one' do
           } }
           it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"mysql\"/) }
           it { should contain_file('/usr/share/one/hooks').with_source('puppet:///modules/one/hookscripts') }
+          it { should_not contain_file('/usr/share/one/hooks/tests').with_source('puppet:///modules/one/hookscripts/tests') }
           it { should contain_file(hiera.lookup('one::oned::backup::script_path', nil, nil)).with_content(/mysqldump/m) }
           it { should contain_cron('one_db_backup').with({
                                                              'command' => hiera.lookup('one::oned::backup::script_path', nil, nil),
