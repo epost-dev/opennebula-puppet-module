@@ -18,5 +18,6 @@ class one::oned::sunstone::service {
   service { 'opennebula-sunstone':
     ensure => running,
     enable => true,
+    require=> Service['opennebula'],
   }
 }
