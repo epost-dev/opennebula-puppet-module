@@ -42,6 +42,7 @@ repo --name="<%= k %>" --baseurl=<%= v['url'] %>
 puppet
 ntp
 one-context
+acpid
 <% pkgs = (@data[@name] || {})['pkgs'] || []
 pkgs.each do |p| -%>
 <%= p %>
