@@ -2,6 +2,8 @@
 one::head::ssh_pub_key: 'ssh pub key'
 one::head::ssh_priv_key: 'ssh-dsa priv key'
 
+one::enable_opennebula_repo: true
+
 one::oned::db: oned
 one::oned::db_user: oned
 one::oned::db_password: oned

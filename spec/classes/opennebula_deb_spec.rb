@@ -8,7 +8,7 @@ hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 describe 'one' do
   let(:hiera_config) { hiera_config }
   context 'with hiera config on Debian' do
-    let (:facts) { {:osfamily => 'Debian'} }
+    let(:facts) { {:osfamily => 'Debian', :lsbdistid => 'Debian'} }
     let(:params) { {:oned => true} }
     hiera = Hiera.new(:config => hiera_config)
     configdir = '/etc/one'
@@ -185,6 +185,21 @@ describe 'one' do
             } }
             it { expect { should contain_class('one::oned') }.to raise_error(Puppet::Error) }
           end
+          context 'with one_repo enabled' do
+              let(:params) { {
+                :oned => true,
+                :sunstone => true,
+                } }
+                # Doesn't work
+                # Todo: is a rspec backend which allows hiera overwrites or use hiera hierarchy
+                # also see hiera-puppet-helper. For now only test lucky path.
+                #let(:hiera_data) {{
+                #:one::enable_opennebula_repo => true
+                #}}
+                #let(:rspec) {respond_to?(:hiera_data) ? hiera_data : {}}
+                it { should contain_apt__source('one-official') }
+                it { should contain_apt__key('one_repo_key') }
+            end
           context 'with ha' do
             let(:params) { {
                 :oned => true,

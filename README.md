@@ -5,6 +5,17 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 [![Build Status](https://travis-ci.org/epost-dev/opennebula-puppet-module.png)](https://travis-ci.org/epost-dev/opennebula-puppet-module)
 
+Requirements
+------------
+
+### Wheezy
+Tested with puppet 3.4.3 from wheezy backports.
+To use the open nebula repositories for wheezy, set one::enable_opennebula_repo to true and install packages for puppet and the puppetlabs-apt module:
+
+    apt-get install -t wheezy-backports puppet
+    apt-get install -t wheezy-backports puppet-module-puppetlabs-apt
+
+
 Running tests
 -------------
 To run the rspec-puppet tests for this module install the needed gems with [bundler](http://bundler.io):

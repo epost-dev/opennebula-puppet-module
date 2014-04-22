@@ -6,3 +6,4 @@ summary 'OpenNebula management module'
 description 'Manage OpenNebula nodes, management oned, sunstone webinterface'
 
 dependency 'puppetlabs/stdlib' >2.2.0
+dependeny  'puppetlabs/apt'
