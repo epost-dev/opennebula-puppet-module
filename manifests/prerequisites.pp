@@ -30,6 +30,26 @@ class one::prerequisites {
                 }
             }
         }
+        'Debian' : {
+      if ($one::params::one_repo_enable == true) {
+        class { apt: }
+
+        apt::source { 'one-official':
+          location          => "http://downloads.opennebula.org/repo/Debian/${lsbmajdistrelease}",
+          release           => 'stable',
+          repos             => 'opennebula',
+          required_packages => 'debian-keyring debian-archive-keyring',
+          pin               => '-10',
+          include_src       => false,
+          require           => Apt::Key['one_repo_key'],
+        }
+
+        apt::key { 'one_repo_key':
+          key        => '85E16EBF',
+          key_source => 'http://downloads.opennebula.org/repo/Debian/repo.key',
+        }
+      }
+    }
         default: {
             notice('We use opennebula from default OS repositories.')
         }
