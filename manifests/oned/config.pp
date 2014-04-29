@@ -56,7 +56,9 @@ class one::oned::config(
     ensure  => 'directory',
     ignore  => 'tests/*',
     mode    => '0750',
-    recurse => true,
+    recurse => 'true',
+    purge   => 'true',
+    force   => 'true',
     source  => $hook_scripts_path,
   }
 
