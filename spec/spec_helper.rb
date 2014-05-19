@@ -12,6 +12,7 @@ Dir[support_path].each { |f| require f }
 RSpec.configure do |c|
   c.config = '/doesnotexist'
   c.manifest_dir = File.join(fixture_path, 'manifests')
+  c.hiera_config = File.join(fixture_path, 'hiera/hiera.yaml')
   c.mock_with :mocha
 end
 
