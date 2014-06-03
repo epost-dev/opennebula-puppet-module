@@ -47,7 +47,9 @@ class one::params (
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', false ),
   
-  $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh')
+  $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh'),
+  $ssh_priv_key_param = hiera('one::head::ssh_priv_key',undef),
+  $ssh_pub_key  = hiera('one::head::ssh_pub_key',undef)
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
@@ -57,13 +59,11 @@ class one::params (
   $onegid = '9869'
 
   # the priv key is mandatory on the head.
+  validate_string($ssh_pub_key)
   if (!$one::node) {
-    #$ssh_priv_key = hiera('one::head::ssh_priv_key')
-    $ssh_priv_key = 'none'
+    validate_string($ssh_priv_key_param)
+    $ssh_priv_key = $ssh_priv_key_param
   }
-  # The pub key should be available on both hosts.
-    #$ssh_pub_key  = hiera('one::head::ssh_pub_key')
-    $ssh_pub_key  = "NONE"
 
   #Allows it to be overwritten by custom puppet profile
   #Should be the path to the folder which should be the source on the master
