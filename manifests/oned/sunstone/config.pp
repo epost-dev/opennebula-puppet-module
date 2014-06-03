@@ -18,7 +18,7 @@
 #
 class one::oned::sunstone::config (
   $listen_ip='127.0.0.1'
-  
+
 ){
   File {
     ensure  => 'present',

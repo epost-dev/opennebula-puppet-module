@@ -46,7 +46,7 @@ class one::params (
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef'),
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', false ),
-  
+
   $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh'),
   $ssh_priv_key_param = hiera('one::head::ssh_priv_key',undef),
   $ssh_pub_key  = hiera('one::head::ssh_pub_key',undef)

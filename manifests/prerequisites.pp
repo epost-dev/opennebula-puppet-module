@@ -35,21 +35,22 @@ class one::prerequisites {
         include ::apt
         case $::operatingsystem {
           'Debian': {
-            $apt_location="/Debian/${lsbmajdistrelease}"
-            $apt_pin="-10"
+            $apt_location="/Debian/${::lsbmajdistrelease}"
+            $apt_pin='-10'
           }
           'Ubuntu': {
-            $apt_location="/Ubuntu/${lsbdistrelease}"
-            $apt_pin="500"
+            $apt_location="/Ubuntu/${::lsbdistrelease}"
+            $apt_pin='500'
           }
+          default: { fail("Unrecognized operating system ${::operatingsystem}") }
         }
 
         apt::source { 'one-official':
-          location          => "http://downloads.opennebula.org/repo/$apt_location",
+          location          => "http://downloads.opennebula.org/repo/${apt_location}",
           release           => 'stable',
           repos             => 'opennebula',
           required_packages => 'debian-keyring debian-archive-keyring',
-          pin               => "$apt_pin",
+          pin               => $apt_pin,
           include_src       => false,
           require           => Apt::Key['one_repo_key'],
         }

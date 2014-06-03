@@ -18,9 +18,9 @@
 #
 class one::oned::install {
   package { $one::params::rubygems :
-    ensure  => latest,
+    ensure    => latest,
     provider  => gem,
-    require => Class['one::prerequisites'],
+    require   => Class['one::prerequisites'],
   }
   package { $one::params::oned_packages :
     ensure  => present,
