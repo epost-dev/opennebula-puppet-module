@@ -28,8 +28,10 @@ server 1:
     :host: <%= scope.lookupvar('one::params::oned_ldap_host') %>
     :port: <%= scope.lookupvar('one::params::oned_ldap_port') %>
 
+<% if scope.lookupvar('one::params::oned_ldap_port') == "636" %>
     # Uncomment this line for tsl conections
     :encryption: :simple_tls
+<% end %>
 
     # base hierarchy where to search for users and groups
     :base: '<%= scope.lookupvar('one::params::oned_ldap_base') %>'

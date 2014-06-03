@@ -16,7 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::sunstone::config {
+class one::oned::sunstone::config (
+  $listen_ip='127.0.0.1'
+  
+){
   File {
     ensure  => 'present',
     owner   => 'root',
@@ -29,6 +32,7 @@ class one::oned::sunstone::config {
   }
   file { '/etc/one/sunstone-server.conf':
     content => template('one/sunstone-server.conf.erb'),
+    notify  => Service['opennebula-sunstone'],
   }
   file { '/etc/one/sunstone-views/admin.yaml':
     source => 'puppet:///modules/one/sunstone-views_admin.yaml',

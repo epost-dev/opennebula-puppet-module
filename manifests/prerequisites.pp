@@ -32,14 +32,24 @@ class one::prerequisites {
         }
         'Debian' : {
       if ($one::params::one_repo_enable == true) {
-        class { apt: }
+        include ::apt
+        case $::operatingsystem {
+          'Debian': {
+            $apt_location="/Debian/${lsbmajdistrelease}"
+            $apt_pin="-10"
+          }
+          'Ubuntu': {
+            $apt_location="/Ubuntu/${lsbdistrelease}"
+            $apt_pin="500"
+          }
+        }
 
         apt::source { 'one-official':
-          location          => "http://downloads.opennebula.org/repo/Debian/${lsbmajdistrelease}",
+          location          => "http://downloads.opennebula.org/repo/$apt_location",
           release           => 'stable',
           repos             => 'opennebula',
           required_packages => 'debian-keyring debian-archive-keyring',
-          pin               => '-10',
+          pin               => "$apt_pin",
           include_src       => false,
           require           => Apt::Key['one_repo_key'],
         }
