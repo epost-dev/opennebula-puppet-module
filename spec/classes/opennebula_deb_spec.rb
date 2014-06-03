@@ -8,7 +8,7 @@ hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 describe 'one' do
   let(:hiera_config) { hiera_config }
   context 'with hiera config on Debian' do
-    let(:facts) { {:osfamily => 'Debian', :lsbdistid => 'Debian'} }
+    let(:facts) { {:osfamily => 'Debian', :lsbdistid => 'Debian', :operatingsystem => 'Debian' } }
     let(:params) { {:oned => true} }
     hiera = Hiera.new(:config => hiera_config)
     configdir = '/etc/one'
