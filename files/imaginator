@@ -78,8 +78,6 @@ else
     exit 1
 fi
 
-# check fpr proper bridge name
-
 # kickstart a vm to bootstrap an image
 install
 
