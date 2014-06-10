@@ -32,10 +32,10 @@ class one::prerequisites {
         }
         'Debian' : {
       if ($one::params::one_repo_enable == true) {
-        class { apt: }
+        class { '::apt': }
 
         apt::source { 'one-official':
-          location          => "http://downloads.opennebula.org/repo/Debian/${lsbmajdistrelease}",
+          location          => "http://downloads.opennebula.org/repo/Debian/${::lsbmajdistrelease}",
           release           => 'stable',
           repos             => 'opennebula',
           required_packages => 'debian-keyring debian-archive-keyring',
