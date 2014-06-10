@@ -19,22 +19,51 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::params {
+class one::params (
+  $oned_db          = hiera('one::oned::db', 'oned'),
+  $oned_db_user     = hiera('one::oned::db_user', 'oned'),
+  $oned_db_password = hiera('one::oned::db_password', 'oned'),
+  $oned_db_host     = hiera('one::oned::db_host', 'localhost'),
+  # ldap stuff (optional needs one::oned::ldap in hiera set to true)
+  $oned_ldap_host = hiera('one::oned::ldap_host','ldap'),
+  $oned_ldap_port = hiera('one::oned::ldap_port','636'),
+  $oned_ldap_base = hiera('one::oned::ldap_base','dc=example,dc=com'),
+  # $oned_ldap_user: can be empty if anonymous query is possible
+  $oned_ldap_user = hiera('one::oned::ldap_user',
+                          'cn=ldap_query,ou=user,dc=example,dc=com'),
+  $oned_ldap_pass = hiera('one::oned::ldap_pass','default_password'),
+  # $oned_ldap_group: can be empty,
+  #     can be set to a group to restrict access to sunstone
+  $oned_ldap_group = hiera( 'one::oned::ldap_group', 'undef'),
+  # $oned_ldap_user_field: defaults to uid, can be set to the field,
+  #     that holds the username in ldap
+  $oned_ldap_user_field = hiera('one::oned::ldap_user_field','undef'),
+  # $oned_ldap_group_field: default to member,
+  #     can be set to the filed that holds the groupname
+  $oned_ldap_group_field = hiera('one::oned::ldap_group_field', 'undef'),
+  # $oned_ldap_user_group_field: default to dn,
+  #     can be set to the user field that is in the group group_field
+  $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef'),
+  # should we enable opennebula repos?
+  $one_repo_enable = hiera('one::enable_opennebula_repo', false ),
+
+  $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh'),
+  $ssh_priv_key_param = hiera('one::head::ssh_priv_key',undef),
+  $ssh_pub_key  = hiera('one::head::ssh_pub_key',undef)
+) {
   # generic params for nodes and oned
   $oneid = $one::oneid
 
-  # should we enable opennebula repos?
-  $one_repo_enable = hiera('one::enable_opennebula_repo', false )
 
   $oneuid = '9869'
   $onegid = '9869'
 
   # the priv key is mandatory on the head.
+  validate_string($ssh_pub_key)
   if (!$one::node) {
-    $ssh_priv_key = hiera('one::head::ssh_priv_key')
+    validate_string($ssh_priv_key_param)
+    $ssh_priv_key = $ssh_priv_key_param
   }
-  # The pub key should be available on both hosts.
-    $ssh_pub_key  = hiera('one::head::ssh_pub_key')
 
   #Allows it to be overwritten by custom puppet profile
   #Should be the path to the folder which should be the source on the master
@@ -65,12 +94,14 @@ class one::params {
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
+      $rubygems       = []
     }
     'Debian': {
       $node_packages   = ['opennebula-node',
                           'sudo',
                           'virtinst'
                           ]
+      $rubygems       = ['parse-cron']
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
@@ -92,10 +123,6 @@ class one::params {
   }
 
   # mysql stuff (optional, need one::mysql set to true)
-  $oned_db            = hiera('one::oned::db', 'oned')
-  $oned_db_user       = hiera('one::oned::db_user', 'oned')
-  $oned_db_password   = hiera('one::oned::db_password', 'oned')
-  $oned_db_host       = hiera('one::oned::db_host', 'localhost')
 
   $ha_setup = hiera('one::ha_setup', true)
   # ha stuff (optional, needs one::ha_setup set to true)
@@ -107,26 +134,6 @@ class one::params {
     $oned_ensure = 'running'
   }
 
-  # ldap stuff (optional needs one::oned::ldap in hiera set to true)
-  $oned_ldap_host = hiera('one::oned::ldap_host','ldap')
-  $oned_ldap_port = hiera('one::oned::ldap_port','636')
-  $oned_ldap_base = hiera('one::oned::ldap_base','dc=example,dc=com')
-  # $oned_ldap_user: can be empty if anonymous query is possible
-  $oned_ldap_user = hiera('one::oned::ldap_user',
-                          'cn=ldap_query,ou=user,dc=example,dc=com')
-  $oned_ldap_pass = hiera('one::oned::ldap_pass','default_password')
-  # $oned_ldap_group: can be empty,
-  #     can be set to a group to restrict access to sunstone
-  $oned_ldap_group = hiera( 'one::oned::ldap_group', 'undef')
-  # $oned_ldap_user_field: defaults to uid, can be set to the field,
-  #     that holds the username in ldap
-  $oned_ldap_user_field = hiera('one::oned::ldap_user_field','undef')
-  # $oned_ldap_group_field: default to member,
-  #     can be set to the filed that holds the groupname
-  $oned_ldap_group_field = hiera('one::oned::ldap_group_field', 'undef')
-  # $oned_ldap_user_group_field: default to dn,
-  #     can be set to the user field that is in the group group_field
-  $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
 
   $kickstart_network         = hiera ('one::node::kickstart::network', undef)
   $kickstart_partition       = hiera ('one::node::kickstart::partition', undef)
@@ -140,7 +147,6 @@ class one::params {
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
   $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 
-  $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh')
   $backup_dir                = hiera ('one::oned::backup::dir', '/srv/backup')
   $backup_opts               = hiera ('one::oned::backup::opts', '-C -q -e')
   $backup_db                 = hiera ('one::oned::backup::db', 'oned')

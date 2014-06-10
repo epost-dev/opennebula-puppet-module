@@ -17,6 +17,11 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::install {
+  package { $one::params::rubygems :
+    ensure    => latest,
+    provider  => gem,
+    require   => Class['one::prerequisites'],
+  }
   package { $one::params::oned_packages :
     ensure  => present,
     require => Class['one::prerequisites'],
