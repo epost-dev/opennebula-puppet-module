@@ -47,6 +47,12 @@ sudo -u oneadmin virt-install \
     fi
 
     [ -z $preseedfilepath ] || rm -f $ksfilepath
+
+    # virbr0 cleanup
+    if [ $bridge == 'virbr0' ]; then
+        service dnsmasq stop 1> /dev/null 2> &1
+        brctl delbr virbr0  1> /dev/null 2> &1
+    fi
 }
 
 ## M_A_I_N
@@ -71,6 +77,8 @@ else
     echo "It can only be attributable to human error."
     exit 1
 fi
+
+# check fpr proper bridge name
 
 # kickstart a vm to bootstrap an image
 install
