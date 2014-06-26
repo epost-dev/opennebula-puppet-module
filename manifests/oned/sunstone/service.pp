@@ -15,9 +15,16 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::service {
+  if $one::sunstone_passenger {
+      $srv_ensure = stopped
+      $srv_enable = false
+  } else {
+      $srv_ensure = running
+      $srv_enable = true
+  }
   service { 'opennebula-sunstone':
-    ensure => running,
-    enable => true,
+    ensure => $srv_ensure,
+    enable => $srv_enable,
     require=> Service['opennebula'],
   }
 }

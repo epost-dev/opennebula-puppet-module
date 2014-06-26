@@ -164,6 +164,13 @@ describe 'one' do
           it { should contain_file('/usr/lib/one/sunstone').with_ensure('directory') }
           it { should contain_file(sunstone_config) }
           it { should contain_service('opennebula-sunstone').with_ensure('running').with_require("Service[opennebula]") }
+          context 'with passenger' do
+              let(:params) { {
+                  :sunstone => true,
+                  :sunstone_passenger => true
+              } }
+              it { should contain_service('opennebula-sunstone').with_ensure('stopped').with_enable(false) }
+          end
           context 'with ldap' do
             let(:params) { {
                 :oned => true,
