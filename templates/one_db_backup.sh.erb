@@ -1,13 +1,13 @@
 #!/bin/bash
 
-DB_USER='<%= backup_db_user %>'
-DB_PASSWORD='<%= backup_db_password %>'
-DB_HOST='<%= backup_db_host %>'
-DB_BACKUP='<%= backup_db %>'
+DB_USER='<%= @backup_db_user %>'
+DB_PASSWORD='<%= @backup_db_password %>'
+DB_HOST='<%= @backup_db_host %>'
+DB_BACKUP='<%= @backup_db %>'
 
-BACKUP_DIR='<%= backup_dir %>'
+BACKUP_DIR='<%= @backup_dir %>'
 BACKUP_FILE=$(hostname)-$(date +%F_%H-%M-%S).sql
-BACKUP_OPTS='<%= backup_opts %>'
+BACKUP_OPTS='<%= @backup_opts %>'
 
 if [ -d $BACKUP_DIR ]; then
     mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
