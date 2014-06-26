@@ -54,6 +54,11 @@
 #   defines where the Sunstone Webinterface should be installed.
 #   Sunstone Webinterface is fully optional.
 #
+# $sunstone_passenger - default false
+#   defines whether Sunstone Webinterface should be started by apache instead of webrick
+#   needs separate apache config
+#   only used if $sunstone is set to true
+#
 # $ldap true|false - default false
 #   defines whether sunstone authentication to ldap should be enabled
 #   ldap is fully optional
@@ -95,18 +100,19 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one ( $oneid      = 'one-cloud',
-            $node       = true,
-            $vtype      = 'kvm',
-            $ntype      = '802.1Q',
-            $oned       = false,
-            $sunstone   = false,
-            $ldap       = false,
-            $oneflow    = false,
-            $onegate    = false,
-            $backend    = 'sqlite',
-            $ha_setup   = false,
-            $puppetdb   = false,
+class one ( $oneid              = 'one-cloud',
+            $node               = true,
+            $vtype              = 'kvm',
+            $ntype              = '802.1Q',
+            $oned               = false,
+            $sunstone           = false,
+            $sunstone_passenger = false,
+            $ldap               = false,
+            $oneflow            = false,
+            $onegate            = false,
+            $backend            = 'sqlite',
+            $ha_setup           = false,
+            $puppetdb           = false,
             ) {
   include one::params
   if ($oned) {
