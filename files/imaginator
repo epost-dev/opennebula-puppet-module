@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 ###
-### clear screen
-clear
 
 function install(){
 echo "Instanciate Bootstrap-VM!"
