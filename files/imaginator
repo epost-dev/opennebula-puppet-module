@@ -50,8 +50,8 @@ sudo -u oneadmin virt-install \
 
     # virbr0 cleanup
     if [ $bridge == 'virbr0' ]; then
-        service dnsmasq stop 1> /dev/null 2> &1
-        brctl delbr virbr0  1> /dev/null 2> &1
+        service dnsmasq stop 1> /dev/null 2>&1
+        brctl delbr virbr0  1> /dev/null 2>&1
     fi
 }
 
