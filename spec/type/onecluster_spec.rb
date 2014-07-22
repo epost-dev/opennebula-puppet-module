@@ -71,21 +71,21 @@ describe res_type do
   it_should_behave_like "a puppet type", parameter_tests, res_type_name
 
   it 'should fail when passing host without being declared as onehost' do
-      pending('needs tests to verify onehost resource declaration')
+      skip('needs tests to verify onehost resource declaration')
   end
   it 'should fail when passing vnet without being declared as onevnet' do
-      pending('needs tests to verify onevnet resource declaration')
+      skip('needs tests to verify onevnet resource declaration')
   end
   it 'should fail when passing datastore without being declared as onedatastore' do
-      pending('needs tests to verify onedatastore resource declaration')
+      skip('needs tests to verify onedatastore resource declaration')
   end
   it 'should autorequire host' do
-      pending('needs host autorequire to be built in')
+      skip('needs host autorequire to be built in')
   end
   it 'should autorequire vnet' do
-      pending('needs vnet autorequire to be built in ')
+      skip('needs vnet autorequire to be built in ')
   end
   it 'should autorequire datastore' do
-      pending('needs datastore autorequire to be built in')
+      skip('needs datastore autorequire to be built in')
   end
 end
