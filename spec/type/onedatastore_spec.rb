@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-res_type_name = :onecluster
+res_type_name = :onedatastore
 res_type = Puppet::Type.type(res_type_name)
 
 describe res_type do
@@ -20,23 +20,20 @@ describe res_type do
 #    res_type.new({:name => 'test'})
 #  }
   before :each do
-      @cluster = res_type.new(:name => 'test', :hosts => ['node1','node2'])
+      @datastore = res_type.new(:name => 'test')
   end
-
   it 'should have :name be its namevar' do
     res_type.key_attributes.should == [:name]
   end
 
   parameters = [:user, :password]
-
   parameters.each do |params|
       it "should have a #{params} parameter" do
           expect(described_class.attrtype(params)).to eq :param
       end
   end
 
-  properties = [:hosts, :vnets, :datastores]
-
+  properties = [:preset, :cluster, :type, :dm, :tm, :disktype, :safedirs, :restricteddirs]
   properties.each do |property|
     it "should have a #{property} property" do
       described_class.attrclass(property).ancestors.should be_include(Puppet::Property)
@@ -47,18 +44,44 @@ describe res_type do
     end
   end
 
-  it 'should have property :hosts' do
-    @cluster[:hosts].should == ['node1','node2']
+  it 'should have property :preset' do
+      @datastore[:preset] = 'filesystem'
+      @datastore[:preset].should == 'filesystem'
   end
 
-  it 'should have property :vnets' do
-    @cluster[:vnets] = ['vnet1', 'vnet2']
-    @cluster[:vnets].should == ['vnet1','vnet2']
+  it 'should have property :cluster' do
+      @datastore[:cluster] = 'foo'
+      @datastore[:cluster].should == 'foo'
   end
 
-  it 'should have property :datastores' do
-    @cluster[:datastores] = ['ds1','ds2']
-    @cluster[:datastores].should == ['ds1','ds2']
+  it 'should have property :type' do
+      @datastore[:type] = 'bar'
+      @datastore[:type].should == 'bar'
+  end
+
+  it 'should have property :dm' do
+      @datastore[:dm] = 'baz'
+      @datastore[:dm].should == 'baz'
+  end
+
+  it 'should have property :tm' do
+      @datastore[:tm] = 'foobar'
+      @datastore[:tm].should == 'foobar'
+  end
+
+  it 'should have property :disktype' do
+      @datastore[:disktype] = 'file'
+      @datastore[:disktype].should == 'file'
+  end
+
+  it 'should have property :safedirs' do
+      @datastore[:safedirs] = ['/','/bin']
+      @datastore[:safedirs].should == ['/','/bin']
+  end
+
+  it 'should have property :restrciteddirs' do
+      @datastore[:restricteddirs] = ['/','/tmp']
+      @datastore[:restricteddirs].should == ['/','/tmp']
   end
 
   parameter_tests = {
@@ -69,23 +92,4 @@ describe res_type do
     },
   }
   it_should_behave_like "a puppet type", parameter_tests, res_type_name
-
-  it 'should fail when passing host without being declared as onehost' do
-      pending('needs tests to verify onehost resource declaration')
-  end
-  it 'should fail when passing vnet without being declared as onevnet' do
-      pending('needs tests to verify onevnet resource declaration')
-  end
-  it 'should fail when passing datastore without being declared as onedatastore' do
-      pending('needs tests to verify onedatastore resource declaration')
-  end
-  it 'should autorequire host' do
-      pending('needs host autorequire to be built in')
-  end
-  it 'should autorequire vnet' do
-      pending('needs vnet autorequire to be built in ')
-  end
-  it 'should autorequire datastore' do
-      pending('needs datastore autorequire to be built in')
-  end
 end
