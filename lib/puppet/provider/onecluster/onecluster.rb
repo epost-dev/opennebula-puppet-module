@@ -6,11 +6,11 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
   commands :onecluster => "onecluster"
 
   def create
-    onecluster "create", resource[:name]
+    onecluster "create", resource[:name], self.class.login()
   end
 
   def destroy
-    onecluster "delete", resource[:name]
+    onecluster "delete", resource[:name], self.class.login()
   end
 
   def exists?
@@ -18,7 +18,7 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
   end
 
   def self.onecluster_list
-    xml = REXML::Document.new(`onecluster -x list`)
+    xml = REXML::Document.new(`onecluster list -x`)
     list = []
     xml.elements.each("CLUSTER_POOL/CLUSTER/NAME") do |cluster|
       list << cluster.text
@@ -37,5 +37,27 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
     end
 
     instances
+  end
+
+  # login credentials
+  def login
+    login = " --user #{resource[:user]} --password #{resource[:password]}"
+    login
+  end
+
+  #getters
+  def host
+  end
+  def vnet
+  end
+  def datastore
+  end
+
+  #setters
+  def host=(value)
+  end
+  def vnet=(value)
+  end
+  def datastore=(value)
   end
 end

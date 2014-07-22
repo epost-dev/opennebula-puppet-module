@@ -16,18 +16,42 @@ describe res_type do
     val.stubs(:defaultprovider).returns provider
     val
   }
-  let(:resource) {
-    res_type.new({:name => 'test'})
-  }
+#  let(:resource) {
+#    res_type.new({:name => 'test'})
+#  }
+  before :each do
+      @host = res_type.new(:name => 'test')
+  end
 
   it 'should have :name be its namevar' do
     res_type.key_attributes.should == [:name]
+  end
+
+  it 'should have property :im_mad' do
+      @host[:im_mad] = 'kvm'
+      @host[:im_mad].should == 'kvm'
+  end
+
+  it 'should have property :vm_mad' do
+      @host[:vm_mad] = 'kvm'
+      @host[:vm_mad].should == 'kvm'
+  end
+
+  it 'should have property :tm_mad' do
+      @host[:tm_mad] = 'ssh'
+      @host[:tm_mad].should == 'ssh'
+  end
+
+  it 'should have property :cluster' do
+      @host[:cluster] = 'cluster1'
+      @host[:cluster].should == 'cluster1'
   end
 
   parameter_tests = {
     :name => {
       :valid => ["test", "foo"],
       :default => "test",
+      :invalid => ["0./fouzb&$", "&fr5"],
     },
 # :im_mad => {
 # },

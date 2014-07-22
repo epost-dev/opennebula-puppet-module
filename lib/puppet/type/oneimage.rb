@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:oneimage) do
-  @doc = "Type for managing Images in OpenNebula using the oneimage " +
+  @doc = "Type for managing Images, Files and Kernels in OpenNebula using the oneimage " +
          "wrapper command."
 
   ensurable do
@@ -14,42 +14,49 @@ Puppet::Type.newtype(:oneimage) do
     defaultto :present
   end
 
-  newparam(:name) do
+  newparam(:name, :namevar => true) do
     desc "Name of image."
-
-    isnamevar
+    validate do |value|
+        fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+    end
   end
 
-  newparam(:description) do
+  newproperty(:datastore) do
+      desc "Selects the datastore"
+  end
+
+  newproperty(:description) do
     desc "Description of image"
   end
 
-  newparam(:type) do
-    desc "Type of image: os, cdrom or datablock"
+  newproperty(:type) do
+    desc "Type of image: os, cdrom, datablock, kernel, ramdisk or context"
   end
 
-  newparam(:public) do
-    desc "Status of image, public or not."
-
-    defaultto :true
-  end
-
-  newparam(:persistent) do
+  newproperty(:persistent) do
     desc "Persistence of the image."
 
     defaultto :false
   end
 
-  newparam(:dev_prefix) do
-    desc "Prefix of device: hd, sd or vd."
+  newproperty(:dev_prefix) do
+    desc "Prefix of device: hd, sd, xvd or vd."
   end
 
-  newparam(:bus) do
-    desc "Bus to use for disk image: ide, scsi or virtio (for KVM)"
+  newproperty(:target) do
+    desc "Target to use for disk image: hda, hdb, sda, sdb"
   end
 
-  newparam(:path) do
+  newproperty(:path) do
     desc "Path to original image that will be copied to the image repository."
+  end
+
+  newproperty(:driver) do
+      desc "Driver to use for image: KVM: raw or qcow2, XEN: tap:aio or file:"
+  end
+
+  newproperty(:disk_type) do
+      desc "Type of the image (BLOCK, CDROM, RBD, FILE, KERNEL, RAMDISK or CONTEXT)"
   end
 
   newparam(:source) do
@@ -58,11 +65,12 @@ Puppet::Type.newtype(:oneimage) do
   end
 
   # Mandatory options for disk images with no path
-  newparam(:size) do
+  newproperty(:size) do
     desc "Size in MB."
   end
 
-  newparam(:fstype) do
+  newproperty(:fstype) do
     desc "FStype for disk."
   end
+
 end
