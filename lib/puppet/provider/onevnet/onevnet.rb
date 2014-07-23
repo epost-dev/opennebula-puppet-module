@@ -19,7 +19,7 @@ BRIDGE = <%= resource[:bridge] %>
 <% if resource[:protocol].upcase == "IPV4" %>
 # IPV4
 <% if resource[:type].upcase == "FIXED" %>
-# FIXED NETWORK IPV$
+# FIXED NETWORK IPV4
 <% resource[:leases].each { |lease| %>
 LEASES = [IP=<%= lease%>]
 <% } %>
