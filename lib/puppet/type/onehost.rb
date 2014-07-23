@@ -16,21 +16,26 @@ EOS
     defaultto :present
   end
 
-  newparam(:name) do
+  newparam(:name, :namevar => true) do
     desc "Name of host."
-
-    isnamevar
+    validate do |value|
+        fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+    end
   end
 
-  newparam(:im_mad) do
+  newproperty(:im_mad) do
     desc "Information Driver"
   end
 
-  newparam(:vm_mad) do
+  newproperty(:vm_mad) do
     desc "Virtualization Driver"
   end
 
-  newparam(:tm_mad) do
+  newproperty(:tm_mad) do
     desc "Transfer Driver"
+  end
+
+  newproperty(:cluster) do
+      desc "Cluster to add a host to"
   end
 end
