@@ -69,6 +69,20 @@ class one::params (
   #Should be the path to the folder which should be the source on the master
   $hook_scripts_path = hiera('one::head::hook_script_path', 'puppet:///modules/one/hookscripts')
 
+  #Configuration for VM_HOOK and HOST_HOOK in oned.conf
+  $hook_scripts = hiera('one::head::hook_scripts', undef)
+  if ($hook_scripts) {
+    validate_hash($hook_scripts)
+    $vm_hook_scripts=$hook_scripts['VM']
+    if ($vm_hook_scripts) {
+      validate_hash($vm_hook_scripts)
+    }
+
+    $host_hook_scripts=$hook_scripts['HOST']
+    if ($host_hook_scripts) {
+      validate_hash($host_hook_scripts)
+    }
+  }
   # Todo: Use Serviceip from HA-Setup if ha enabled.
   $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)
 
