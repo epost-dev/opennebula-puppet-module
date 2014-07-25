@@ -155,6 +155,4 @@ class one::params (
   $backup_db_host            = hiera ('one::oned::backup::db_host', 'localhost')
   $backup_intervall          = hiera ('one::oned::backup::intervall', '*/10')
   $backup_keep               = hiera ('one::oned::backup::keep', '-mtime +15')
-
-  $puppet_hook               = hiera ('one::oned::puppet_hook', 'false')
 }

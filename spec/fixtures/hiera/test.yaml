@@ -9,8 +9,6 @@ one::oned::db_user: oned
 one::oned::db_password: oned
 one::oned::db_host: localhost
 
-one::oned::puppet_hook: false
-
 one::oned::backup::script_path: '/var/lib/one/bin/one_db_backup.sh'
 one::oned::backup::dir: '/var/lib/one/backup/db'
 one::oned::backup::opts: '-C -q -e'

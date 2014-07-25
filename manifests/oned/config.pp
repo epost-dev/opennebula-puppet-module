@@ -32,8 +32,7 @@ class one::oned::config(
   $backup_db_password = $one::params::backup_db_password,
   $backup_db_host     = $one::params::backup_db_host,
   $backup_intervall   = $one::params::backup_intervall,
-  $backup_keep        = $one::params::backup_keep,
-  $puppet_hook        = $one::params::puppet_hook
+  $backup_keep        = $one::params::backup_keep
   ) {
 
   File {

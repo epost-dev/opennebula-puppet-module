@@ -107,14 +107,6 @@ describe 'one' do
         it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
         it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
         it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
-        context 'with puppet_cert_remove hook' do
-          puppet_hook = hiera.lookup('one::oned::puppet_hook', nil, nil)
-          if puppet_hook
-            it { should contain_file(oned_config).with_content(/puppetcertremove/) }
-          else
-            it { should contain_file(oned_config).without_content(/puppetcertremove/) }
-          end
-        end
         context 'with sqlite backend' do
           it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
         end

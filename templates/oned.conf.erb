@@ -554,14 +554,6 @@ HM_MAD = [
 #  arguments = "$ID",
 #  remote    = "no" ]
 #
- <% if @puppet_hook == true -%>
-VM_HOOK = [
-  name      = "puppet_cert_clean",
-  on        = "DONE",
-  command   = "/usr/share/one/hooks/puppetcertremove.py",
-  arguments = "$ID",
-  remote    = "no" ]
- <% end -%>
 #*******************************************************************************
 # Auth Manager Configuration
 #*******************************************************************************
