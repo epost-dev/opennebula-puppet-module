@@ -74,6 +74,9 @@ class one::params (
   # Default is a folder with an empty sample_hook.py
   $hook_scripts_path = hiera('one::head::hook_script_path', 'puppet:///modules/one/hookscripts')
 
+  # Alternative 2: Define package(s) which install the hook scripts.
+  # This should be the preferred way.
+  $hook_scripts_pkgs = hiera('one::head::hook_script_pkgs', undef)
 
   # Configuration for VM_HOOK and HOST_HOOK in oned.conf.
   # Activate and configure the hook scripts delivered via $hook_scripts_path or $hook_scripts_pkgs.

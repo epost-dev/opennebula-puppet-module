@@ -26,4 +26,11 @@ class one::oned::install {
     ensure  => present,
     require => Class['one::prerequisites'],
   }
+
+  if ($one::params::hook_scripts_pkgs) {
+    package { $one::params::hook_scripts_pkgs:
+      ensure  => present,
+      require => Class['one::prerequisites'],
+    }
+  }
 }

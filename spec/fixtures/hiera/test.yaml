@@ -23,6 +23,10 @@ one::head::hook_scripts:
       command:    'ft/host_error.rb'
       arguments:  '$ID -r'
       remote:      'no'
+#Install additional packages which contains the hook scripts
+one::head::hook_script_pkgs:
+  -'hook_vms'
+  -'hook_hosts'
 
 one::oned::backup::script_path: '/var/lib/one/bin/one_db_backup.sh'
 one::oned::backup::dir: '/var/lib/one/backup/db'
