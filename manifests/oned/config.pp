@@ -17,23 +17,25 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::config(
-  $ssh_priv_key       = $one::params::ssh_priv_key,
-  $ssh_pub_key        = $one::params::ssh_pub_key,
-  $hook_scripts_path  = $one::params::hook_scripts_path,
-  $oned_db            = $one::params::oned_db,
-  $oned_db_user       = $one::params::oned_db_user,
-  $oned_db_password   = $one::params::oned_db_password,
-  $oned_db_host       = $one::params::oned_db_host,
-  $backup_script_path = $one::params::backup_script_path,
-  $backup_opts        = $one::params::backup_opts,
-  $backup_dir         = $one::params::backup_dir,
-  $backup_db          = $one::params::backup_db,
-  $backup_db_user     = $one::params::backup_db_user,
-  $backup_db_password = $one::params::backup_db_password,
-  $backup_db_host     = $one::params::backup_db_host,
-  $backup_intervall   = $one::params::backup_intervall,
-  $backup_keep        = $one::params::backup_keep,
-  $puppet_hook        = $one::params::puppet_hook
+  $ssh_priv_key         = $one::params::ssh_priv_key,
+  $ssh_pub_key          = $one::params::ssh_pub_key,
+  $hook_scripts_path    = $one::params::hook_scripts_path,
+  $hook_scripts         = $one::params::hook_scripts,
+  $vm_hook_scripts      = $one::params::vm_hook_scripts,
+  $host_hook_scripts    = $one::params::host_hook_scripts,
+  $oned_db              = $one::params::oned_db,
+  $oned_db_user         = $one::params::oned_db_user,
+  $oned_db_password     = $one::params::oned_db_password,
+  $oned_db_host         = $one::params::oned_db_host,
+  $backup_script_path   = $one::params::backup_script_path,
+  $backup_opts          = $one::params::backup_opts,
+  $backup_dir           = $one::params::backup_dir,
+  $backup_db            = $one::params::backup_db,
+  $backup_db_user       = $one::params::backup_db_user,
+  $backup_db_password   = $one::params::backup_db_password,
+  $backup_db_host       = $one::params::backup_db_host,
+  $backup_intervall     = $one::params::backup_intervall,
+  $backup_keep          = $one::params::backup_keep
   ) {
 
   File {

@@ -9,7 +9,24 @@ one::oned::db_user: oned
 one::oned::db_password: oned
 one::oned::db_host: localhost
 
-one::oned::puppet_hook: false
+# Configures the hook scripts for VM and HOST in oned.conf
+one::head::hook_scripts:
+  VM:
+    dnsupdate:
+      state:      'CREATE'
+      command:    '/usr/share/one/hooks/dnsupdate.sh'
+      arguments:  '$TEMPLATE'
+      remote:      'no'
+  HOST:
+    error:
+      state:      'ERROR'
+      command:    'ft/host_error.rb'
+      arguments:  '$ID -r'
+      remote:      'no'
+#Install additional packages which contains the hook scripts
+one::head::hook_script_pkgs:
+  -'hook_vms'
+  -'hook_hosts'
 
 one::oned::backup::script_path: '/var/lib/one/bin/one_db_backup.sh'
 one::oned::backup::dir: '/var/lib/one/backup/db'

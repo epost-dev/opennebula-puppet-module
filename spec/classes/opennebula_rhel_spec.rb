@@ -107,14 +107,6 @@ describe 'one' do
         it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
         it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
         it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
-        context 'with puppet_cert_remove hook' do
-          puppet_hook = hiera.lookup('one::oned::puppet_hook', nil, nil)
-          if puppet_hook
-            it { should contain_file(oned_config).with_content(/puppetcertremove/) }
-          else
-            it { should contain_file(oned_config).without_content(/puppetcertremove/) }
-          end
-        end
         context 'with sqlite backend' do
           it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
         end
@@ -124,8 +116,6 @@ describe 'one' do
               :backend => 'mysql'
           } }
           it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"mysql\"/) }
-          it { should contain_file('/usr/share/one/hooks').with_source('puppet:///modules/one/hookscripts') }
-          it { should_not contain_file('/usr/share/one/hooks/tests').with_source('puppet:///modules/one/hookscripts/tests') }
           it { should contain_file(hiera.lookup('one::oned::backup::script_path', nil, nil)).with_content(/mysqldump/m) }
           it { should contain_cron('one_db_backup').with({
                                                              'command' => hiera.lookup('one::oned::backup::script_path', nil, nil),
@@ -141,6 +131,38 @@ describe 'one' do
               :backend => 'foobar'
           } }
           it { expect { should contain_class('one::oned') }.to raise_error(Puppet::Error) }
+        end
+        context 'with hookscripts configured in oned.conf' do
+          expected_vm_hook=%q{
+            VM_HOOK = \[
+              name      = "dnsupdate",
+              on        = "CREATE",
+              command   = "\/usr\/share\/one\/hooks\/dnsupdate\.sh",
+              arguments = "\$TEMPLATE",
+              remote    = "no" \]
+          }
+          expected_host_hook=%q{
+            HOST_HOOK = \[
+              name      = "error",
+              on        = "ERROR",
+              command   = "ft\/host_error.rb",
+              arguments = "\$ID -r",
+              remote    = "no" \]
+          }
+          # Check for correct template replacement but ignore whitspaces and stuff.
+          # Hint for editing: with %q{} only escaping of doublequote is not needed.
+          expected_vm_hook=expected_vm_hook.gsub(/\s+/, '\\s+')
+          expected_host_hook=expected_host_hook.gsub(/\s+/, '\\s+')
+          it { should contain_file(oned_config).with_content(/^#{expected_vm_hook}/m) }
+          it { should contain_file(oned_config).with_content(/^#{expected_host_hook}/m) }
+        end
+        context 'with default hook scripts rolled out' do
+          it { should contain_file('/usr/share/one/hooks').with_source('puppet:///modules/one/hookscripts') }
+          it { should_not contain_file('/usr/share/one/hooks/tests').with_source('puppet:///modules/one/hookscripts/tests') }
+        end
+        context 'with hook scripts package defined' do
+          packages = hiera.lookup('one::head::hook_script_pkgs', nil, nil)
+          it { should contain_package(packages) }
         end
         context 'with oneflow' do
           let(:params) { {

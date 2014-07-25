@@ -65,9 +65,35 @@ class one::params (
     $ssh_priv_key = $ssh_priv_key_param
   }
 
-  #Allows it to be overwritten by custom puppet profile
-  #Should be the path to the folder which should be the source on the master
+  #
+  # hook script installation
+  #
+  # Alternative 1: Put the scripts into a puppet module.
+  # Allows it to be overwritten by custom puppet profile
+  # Should be the path to the folder which should be the source for the hookscripts on the puppetmaster
+  # Default is a folder with an empty sample_hook.py
   $hook_scripts_path = hiera('one::head::hook_script_path', 'puppet:///modules/one/hookscripts')
+
+  # Alternative 2: Define package(s) which install the hook scripts.
+  # This should be the preferred way.
+  $hook_scripts_pkgs = hiera('one::head::hook_script_pkgs', undef)
+
+  # Configuration for VM_HOOK and HOST_HOOK in oned.conf.
+  # Activate and configure the hook scripts delivered via $hook_scripts_path or $hook_scripts_pkgs.
+  $hook_scripts = hiera('one::head::hook_scripts', undef)
+  if ($hook_scripts) {
+    validate_hash($hook_scripts)
+    $vm_hook_scripts=$hook_scripts['VM']
+
+    if ($vm_hook_scripts) {
+      validate_hash($vm_hook_scripts)
+    }
+
+    $host_hook_scripts=$hook_scripts['HOST']
+    if ($host_hook_scripts) {
+      validate_hash($host_hook_scripts)
+    }
+  }
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
   $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)
@@ -155,6 +181,4 @@ class one::params (
   $backup_db_host            = hiera ('one::oned::backup::db_host', 'localhost')
   $backup_intervall          = hiera ('one::oned::backup::intervall', '*/10')
   $backup_keep               = hiera ('one::oned::backup::keep', '-mtime +15')
-
-  $puppet_hook               = hiera ('one::oned::puppet_hook', 'false')
 }
