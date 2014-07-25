@@ -125,7 +125,7 @@ describe 'one' do
           } }
           it { expect { should contain_class('one::oned') }.to raise_error(Puppet::Error) }
         end
-        context 'with hookscripts' do
+        context 'with hookscripts configured in oned.conf' do
           expected_vm_hook=%q{
             VM_HOOK = \[
               name      = "dnsupdate",
