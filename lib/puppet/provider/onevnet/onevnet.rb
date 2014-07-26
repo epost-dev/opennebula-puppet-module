@@ -7,6 +7,7 @@ Puppet::Type.type(:onevnet).provide :onevnet do
 
   commands :onevnet => "onevnet"
 
+#  mk_resource_methods
 
   # Create a network with onevnet by passing in a temporary template.
   def create
@@ -50,21 +51,23 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "create", file.path, self.class.login()
+    onevnet "create", file.path, login
     file.delete
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    onevnet "delete", resource[:name], self.class.login()
+    onevnet "delete", resource[:name], login
   end
 
   # Return a list of existing networks using the onevnet -x list command
   def self.onevnet_list
-    xml = REXML::Document.new(onevnet "list -x", self.class.login())
+    output = "onevnet list --xml", login
+    xml = REXML::Document.new(`#{output}`)
     onevnets = []
     xml.elements.each("VNET_POOL/VNET/NAME") do |element|
       onevnets << element.text
+      self.debug "Found vnet : #{element}"
     end
     onevnets
   end
@@ -74,178 +77,253 @@ EOF
     self.class.onevnet_list().include?(resource[:name])
   end
 
-  # Return the full hash of all existing onevnet resources
+#  # Return the full hash of all existing onevnet resources
   def self.instances
     instances = []
     onevnet_list.each do |vnet|
+#    output = "onevnet list --xml", login
+#    doc = REXML::Document.new(`#{output}`)
+#    doc.elements.each("VNET_POOL/VNET/NAME") do |element|
+#     vnet = element.text
       hash = {}
+      self.debug "Getting properties for vnet : #{vnet}"
 
       # Obvious resource attributes
       hash[:provider] = self.name.to_s
       hash[:name] = vnet
 
       # Open onevnet xml output using REXML
-      xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+      output = "onevnet show #{vnet} --xml", login
+      xml = REXML::Document.new(`#{output}`)
+#      doc.each_element_with_text("#{vnet}", 1, 'VNET_POOL/VNET/NAME') { |name|
+#	vnetelement = name.parent
+#	xml = REXML::Document.new()
+#	xml.add_element(vnetelement)
 
-      # Traverse the XML document and populate the common attributes
-      xml.elements.each("VNET/TYPE") { |element|
-        hash[:type] = element.text == "1" ? "fixed" : "ranged"
-      }
-      xml.elements.each("VNET/BRIDGE") { |element|
-        hash[:bridge] = element.text
-      }
-      xml.eletments.each("VNET/VLAN_ID") { |element|
-        hash[:vlanid] = element.text
-      }
-      xml.elements.each("VNET/PUBLIC") { |element|
-        hash[:public] = element.text == "1" ? true : false
-      }
+	# Traverse the XML document and populate the common attributes
+	xml.elements.each("VNET/TYPE") { |element|
+	  hash[:type] = element.text == "1" ? "fixed" : "ranged"
+	}
+	self.debug "Found network type :", hash[:type]
+	xml.elements.each("VNET/BRIDGE") { |element|
+          hash[:bridge] = element.text
+	}
+	xml.elements.each("VNET/VLAN_ID") { |element|
+          hash[:vlanid] = element.text
+	}
+	xml.elements.each("VNET/PUBLIC") { |element|
+          hash[:public] = element.text == "1" ? true : false
+	}
 
-      # Populate ranged or fixed specific resource attributes
-      if hash[:type] == "ranged" then
-        xml.elements.each("VNET/TEMPLATE/NETWORK_MASK") { |element|
-          hash[:network_size] = element.text
-        }
-        xml.elements.each("VNET/TEMPLATE/NETWORK_ADDRESS") { |element|
-          hash[:network_address] = element.text
-          hash[:protocol] = 'ipv4'
-        }
-        xml.elements.each("VNET/TEMPLATE/IP_START") { |element|
-          hash[:network_start] = element
-        }
-        xml.elements.each("VNET/TEMPLATE/IP_END") { |element|
-          hash[:network_end] = element
-        } 
-        xml.elements.each("VNET/TEMPLATE/GLOBAL_PREFIX") { |element|
-          if element == '' then
-            xml.elements.each("VNET/GLOBAL_PREFIX") { |element2|
-                hash[:globalprefix] = element2
+	# Populate ranged or fixed specific resource attributes
+	if hash[:type] == "ranged" then
+          xml.elements.each("VNET/TEMPLATE/NETWORK_MASK") { |element|
+            hash[:network_size] = element.text
+          }
+          xml.elements.each("VNET/TEMPLATE/NETWORK_ADDRESS") { |element|
+            hash[:network_address] = element.text
+            hash[:protocol] = 'ipv4'
+          }
+          xml.elements.each("VNET/RANGE/IP_START") { |element|
+            hash[:network_start] = element.text
+          }
+          xml.elements.each("VNET/TEMPLATE/IP_START") { |element|
+            hash[:network_start] = element.text
+          }
+          xml.elements.each("VNET/RANGE/IP_END") { |element|
+            hash[:network_end] = element.text
+          } 
+          xml.elements.each("VNET/TEMPLATE/IP_END") { |element|
+            hash[:network_end] = element.text
+          } 
+          xml.elements.each("VNET/TEMPLATE/GLOBAL_PREFIX") { |element|
+            if element == '' then
+              xml.elements.each("VNET/GLOBAL_PREFIX") { |element2|
+                hash[:globalprefix] = element2.text
                 if element2 != '' then
                     hash[:protocol] = 'ipv6'
                 end
-            }
-          else
-            hash[:globalprefix] = element
-            hash[:protocol] = 'ipv6'
-          end
-        }
-        xml.elements.each("VNET/TEMPLATE/SITE_PREFIX") { |element|
-          if element == '' then
-            xml.elements.each("VNET/SITE_PREFIX") { |element2|
-                hash[:siteprefix] = element2
+              }
+            else
+              hash[:globalprefix] = element.text
+              hash[:protocol] = 'ipv6'
+            end
+          }
+          xml.elements.each("VNET/TEMPLATE/SITE_PREFIX") { |element|
+            if element == '' then
+              xml.elements.each("VNET/SITE_PREFIX") { |element2|
+                hash[:siteprefix] = element2.text
                 if element2 != '' then
                   hash[:protocol] = 'ipv6'
                 end
-            }
-          else
-            hash[:siteprefix] = element
-          end
-        }
-      elsif hash[:type] == "fixed"
-        hash[:leases] = []
-        xml.elements.each("VNET/LEASES/LEASE/IP") { |element|
-          hash[:leases] << element.text
-        }
-      end
+              }
+            else
+              hash[:siteprefix] = element.text
+            end
+          }
+	elsif hash[:type] == "fixed"
+          hash[:leases] = []
+          xml.elements.each("VNET/LEASES/LEASE/IP") { |element|
+            hash[:leases] << element.text
+          }
+        end
 
-      instances << new(hash)
+	instances << new(hash)
+#    }
     end
-
     instances
-  end
+ end
 
   # login credentials
-  def login
-    login = " --user #{resource[:user]} --password #{resource[:password]}"
+  def self.login
+    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
+    user = credentials[0]
+    password = credentials[1]
+    login = " --user #{user} --password #{password}"
     login
   end
 
   # getters
   def network_address
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/NETWORK_ADDRESS") { |element|
-        element.text
+        result =  element.text
     }
+    result
   end
+
   def network_mask
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/NETWORK_MASK") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def siteprefix
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/SITE_PREFIX") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def globalprefix
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/GLOBAL_PREFIX") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def dnsservers
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = []
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/DNSSERVERS") { |element|
-        element.text.to_a?
+        result << element.text.to_a?
     }
+    result
   end
+
   def gateway
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/GATEWAY") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def type
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TYPE") { |element|
-        result = element.text.upcase == 'FIXED' ? '1' : '0'
-        result
+        result = element.text == "1" ? "fixed" : "ranged"
     }
+    self.debug "Found netowrk type : #{result}"
+    result
   end
+
   def network_start
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/RANGE/IP_START") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def network_end
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/RANGE/IP_END") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def network_size
-  # needs to be done
+    # needs to be done
   end
+
   def macstart
-  # needs to be done
+    # needs to be done
   end
+
   def leases
-  # needs to be done
+    # needs to be done
   end
+
   def model
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/MODEL") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def vlanid
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/VLAN_ID") { |element|
-        element.text
+        result = element.text
     }
+    result
   end
+
   def bridge
-    xml = REXML::Document.new(onevnet "show", vnet, " -x ", self.class.login())
+    result = ''
+    getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/BRIDGE") { |element|
-        element.text
+        result = element.text
     }
+    result
+  end
+
+  def context
+    # todo
   end
 
   # setters
   def network_address=(value)
+    self.debug "Setting", self.name.to_s, " address on resource onevnet #{resource[:name]} to #{value}"
     file = Tempfile.new("onevnet-network_address-#{resource[:name]}")
     template = ERB.new <<-EOF
 NETWORK_ADDRESS = <%= value %>
@@ -253,7 +331,11 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    self.debug "Wrote tempfile: #{file.path} for update of ", self.name.to_s
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    self.debug "Will run #{output} to update ", self.name.to_s
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def network_mask=(value)
@@ -264,7 +346,9 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def siteprefix=(value)
@@ -275,7 +359,9 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def globalprefix=(value)
@@ -286,7 +372,9 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def dnsservers=(value)
@@ -297,7 +385,9 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def gateway=(value)
@@ -308,31 +398,37 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def type=(value)
     file = Tempfile.new("onevnet-type-#{resource[:name]}")
     template = ERB.new <<-EOF
-TYPE = <% value.upcase == 'FIXED' ? '1' : '0' %>
+TYPE = <% value.to_s.upcase == 'FIXED' ? '1' : '0' %>
 EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
     file.delete
   end
+
   def network_start=(value)
     file = Tempfile.new("onevnet-network_start-#{resource[:name]}")
     template = ERB.new <<-EOF
-IP_START = <%= value %>
+IP_START = '<%= value %>'
 EOF
     tempfile = template.result(binding)
     file.write(tempfile)
+    file.open
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
-    file.delete
   end
+
   def network_end=(value)
     file = Tempfile.new("onevnet-network_end-#{resource[:name]}")
     template = ERB.new <<-EOF
@@ -341,7 +437,9 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+#    onevnet "update", resource[:name], file.path, self.class.login
     file.delete
   end
   def model=(value)
@@ -352,7 +450,8 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
     file.delete
   end
   def vlanid=(value)
@@ -363,7 +462,8 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
     file.delete
   end
   def bridge=(value)
@@ -374,7 +474,11 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    onevnet "update", resource[:name], file.path, self.class.login()
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
     file.delete
+  end
+  def context=(value)
+    # todo
   end
 end
