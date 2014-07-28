@@ -77,6 +77,9 @@ class one::params (
   # Alternative 2: Define package(s) which install the hook scripts.
   # This should be the preferred way.
   $hook_scripts_pkgs = hiera('one::head::hook_script_pkgs', undef)
+  if ($hook_scripts_pkgs) {
+    validate_array($hook_scripts_pkgs)
+  }
 
   # Configuration for VM_HOOK and HOST_HOOK in oned.conf.
   # Activate and configure the hook scripts delivered via $hook_scripts_path or $hook_scripts_pkgs.
