@@ -153,8 +153,8 @@ describe 'one' do
           it { should_not contain_file('/usr/share/one/hooks/tests').with_source('puppet:///modules/one/hookscripts/tests') }
         end
         context 'with hook scripts package defined' do
-          packages = hiera.lookup('one::head::hook_script_pkgs', nil, nil)
-          it { should contain_package(packages) }
+          it { should contain_package('hook_vms') }
+          it { should contain_package('hook_hosts') }
         end
         context 'with oneflow' do
           let(:params) { {
