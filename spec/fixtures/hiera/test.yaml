@@ -42,6 +42,7 @@ one::oned::ldap_user: 'cn=user'
 one::oned::ldap_pass: 'secure_password'
 one::oned::ldap_host: 'localhost'
 one::oned::ldap_base: 'cn=base'
+one::oned::ldap_port: '636'
 
 one::node::kickstart::network:
   type:         'static'
