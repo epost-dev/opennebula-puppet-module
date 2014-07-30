@@ -213,6 +213,7 @@ describe 'one' do
             it { should contain_package('ruby-ldap') }
             it { should contain_package('ruby-net-ldap') }
             it { should contain_file(ldap_config).with_content(/secure_password/) }
+            it { should contain_file(ldap_config).with_content(/\:encryption\: \:simple_tls/) }
             it { should contain_file('/var/lib/one/remotes/auth/default').with_ensure('link') }
           end
           context 'with wrong ldap' do
