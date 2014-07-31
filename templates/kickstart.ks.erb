@@ -37,7 +37,7 @@ repos.each do |k,v| -%>
 repo --name="<%= k %>" --baseurl=<%= v['url'] %>
 <% end -%>
 
-%packages --nobase
+%packages
 @core
 puppet
 ntp
