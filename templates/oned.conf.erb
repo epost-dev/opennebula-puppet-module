@@ -50,15 +50,16 @@ LOG = [
   debug_level = 3
 ]
 
-MANAGER_TIMER = 10
+#MANAGER_TIMER = 30
 
-MONITORING_INTERVAL              = 30
+MONITORING_INTERVAL = 60
+MONITORING_THREADS  = 50
 
 #HOST_PER_INTERVAL               = 15
-#HOST_MONITORING_EXPIRATION_TIME = 86400
+#HOST_MONITORING_EXPIRATION_TIME = 43200
 
 #VM_PER_INTERVAL               = 5
-#VM_MONITORING_EXPIRATION_TIME = 86400
+#VM_MONITORING_EXPIRATION_TIME = 14400
 
 SCRIPTS_REMOTE_DIR=/var/tmp/one
 
@@ -81,6 +82,34 @@ DB = [ backend = "mysql",
 VNC_BASE_PORT = 5900
 
 #VM_SUBMIT_ON_HOLD = "NO"
+
+#*******************************************************************************
+# XML-RPC server configuration
+#-------------------------------------------------------------------------------
+#  These are configuration parameters for oned's xmlrpc-c server
+#
+#  MAX_CONN: Maximum number of simultaneous TCP connections the server
+#  will maintain
+#
+#  MAX_CONN_BACKLOG: Maximum number of TCP connections the operating system
+#  will accept on the server's behalf without the server accepting them from
+#  the operating system
+#
+#  KEEPALIVE_TIMEOUT: Maximum time in seconds that the server allows a
+#  connection to be open between RPCs
+#
+#  KEEPALIVE_MAX_CONN: Maximum number of RPCs that the server will execute on
+#  a single connection
+#
+#  TIMEOUT: Maximum time in seconds the server will wait for the client to
+#  do anything while processing an RPC
+#*******************************************************************************
+
+#MAX_CONN            = 15
+#MAX_CONN_BACKLOG    = 15
+#KEEPALIVE_TIMEOUT   = 15
+#KEEPALIVE_MAX_CONN  = 30
+#TIMEOUT             = 15
 
 #*******************************************************************************
 # Physical Networks configuration
@@ -107,6 +136,10 @@ MAC_PREFIX   = "02:00"
 #  You can define a different DATASTORE_LOCATION in each cluster by updating
 #  its properties with onecluster update.
 #
+#  DATASTORE_BASE_PATH: This is the base path for the SOURCE attribute of
+#  the images registered in a Datastore. This is a default value, that can be
+#  changed when the datastore is created.
+#
 #  DATASTORE_CAPACITY_CHECK: Checks that there is enough capacity before
 #  creating a new imag. Defaults to Yes
 #
@@ -122,7 +155,9 @@ MAC_PREFIX   = "02:00"
 #       vd        KVM virtual disk
 #*******************************************************************************
 
-#DATASTORE_LOCATION = /var/lib/one/datastores
+#DATASTORE_LOCATION  = /var/lib/one/datastores
+
+#DATASTORE_BASE_PATH = /var/lib/one/datastores
 
 DATASTORE_CAPACITY_CHECK = "yes"
 
@@ -148,18 +183,49 @@ DEFAULT_DEVICE_PREFIX = "hd"
 #*******************************************************************************
 
 #-------------------------------------------------------------------------------
-#  KVM Information Driver Manager Configuration
+#  Information Collector for KVM and Xen IM's.
+#-------------------------------------------------------------------------------
+#  This driver CANNOT BE ASSIGNED TO A HOST, and needs to be used with KVM or
+#  Xen drivers
+#    -h  prints this help.
+#    -a  Address to bind the collectd sockect (defults 0.0.0.0)
+#    -p  UDP port to listen for monitor information (default 4124)
+#    -f  Interval in seconds to flush collected information (default 5)
+#    -t  Number of threads for the server (defult 50)
+#    -i  Time in seconds of the monitorization push cycle. This parameter must
+#        be smaller than MONITORING_INTERVAL, otherwise push monitorization will
+#        not be effective.
+#-------------------------------------------------------------------------------
+IM_MAD = [
+    name       = "collectd",
+    executable = "collectd",
+    arguments  = "-p 4124 -f 5 -t 50 -i 20" ]
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+#  KVM UDP-push Information Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
 IM_MAD = [
-      name       = "kvm",
-      executable = "one_im_ssh",
-      arguments  = "-r 0 -t 15 kvm" ]
+    name       = "kvm",
+    executable = "one_im_ssh",
+    arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-#  XEN Information Driver Manager Configuration
+#  KVM SSH-pull Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
+# IM_MAD = [
+#       name       = "kvm",
+#       executable = "one_im_ssh",
+#       arguments  = "-r 3 -t 15 kvm-probes" ]
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+#  XEN UDP-push Information Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
@@ -168,13 +234,31 @@ IM_MAD = [
 #IM_MAD = [
 #    name       = "xen",
 #    executable = "one_im_ssh",
-#    arguments  = "xen3" ]
+#    arguments  = "-r 3 -t 15 xen3" ]
 
 # Driver for Xen 4.x
 #IM_MAD = [
 #    name       = "xen",
 #    executable = "one_im_ssh",
-#    arguments  = "xen4" ]
+#    arguments  = "-r 3 -t 15 xen4" ]
+
+#-------------------------------------------------------------------------------
+#  XEN SSH-pull Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
+
+# Driver for Xen 3.x
+#IM_MAD = [
+#    name       = "xen",
+#    executable = "one_im_ssh",
+#    arguments  = "-r 0 -t 15 xen3-probes" ]
+
+# Driver for Xen 4.x
+#IM_MAD = [
+#    name       = "xen",
+#    executable = "one_im_ssh",
+#    arguments  = "-r 0 -t 15 xen4-probes" ]
 
 #-------------------------------------------------------------------------------
 
@@ -194,8 +278,8 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
-#      executable = "one_im_ec2",
-#      arguments  = "im_ec2/im_ec2.conf" ]
+#      executable = "one_im_sh",
+#      arguments  = "-c -t 1 -r 0 ec2" ]
 #-------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -241,7 +325,7 @@ IM_MAD = [
 #    -l <actions[=command_name]> actions executed locally, command can be
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
-#        An example: "-l migrate,poll=poll_ganglia,save"
+#        An example: "-l migrate=migrate_local,save"
 #
 #  Note: You can use type = "qemu" to use qemu emulated guests, e.g. if your
 #  CPU does not have virtualization extensions or use nested Qemu-KVM hosts
@@ -261,7 +345,7 @@ VM_MAD = [
 #    -l <actions[=command_name]> actions executed locally, command can be
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
-#        An example: "-l migrate,poll=poll_ganglia,save"
+#        An example: "-l migrate,save"
 #-------------------------------------------------------------------------------
 
 # Driver for Xen 3.x
@@ -297,14 +381,13 @@ VM_MAD = [
 
 #-------------------------------------------------------------------------------
 #  EC2 Virtualization Driver Manager Configuration
-#    arguments: default values for the EC2 driver, can be an absolute path or
-#               relative to $ONE_LOCATION/etc (or /etc/one/ if OpenNebula was
-#               installed in /).
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of actions performed at the same time
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "ec2",
-#    executable = "one_vmm_ec2",
-#    arguments  = "vmm_ec2/vmm_ec2.conf",
+#    executable = "one_vmm_sh",
+#    arguments  = "-t 15 -r 0 ec2",
 #    type       = "xml" ]
 #-------------------------------------------------------------------------------
 
@@ -328,42 +411,85 @@ VM_MAD = [
 #       -t: number of threads, i.e. number of transfers made at the same time
 #       -d: list of transfer drivers separated by commas, if not defined all the
 #           drivers available will be enabled
+#
+# The  configuration for each driver is defined in TM_MAD_CONF. These
+# values are used when creating a new datastore and should not be modified
+# since they define the datastore behaviour.
+#   name      : name of the transfer driver, listed in the -d option of the
+#               TM_MAD section
+#   ln_target : determines how the persistent images will be cloned when
+#               a new VM is instantiated.
+#       NONE: The image will be linked and no more storage capacity will be used
+#       SELF: The image will be cloned in the Images datastore
+#       SYSTEM: The image will be cloned in the System datastore
+#   clone_target : determines how the non persistent images will be
+#                  cloned when a new VM is instantiated.
+#       NONE: The image will be linked and no more storage capacity will be used
+#       SELF: The image will be cloned in the Images datastore
+#       SYSTEM: The image will be cloned in the System datastore
+#   shared : determines if the storage holding the system datastore is shared
+#            among the different hosts or not. Valid values: "yes" or "no"
 #*******************************************************************************
 
 TM_MAD = [
     executable = "one_tm",
-    arguments  = "-t 15 -d dummy,lvm,shared,qcow2,ssh,vmfs,iscsi,ceph" ]
-
-TM_MAD_CONF = [
-    name = "dummy", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+    arguments = "-t 15 -d dummy,lvm,shared,fs_lvm,qcow2,ssh,vmfs,ceph"
 ]
 
 TM_MAD_CONF = [
-    name = "lvm", ln_target = "NONE", clone_target = "SELF", shared = "yes"
+    name        = "dummy",
+    ln_target   = "NONE",
+    clone_target= "SYSTEM",
+    shared      = "yes"
 ]
 
 TM_MAD_CONF = [
-    name = "shared", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+    name        = "lvm",
+    ln_target   = "NONE",
+    clone_target= "SELF",
+    shared      = "yes"
 ]
 
 TM_MAD_CONF = [
-    name = "fs_lvm", ln_target = "SYSTEM", clone_target = "SYSTEM", shared="yes"
+    name        = "shared",
+    ln_target   = "NONE",
+    clone_target= "SYSTEM",
+    shared      = "yes"
 ]
 
 TM_MAD_CONF = [
-    name = "qcow2", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+    name        = "fs_lvm",
+    ln_target   = "SYSTEM",
+    clone_target= "SYSTEM",
+    shared      = "yes"
 ]
 
 TM_MAD_CONF = [
-    name = "ssh", ln_target = "SYSTEM", clone_target = "SYSTEM", shared = "no"
+    name        = "qcow2",
+    ln_target   = "NONE",
+    clone_target= "SYSTEM",
+    shared      = "yes"
 ]
 
 TM_MAD_CONF = [
-    name = "vmfs", ln_target = "NONE", clone_target= "SYSTEM", shared = "yes"
+    name        = "ssh",
+    ln_target   = "SYSTEM",
+    clone_target= "SYSTEM",
+    shared      = "no"
 ]
 
 TM_MAD_CONF = [
-    name = "ceph", ln_target = "NONE", clone_target = "SELF", shared = "yes"
+    name        = "vmfs",
+    ln_target   = "NONE",
+    clone_target= "SYSTEM",
+    shared      = "yes"
+]
+
+TM_MAD_CONF = [
+    name        = "ceph",
+    ln_target   = "NONE",
+    clone_target= "SELF",
+    shared      = "yes"
 ]
 
 
@@ -383,7 +509,7 @@ TM_MAD_CONF = [
 
 DATASTORE_MAD = [
     executable = "one_datastore",
-    arguments  = "-t 15 -d dummy,fs,vmfs,iscsi,lvm,ceph"
+    arguments  = "-t 15 -d dummy,fs,vmfs,lvm,ceph"
 ]
 
 #*******************************************************************************
@@ -611,6 +737,7 @@ DEFAULT_UMASK = 177
 VM_RESTRICTED_ATTR = "CONTEXT/FILES"
 VM_RESTRICTED_ATTR = "NIC/MAC"
 VM_RESTRICTED_ATTR = "NIC/VLAN_ID"
+VM_RESTRICTED_ATTR = "NIC/BRIDGE"
 
 #VM_RESTRICTED_ATTR = "RANK"
 #VM_RESTRICTED_ATTR = "SCHED_RANK"
@@ -623,3 +750,30 @@ IMAGE_RESTRICTED_ATTR = "SOURCE"
 # OneGate
 #*******************************************************************************
 ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::params::oned_onedgate_ip') %>:5030"
+
+#*******************************************************************************
+# Inherited Attributes Configuration
+#*******************************************************************************
+# The following attributes will be copied from the resource template to the
+# instantiated VMs. More than one attribute can be defined.
+#
+# INHERIT_IMAGE_ATTR: Attribute to be copied from the Image template
+# to each VM/DISK.
+#
+# INHERIT_DATASTORE_ATTR: Attribute to be copied from the Datastore template
+# to each VM/DISK.
+#
+# INHERIT_VNET_ATTR: Attribute to be copied from the Network template
+# to each VM/NIC.
+#*******************************************************************************
+
+#INHERIT_IMAGE_ATTR     = "EXAMPLE"
+#INHERIT_IMAGE_ATTR     = "SECOND_EXAMPLE"
+#INHERIT_DATASTORE_ATTR = "COLOR"
+#INHERIT_VNET_ATTR      = "BANDWIDTH_THROTTLING"
+
+INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
+INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
+INHERIT_DATASTORE_ATTR  = "CEPH_USER"
+
+INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
