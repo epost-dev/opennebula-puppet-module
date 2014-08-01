@@ -165,6 +165,10 @@ Puppet::Type.newtype(:onevnet) do
     desc "Name of the physical bridge on each host to use."
   end
 
+  newproperty(:phydev) do
+    desc "Name of the physical device on which the vnet is available"
+  end
+
   newproperty(:context) do
     desc "A hash of context information to also store in the template."
   end
