@@ -29,7 +29,7 @@ Puppet::Type.type(:onevnet).provide :onevnet do
 
   # we can not use the mk_reosurce_methods helper.
   # opennebula has different ways of getting and reading properties.
-  #  mk_resource_methods
+  mk_resource_methods
 
   # Create a network with onevnet by passing in a temporary template.
   def create
@@ -94,7 +94,6 @@ EOF
     onevnets = []
     xml.elements.each("VNET_POOL/VNET/NAME") do |element|
       onevnets << element.text
-      self.debug "Found vnet : #{element}"
     end
     onevnets
   end
@@ -102,16 +101,18 @@ EOF
   # Check if a network exists by scanning the onevnet list
   def exists?
     self.class.onevnet_list().include?(resource[:name])
+    self.debug "Found network #{resource[:name]}"
   end
 
 #  # Return the full hash of all existing onevnet resources
   def self.instances
     instances = []
-    onevnet_list.each do |vnet|
-#    output = "onevnet list --xml", login
-#    doc = REXML::Document.new(`#{output}`)
-#    doc.elements.each("VNET_POOL/VNET/NAME") do |element|
-#     vnet = element.text
+    # Read all onevent into doc
+    output = "onevnet list --xml", login
+    doc = REXML::Document.new(`#{output}`)
+    # Iterate over all onevent
+    doc.elements.each("VNET_POOL/VNET/NAME") do |element|
+      vnet = element.text
       hash = {}
       self.debug "Getting properties for vnet : #{vnet}"
 
@@ -119,42 +120,40 @@ EOF
       hash[:provider] = self.name.to_s
       hash[:name] = vnet
 
-      # Open onevnet xml output using REXML
-      output = "onevnet show #{vnet} --xml", login
-      xml = REXML::Document.new(`#{output}`)
-#      doc.each_element_with_text("#{vnet}", 1, 'VNET_POOL/VNET/NAME') { |name|
-#	vnetelement = name.parent
-#	xml = REXML::Document.new()
-#	xml.add_element(vnetelement)
+      # Put xml tree for single vent into new xml document
+      doc.each_element_with_text("#{vnet}", 1, 'VNET_POOL/VNET/NAME') { |name|
+	    vnetelement = name.parent
+	    xml = REXML::Document.new()
+	    xml.add_element(vnetelement)
 
-	# Traverse the XML document and populate the common attributes
-	xml.elements.each("VNET/TYPE") { |element|
-	  hash[:type] = element.text == "1" ? 'fixed' : 'ranged'
-	}
-	xml.elements.each("VNET/BRIDGE") { |element|
+	    # Traverse the XML document and populate the common attributes
+	    xml.elements.each("VNET/TYPE") { |element|
+	      hash[:type] = element.text == "1" ? 'fixed' : 'ranged'
+	    }
+        xml.elements.each("VNET/BRIDGE") { |element|
           hash[:bridge] = element.text
-	}
+	    }
         xml.elements.each("VNET/TEMPLATE/BRIDGE") { |element|
           hash[:bridge] = element.text
         }
-	xml.elements.each("VNET/PHYDEV") { element|
-	  hash[:phydev] = element.text
-	}
+	    xml.elements.each("VNET/PHYDEV") { |element|
+	      hash[:phydev] = element.text
+	    }
         xml.elements.each("VNET/TEMPLATE/PHYDEV") { |element|
           hash[:phydev] = element.text
         }
-	xml.elements.each("VNET/VLAN_ID") { |element|
+	    xml.elements.each("VNET/VLAN_ID") { |element|
           hash[:vlanid] = element.text
-	}
-	xml.elements.each("VNET/TEMPLATE/VLAN_ID") { |element|
+	    }
+	    xml.elements.each("VNET/TEMPLATE/VLAN_ID") { |element|
           hash[:vlanid] = element.text
         }
-	xml.elements.each("VNET/PUBLIC") { |element|
+	    xml.elements.each("VNET/PUBLIC") { |element|
           hash[:public] = element.text == "1" ? true : false
-	}
+	    }
 
-	# Populate ranged or fixed specific resource attributes
-	if hash[:type] == "ranged" then
+	    # Populate ranged or fixed specific resource attributes
+	    if hash[:type] == "ranged" then
           xml.elements.each("VNET/TEMPLATE/NETWORK_MASK") { |element|
             hash[:network_size] = element.text
           }
@@ -182,11 +181,11 @@ EOF
           # or modified afterwards and be set in TEMPLATE section
           xml.elements.each("VNET/GLOBAL_PREFIX") { |element|
             hash[:globalprefix] = element.text
-              hash[:protocol] = 'ipv6'
+            hash[:protocol] = 'ipv6'
           }
           xml.elements.each("VNET/TEMPLATE/GLOBAL_PREFIX") { |element|
             hash[:globalprefix] = element.text
-              hash[:protocol] = 'ipv6'
+            hash[:protocol] = 'ipv6'
           }
           # SITE_PREFIX can either be set during creating (in VNET section)
           # or modified afterwards and be set in TEMPLATE section
@@ -198,18 +197,18 @@ EOF
             hash[:siteprefix] = element.text
             hash[:protocol] = 'ipv6'
           }
-	elsif hash[:type] == "fixed"
+	    elsif hash[:type] == "fixed"
           hash[:leases] = []
           xml.elements.each("VNET/LEASES/LEASE/IP") { |element|
             hash[:leases] << element.text
           }
         end
 
-	instances << new(hash)
-#    }
+	    instances << new(hash)
+      }
     end
-#    instances
- end
+    instances
+  end
 
   # login credentials
   def self.login

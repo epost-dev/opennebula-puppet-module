@@ -173,6 +173,7 @@ Puppet::Type.newtype(:onevnet) do
     desc "A hash of context information to also store in the template."
   end
 
+  # disable instances at the moment - needs to long to fetch all attributes
   def self.instances
     return []
   end
