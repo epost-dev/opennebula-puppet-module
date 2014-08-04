@@ -1,6 +1,17 @@
+# OpenNebula Puppet provider for onecluster
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014
+#
+
 require 'rexml/document'
-#require 'tempfile'
-#require 'erb'
 
 Puppet::Type.type(:onecluster).provide(:onecluster) do
   desc "onecluster provider"
@@ -56,7 +67,10 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
   end
 
   def exists?
-    self.class.onecluster_list().include?(resource[:name])
+    if self.class.onecluster_list().include?(resource[:name])
+        self.debug "Found cluster #{resource[:name]}"
+        true
+    end
   end
 
   def self.onecluster_list
@@ -148,6 +162,7 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
         self.debug "Running host add command : #{host_command}"
         `#{host_command}`
       }
+      # todo: remove hosts which are no longer in list
   end
   def vnets=(value)
       value.each { |vnet|
@@ -155,11 +170,13 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
         self.debug "Running vnet add command: #{vnet_command}"
         `#{vnet_command}`
       }
+      # todo: remove vnets which are no longer in list
   end
   def datastores=(value)
       value.each { |ds|
         ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
         `#{ds_command}`
       }
+      # todo: remove datastores which are no longer in list
   end
 end
