@@ -35,6 +35,10 @@ EOS
     desc "Transfer Driver"
   end
 
+  newproperty(:net_mad) do
+      desc "Network Driver"
+  end
+
   newproperty(:cluster) do
       desc "Cluster to add a host to"
   end

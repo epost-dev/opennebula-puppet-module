@@ -6,12 +6,13 @@ Puppet::Type.type(:onehost).provide(:onehost) do
   commands :onehost => "onehost"
 
   def create
-    onehost "create", resource[:name], resource[:im_mad], resource[:vm_mad],
-      resource[:tm_mad]
+    output = "onehost create #{resource[:name]} --im #{resource[:im_mad]} --vm #{resource[:vm_mad]} --net #{resource[:net_mad]} ", self.class.login
+    `#{output}`
   end
 
   def destroy
-    onehost "delete", resource[:name]
+    output = "onehost delete #{resource[:name]} ", self.class.login
+    `#{output}`
   end
 
   def self.onehost_list
@@ -44,4 +45,40 @@ Puppet::Type.type(:onehost).provide(:onehost) do
 
     instances
   end
+
+  # login credentials
+  def self.login
+    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
+    user = credentials[0]
+    password = credentials[1]
+    login = " --user #{user} --password #{password}"
+    login
+  end
+
+  # getters
+  def im_mad
+  end
+
+  def vm_mad
+  end
+
+  def tm_mad
+  end
+
+  def net_mad
+  end
+
+  # setters
+  def im_mad=(value)
+  end
+
+  def vm_mad=(value)
+  end
+
+  def tm_mad=(value)
+  end
+
+  def net_mad=(value)
+  end
+
 end
