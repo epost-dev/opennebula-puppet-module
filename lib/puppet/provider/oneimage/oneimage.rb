@@ -29,13 +29,14 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    oneimage "register", file.path
-    # debug(`su oneadmin -c 'oneimage register #{file.path}'`)
+    output = "oneimage register #{file.path} ", self.class.login
+    `#{output}`
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    oneimage "delete", resource[:name]
+    output = "oneimage delete #{resource[:name]} ", self.class.login
+    `#{output}`
   end
 
   # Return a list of existing networks using the onevnet -x list command
@@ -96,5 +97,14 @@ EOF
     end
 
     instances
+  end
+
+  # login credentials
+  def self.login
+    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
+    user = credentials[0]
+    password = credentials[1]
+    login = " --user #{user} --password #{password}"
+    login
   end
 end
