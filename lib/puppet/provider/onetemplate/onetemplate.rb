@@ -78,12 +78,14 @@ EOF
     debug("template is:\n#{tempfile}")
     file.write(tempfile)
     file.close
-    onetemplate "create", file.path
+    output = "onetemplate create #{file.path} ", self.class.login
+    `#{output}`
   end
 
   # Destroy a VM using onevm delete
   def destroy
-    onevm "delete", resource[:name]
+    output = "onetemplate delete #{resource[:name]} ", self.class.login
+    `#{output}`
   end
 
   # Return a list of existing VM's using the onevm -x list command
@@ -129,5 +131,14 @@ EOF
     end
 
     instances
+  end
+
+  # login credentials
+  def self.login
+    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
+    user = credentials[0]
+    password = credentials[1]
+    login = " --user #{user} --password #{password}"
+    login
   end
 end
