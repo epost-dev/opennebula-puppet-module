@@ -10,26 +10,28 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
   def create
     output = "onecluster create #{resource[:name]} ", self.class.login()
     `#{output}`
-    # clusterhosts = resource[:hosts]
-    if resource[:hosts].to_a != []
-        self.debug "We have hosts: #{resource[:hosts]}"
-        resource[:hosts].to_a.each { |host|
-          host_command = "onecluster addhost #{resource[:name]} #{host} ", self.class.login()
-          `#{host_command}`
-        }
-    end
-    if resource[:vnets].to_a != []
-        resource[:vnets].each { |vnet|
-            vnet_command = "onecluster addvnet #{resource[:name]} #{vnet} ", self.class.login()
-            `#{vnet_command}`
-        }
-    end
-    if resource[:datastores].to_a != []
-        resource[:datastores].each { |datastore|
-            ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
-            `#{ds_command}`
-        }
-    end
+    self.debug "We have hosts: #{resource[:hosts]}"
+    self.debug "We have vnets: #{resource[:vnets]}"
+    hosts = []
+    hosts << resource[:hosts]
+    hosts.each { |host|
+      host_command = "onecluster addhost #{resource[:name]} #{host} ", self.class.login()
+      self.debug "Running host add command : #{host_command}"
+      `#{host_command}`
+    }
+    vnets = []
+    vnets << resource[:vnets]
+    vnets.each { |vnet|
+        vnet_command = "onecluster addvnet #{resource[:name]} #{vnet} ", self.class.login()
+        self.debug "Running vnet add command: #{vnet_command}"
+        `#{vnet_command}`
+    }
+    ds = []
+    ds << resource[:datastores]
+    ds.each { |datastore|
+        ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
+        `#{ds_command}`
+    }
   end
 
   def destroy
@@ -141,9 +143,23 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
 
   #setters
   def hosts=(value)
+      value.each { |host|
+        host_command = "onecluster addhost #{resource[:name]} #{host} ", self.class.login()
+        self.debug "Running host add command : #{host_command}"
+        `#{host_command}`
+      }
   end
   def vnets=(value)
+      value.each { |vnet|
+        vnet_command = "onecluster addvnet #{resource[:name]} #{vnet} ", self.class.login()
+        self.debug "Running vnet add command: #{vnet_command}"
+        `#{vnet_command}`
+      }
   end
   def datastores=(value)
+      value.each { |ds|
+        ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
+        `#{ds_command}`
+      }
   end
 end
