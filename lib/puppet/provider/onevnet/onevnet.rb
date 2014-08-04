@@ -100,8 +100,10 @@ EOF
 
   # Check if a network exists by scanning the onevnet list
   def exists?
-    self.class.onevnet_list().include?(resource[:name])
-    self.debug "Found network #{resource[:name]}"
+    if self.class.onevnet_list().include?("#{resource[:name]}")
+      self.debug "Found network #{resource[:name]}"
+      true
+    end
   end
 
 #  # Return the full hash of all existing onevnet resources
@@ -223,6 +225,7 @@ EOF
   def network_address
     result = ''
     getter_output = "onevnet show #{resource[:name]} --xml ", self.class.login
+    self.debug "Running getter command for network address: #{getter_output}"
     xml = REXML::Document.new(`#{getter_output}`)
     xml.elements.each("VNET/TEMPLATE/NETWORK_ADDRESS") { |element|
         result =  element.text
