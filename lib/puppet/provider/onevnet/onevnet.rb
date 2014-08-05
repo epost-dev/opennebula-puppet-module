@@ -51,12 +51,14 @@ LEASES = [IP=<%= lease%>]
 <% end %>
 <% elsif resource[:type]== :ranged %>
 # RANGED NETWORK
-<% if resource[:network_size]    %>NETWORK_SIZE = <%=    resource[:network_size] %><% end %>
+<% if resource[:network_size]    %>NETWORK_MASK = <%=    resource[:network_size]    %><% end %>
 <% if resource[:network_address] %>NETWORK_ADDRESS = <%= resource[:network_address] %><% end %>
+<% if resource[:network_start]   %>IP_START = <%=        resource[:network_start]   %><% end %>
+<% if resource[:network_end]     %>IP_END = <%=          resource[:network_end]     %><% end %>
+<% if resource[:macstart]        %>MAC_START = <%=       resource[:macstart]        %><% end %>
+<% if resource[:siteprefix]      %>SITE_PREFIX = <%=     resource[:siteprefix]      %><% end %>
+<% if resource[:globalprefix]    %>GLOBAL_PREFIX = <%=   resource[:globalprefix]    %><% end %>
 <% end %>
-<% if resource[:macstart]     %>MAC_START = <%=     resource[:macstart]      %><% end %>
-<% if resource[:siteprefix]   %>SITE_PREFIX = <%=   resource[:siteprefix]    %><% end %>
-<% if resource[:globalprefix] %>GLOBAL_PREFIX = <%= resource[:globalprefix]  %><% end %>
 <% if resource[:vlanid]       %>VLAN_ID = <%=       resource[:vlanid]        %><% end %>
 
 # Context information
