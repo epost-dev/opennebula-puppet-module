@@ -36,46 +36,41 @@ Puppet::Type.type(:onevnet).provide :onevnet do
     file = Tempfile.new("onevnet-#{resource[:name]}")
     template = ERB.new <<-EOF
 NAME = "<%= resource[:name] %>"
-TYPE = <%= resource[:type].upcase %>
+TYPE = <%= resource[:type]%>
 BRIDGE = <%= resource[:bridge] %>
 
 <% if resource[:phydev] %>
 PHYDEV = <%= resource[:phydev] %>
 <% end %>
-<% if resource[:protocol].upcase == "IPV4" %>
-# IPV4
-<% if resource[:type].upcase == "FIXED" %>
-# FIXED NETWORK IPV4
+<% if resource[:type]== :fixed %>
+# FIXED NETWORK
+<% if resource[:leases] %>
 <% resource[:leases].each { |lease| %>
 LEASES = [IP=<%= lease%>]
 <% } %>
-<% elsif resource[:type].upcase == "RANGED" %>
-# RANGED NETWORK IPV4
-NETWORK_SIZE = <%= resource[:network_size] %>
-NETWORK_ADDRESS = <%= resource[:network_address] %>
 <% end %>
-<% elsif resource[:protocol].upcase == "IPV6" %>
-# IPV6
-<% if resource[:type].upcase == "FIXED" %>
-# FIXED NETWORK IPV6
-<% resource[:leases].each { |lease| %>
-#LEASES = 
-<% elsif resource[:type].upcase == "RANGED" %>
-# RANGED NETWORK IPV6
-MAC_START = <%= resource[:macstart] %>
-NETWORK_SIZE = <%= resource[:network_size] %>
-SITE_PREFIX = <%= resource[:siteprefix] %>
-GLOBAL_PREFIX = <%= resource[:globalprefix] %>
+<% elsif resource[:type]== :ranged %>
+# RANGED NETWORK
+<% if resource[:network_size]    %>NETWORK_SIZE = <%=    resource[:network_size] %><% end %>
+<% if resource[:network_address] %>NETWORK_ADDRESS = <%= resource[:network_address] %><% end %>
+<% end %>
+<% if resource[:macstart]     %>MAC_START = <%=     resource[:macstart]      %><% end %>
+<% if resource[:siteprefix]   %>SITE_PREFIX = <%=   resource[:siteprefix]    %><% end %>
+<% if resource[:globalprefix] %>GLOBAL_PREFIX = <%= resource[:globalprefix]  %><% end %>
+<% if resource[:vlanid]       %>VLAN_ID = <%=       resource[:vlanid]        %><% end %>
 
 # Context information
+<% if resource[:context] %>
 <% resource[:context].each { |key,value| %>
 <%= key.upcase %> = <%= value %>
 <% } %>
+<% end %>
 EOF
 
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
+    self.debug "Adding new network using template: #{tempfile}"
     output = "onevnet create #{file.path} ", self.class.login
     `#{output}`
     file.delete
