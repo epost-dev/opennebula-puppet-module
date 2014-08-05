@@ -17,14 +17,14 @@ Puppet::Type.type(:oneimage).provide(:oneimage) do
     template = ERB.new <<-EOF
 NAME = "<%= resource[:name] %>"
 <% if resource[:description] %>DESCRIPTION = "<%= resource[:description] %>"<% end%>
-<% if resource[:type] %>TYPE = <%= resource[:type].upcase %><% end%>
-<% if resource[:persistent] %>PERSISTENT = <%= resource[:persistent] ? "YES" : "NO" %><% end%>
-<% if resource[:dev_prefix] %>DEV_PREFIX = "<%= resource[:dev_prefix] %>"<% end%>
-<% if resource[:driver] %>DRIVER = "<%= resource[:driver] %>"<% end %>
-<% if resource[:path] %>PATH = <%= resource[:path] %><% end%>
-<% if resource[:source] %>SOURCE = <%= resource[:source] %><% end%>
-<% if resource[:fstype] %>FSTYPE = <%= resource[:fstype] %><% end%>
-<% if resource[:size] %>SIZE = <%= resource[:size] %><% end%>
+<% if resource[:type]        %>TYPE = <%=         resource[:type].upcase %><% end%>
+<% if resource[:persistent]  %>PERSISTENT = <%=   resource[:persistent] ? "YES" : "NO" %><% end%>
+<% if resource[:dev_prefix]  %>DEV_PREFIX = "<%=  resource[:dev_prefix]  %>"<% end%>
+<% if resource[:driver]      %>DRIVER = "<%=      resource[:driver]      %>"<% end %>
+<% if resource[:path]        %>PATH = <%=         resource[:path]        %><% end%>
+<% if resource[:source]      %>SOURCE = <%=       resource[:source]      %><% end%>
+<% if resource[:fstype]      %>FSTYPE = <%=       resource[:fstype]      %><% end%>
+<% if resource[:size]        %>SIZE = <%=         resource[:size]        %><% end%>
 EOF
 
     tempfile = template.result(binding)
