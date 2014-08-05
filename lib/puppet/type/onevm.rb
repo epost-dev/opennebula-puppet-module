@@ -25,8 +25,4 @@ Puppet::Type.newtype(:onevm) do
     desc "Template to use for VM"
   end
 
-  newparam(:amount) do
-      desc "Number of VMs to start - needs %i in name"
-  end
-
 end
