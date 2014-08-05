@@ -9,77 +9,52 @@ Puppet::Type.type(:onetemplate).provide(:onetemplate) do
 
   # Create a VM template with onetemplate by passing in a temporary template definition file.
   def create
-    file = Tempfile.new("onetemplate-#{resource[:name].to_s}")
-
-    os_array = []
-    ["arch","kernel","initrd","root","kernel_cmd","bootloader","boot"].each { |k|
-      sym = "os_#{k.to_s}".to_sym
-      if resource[sym] then
-        os_array << "#{k.to_s.upcase} = #{resource[sym]}"
-      end
-    }
-
-    debug("Start building up template for create command")
+    file = Tempfile.new("onetemplate-#{resource[:name]}")
     template = ERB.new <<-EOF
-NAME = "<%= resource[:name].to_s %>"
-MEMORY = <%= resource[:memory].to_s %>
-CPU = <%= resource[:cpu].to_s %>
-VCPU = <%= resource[:vcpu].to_s %>
+<TEMPLATE>
+  <NAME><%=   resource[:name]   %></NAME>
+  <MEMORY><%= resource[:memory] %></MEMORY>
+  <CPU><%=    resource[:cpu]    %></CPU>
+  <VCPU><%=   resource[:vcpu]   %></VCPU>
 
-OS = [ <%= os_array.join(", \n") %> ]
+  <OS>
+<% if resource[:os_kernel]     %>    <KERNEL><%=     resource[:os_kernel]     %></KERNEL><% end %>
+<% if resource[:os_initrd]     %>    <INITRD><%=     resource[:os_initrd]     %></INITRD><% end %>
+<% if resource[:os_arch]       %>    <ARCH><%=       resource[:os_arch]       %></ARCH><% end %>
+<% if resource[:os_root]       %>    <ROOT><%=       resource[:os_root]       %></ROOT><% end %>
+<% if resource[:os_kernel_cmd] %>    <KERNEL_CMD><%= resource[:os_kernel_cmd] %></KERNEL_CMD><% end %>
+<% if resource[:os_bootloader] %>    <BOOTLOADER><%= resource[:os_bootloader] %></BOOTLOADER><% end %>
+<% if resource[:os_boot]       %>    <BOOT><%=       resource[:os_boot]       %></BOOT><% end %>
+  </OS>
 
-<%
-resource[:disks].each { |disk|
-disk_array = []
-next if !disk.is_a?(Hash)
-next if disk.size < 1
-disk.each { |key,value|
-disk_array << key.to_s.upcase + " = " + value.to_s
-} %>
-DISK = [ <%= disk_array.join(", \n") %> ]
-<%
-}
+  <DISK>
+<% resource[:disks].each do |disk| %>
+    <IMAGE><%= disk %></IMAGE>
+<% end %>
+  </DISK>
+  <NIC>
+<% resource[:nics].each do |nic| %>
+    <NETWORK><%= nic %></NETWORK>
+<% end %>
+  </NIC>
 
-resource[:nics].each { |nic|
-nic_array = []
-next if !nic.is_a?(Hash)
-next if nic.size < 1
-nic.each { |key,value|
-nic_array << key.to_s.upcase + " = " + value.to_s
-} %>
-NIC = [ <%= nic_array.join(", \n") %> ]
-<%
-}
-
-graph_array = []
-["type","listen","port","passwd","keymap"].each { |param|
-res = ("graphics_"+param.to_s).to_sym
-if resource[res] then
-graph_array << param.to_s.upcase + " = " + resource[res]
-end
-}
-%>
-GRAPHICS = [ <%= graph_array.join(", \n") %> ]
-
-<%
-if resource[:context] then
-context_array = []
-resource[:context].each { |key,value|
-context_array << key.to_s.upcase + ' = "' + value.to_s + '"'
-} %>
-CONTEXT = [ <%= context_array.join(", \n") %> ]
-<%
-end
-%>
+  <GRAPHICS>
+<% if resource[:graphics_type]   %><TYPE><%=   resource[:graphics_type]   %></TYPE><% end %>
+<% if resource[:graphics_listen] %><LISTEN><%= resource[:graphics_listen] %></LISTEN><% end %>
+<% if resource[:graphics_port]   %><PORT><%=   resource[:graphics_port]   %></PORT><% end %>
+<% if resource[:graphics_passwd] %><PASSWD><%= resource[:graphics_passwd] %></PASSWD><% end %>
+<% if resource[:graphics_keymap] %><KEYMAP><%= resource[:graphics_keymap] %></KEYMAP><% end %>
+  </GRAPHICS>
+</TEMPLATE>
 EOF
 
-    debug("Created template, lets try and parse it")
     tempfile = template.result(binding)
-    debug("template is:\n#{tempfile}")
     file.write(tempfile)
     file.close
+    self.debug "Creating template using #{tempfile}"
     output = "onetemplate create #{file.path} ", self.class.login
     `#{output}`
+    file.delete
   end
 
   # Destroy a VM using onevm delete
@@ -416,32 +391,32 @@ EOF
       result
   end
   def context_variables
-      result = ''
-      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      # todo
-      result
+      #result = ''
+      #output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+      #xml = REXML::Document.new(`#{output}`)
+      ## todo
+      #result
   end
   def context_placement_host
-      result = ''
-      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      # todo
-      result
+      #result = ''
+      #output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+      #xml = REXML::Document.new(`#{output}`)
+      ## todo
+      #result
   end
   def context_placement_cluster
-      result = ''
-      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      # todo
-      result
+      #result = ''
+      #output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+      #xml = REXML::Document.new(`#{output}`)
+      ## todo
+      #result
   end
   def context_policy
-      result = ''
-      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      # todo
-      result
+      #result = ''
+      #output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+      #xml = REXML::Document.new(`#{output}`)
+      ## todo
+      #result
   end
 
   # setters

@@ -109,14 +109,10 @@ Puppet::Type.newtype(:onetemplate) do
 
   newproperty(:graphics_passwd) do
     desc "VNC password."
-
-    defaultto ""
   end
 
   newproperty(:graphics_keymap) do
     desc "keyboard configuration locale to use in the VNC display"
-
-    defaultto ""
   end
 
   # Template Context config
