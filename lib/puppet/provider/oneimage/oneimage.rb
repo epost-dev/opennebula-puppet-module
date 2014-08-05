@@ -18,10 +18,9 @@ Puppet::Type.type(:oneimage).provide(:oneimage) do
 NAME = "<%= resource[:name] %>"
 <% if resource[:description] %>DESCRIPTION = "<%= resource[:description] %>"<% end%>
 <% if resource[:type] %>TYPE = <%= resource[:type].upcase %><% end%>
-<% if resource[:public] %>PUBLIC = <%= resource[:public] ? "YES" : "NO" %><% end%>
 <% if resource[:persistent] %>PERSISTENT = <%= resource[:persistent] ? "YES" : "NO" %><% end%>
 <% if resource[:dev_prefix] %>DEV_PREFIX = "<%= resource[:dev_prefix] %>"<% end%>
-<% if resource[:bus] %>BUS = "<%= resource[:bus] %>"<% end%>
+<% if resource[:driver] %>DRIVER = "<%= resource[:driver] %>"<% end %>
 <% if resource[:path] %>PATH = <%= resource[:path] %><% end%>
 <% if resource[:source] %>SOURCE = <%= resource[:source] %><% end%>
 <% if resource[:fstype] %>FSTYPE = <%= resource[:fstype] %><% end%>
@@ -29,9 +28,10 @@ NAME = "<%= resource[:name] %>"
 EOF
 
     tempfile = template.result(binding)
+    self.debug "Creating image using tempfile: #{tempfile}"
     file.write(tempfile)
     file.close
-    output = "oneimage register #{file.path} ", self.class.login
+    output = "oneimage create -d #{resource[:datastore]} #{file.path} ", self.class.login
     `#{output}`
   end
 
