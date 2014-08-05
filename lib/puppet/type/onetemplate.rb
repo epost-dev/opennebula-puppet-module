@@ -90,6 +90,11 @@ Puppet::Type.newtype(:onetemplate) do
     desc "Array of nic definitions."
   end
 
+  newproperty(:nic_model) do
+      desc "Model to use for all network interfaces" +
+          "e.g. virtio for kvm"
+  end
+
   # Template Input/Output config
   newproperty(:graphics_type) do
     desc "Graphics type - vnc or sdl"
