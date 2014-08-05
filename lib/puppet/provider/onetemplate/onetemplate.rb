@@ -32,11 +32,12 @@ Puppet::Type.type(:onetemplate).provide(:onetemplate) do
     <IMAGE><%= disk %></IMAGE>
 <% end %>
   </DISK>
-  <NIC>
 <% resource[:nics].each do |nic| %>
+  <NIC>
+    <% if resource[:nic_model] %><MODEL><%= resource[:nic_model] %></MODEL><% end %>
     <NETWORK><%= nic %></NETWORK>
-<% end %>
   </NIC>
+<% end %>
 
   <GRAPHICS>
 <% if resource[:graphics_type]   %><TYPE><%=   resource[:graphics_type]   %></TYPE><% end %>
@@ -45,6 +46,22 @@ Puppet::Type.type(:onetemplate).provide(:onetemplate) do
 <% if resource[:graphics_passwd] %><PASSWD><%= resource[:graphics_passwd] %></PASSWD><% end %>
 <% if resource[:graphics_keymap] %><KEYMAP><%= resource[:graphics_keymap] %></KEYMAP><% end %>
   </GRAPHICS>
+  <FEATURES>
+<% if resource[:acpi] %><ACPI><%= resource[:acpi] %></ACPI><% end %>
+<% if resource[:pae]  %><PAE><%=  resource[:pae]  %></PAE><%  end %>
+  </FEATURES>
+  <CONTEXT>
+<% if resource[:context_network] %><NETWORK><%= resource[:context_network] %></NETWORK><% end %>
+<% if resource[:context_files] %>
+    <FILES_DS><% resource[:context_files].each do |context_file| %>$FILE[IMAGE="<%= context_file %>"] <% end %></FILES_DS>
+<% end %>
+<% if resource[:context] %>
+<% resource[:context].each do |key, value| %>
+   <<%= key %>><%= value %></<%= key %>>
+<% end %>
+<% end %>
+<% if resource[:context_ssh_pubkey] %><SSH_PUBLIC_KEY><%= resource[:context_ssh_pubkey] %></SSH_PUBLIC_KEY><% end %>
+  </CONTEXT>
 </TEMPLATE>
 EOF
 
@@ -124,6 +141,9 @@ EOF
       xml.elements.each("VMTEMPLATE/TEMPLATE/NIC/NETWORK") { |element|
         hash[:nics] << element.text
       }
+      xml.elements.each("VMTEMPLATE/TEMPLATE/NIC/MODEL") { |element|
+        hash[:nic_model] = element.text
+      }
       xml.elements.each("VMTEMPLATE/TEMPLATE/OS/ARCH") { |element|
         hash[:os_arch] = element.text
       }
@@ -131,7 +151,7 @@ EOF
         hash[:os_boot] = element.text
       }
       xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/FILES_DS") { |element|
-        hash[:context_files] = element.text
+        hash[:context_files] << element.text
       }
       xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/NETWORK") { |element|
         hash[:context_network] = element.text
@@ -291,6 +311,15 @@ EOF
       }
       result
   end
+  def nic_model
+      result = ''
+      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+      xml = REXML::Document.new(`#{output}`)
+      xml.elements.each("VMTEMPLATE/TEMPLATE/NIC/MODEL") { |element|
+          result = element.text
+      }
+      result
+  end
   def graphics_type
       result = ''
       output = "onetemplate show #{resource[:name]} --xml ", self.class.login
@@ -338,11 +367,11 @@ EOF
   end
   def context
       result = ''
-      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT") { |element|
-          result = element.text
-      }
+#      output = "onetemplate show #{resource[:name]} --xml ", self.class.login
+#      xml = REXML::Document.new(`#{output}`)
+#      xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT") { |element|
+#          result = element.text
+#      }
       result
   end
   def context_ssh
@@ -382,11 +411,11 @@ EOF
       result
   end
   def context_files
-      result = []
+      result = ''
       output = "onetemplate show #{resource[:name]} --xml ", self.class.login
       xml = REXML::Document.new(`#{output}`)
       xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/FILES_DS") { |element|
-          result << element.text
+          result = element.text
       }
       result
   end
@@ -463,7 +492,10 @@ EOF
       raise "Can not yet modify disks on a template"
   end
   def nics=(value)
-      raise "Can not yet modify networks on a template"
+      #raise "Can not yet modify networks on a template"
+  end
+  def nic_model=(value)
+      raise "Can not modify network model on a template"
   end
   def graphics_type=(value)
       raise "Can not modify graphics type on a template"
@@ -481,7 +513,7 @@ EOF
       raise "Can not yet modify graphics keymap on a template"
   end
   def context=(value)
-      raise "Can not yet modify context hashes on a template"
+      #raise "Can not yet modify context hashes on a template"
   end
   def context_ssh=(value)
       raise "Can not yet modify ssh context on a template"
@@ -496,7 +528,7 @@ EOF
       raise "Can not modify onegate context on a template"
   end
   def context_files=(value)
-      raise "Can not yet modify context files on a template"
+      #raise "Can not yet modify context files on a template"
   end
   def context_variables=(value)
       raise "Can not yet modify context variables on a template"
