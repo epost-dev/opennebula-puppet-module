@@ -59,7 +59,7 @@ oneimage { '<name>':
     datastore   => 'default',
     description => 'Image description',
     type        => 'os' | 'cdrom' | 'datablock' | 'kernel' | 'ramdisk' | 'context',
-    persistent  => true | false,
+    persistent  => 'yes' | 'no',
     dev_prefix  => 'hd' | 'sd' | 'xvd' | 'vd',
     target      => 'hda' | 'hdb' | 'sda' | 'sdb',
     path        => '/tmp/image_file',
