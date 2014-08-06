@@ -37,16 +37,6 @@ describe res_type do
       @host[:vm_mad].should == 'kvm'
   end
 
-  it 'should have property :tm_mad' do
-      @host[:tm_mad] = 'ssh'
-      @host[:tm_mad].should == 'ssh'
-  end
-
-  it 'should have property :cluster' do
-      @host[:cluster] = 'cluster1'
-      @host[:cluster].should == 'cluster1'
-  end
-
   parameter_tests = {
     :name => {
       :valid => ["test", "foo"],
