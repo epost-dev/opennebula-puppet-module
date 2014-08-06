@@ -18,7 +18,7 @@ Puppet::Type.type(:oneimage).provide(:oneimage) do
 NAME = "<%= resource[:name] %>"
 <% if resource[:description] %>DESCRIPTION = "<%= resource[:description] %>"<% end%>
 <% if resource[:type]        %>TYPE = <%=         resource[:type].upcase %><% end%>
-<% if resource[:persistent]  %>PERSISTENT = <%=   resource[:persistent] ? "YES" : "NO" %><% end%>
+<% if resource[:persistent]  %>PERSISTENT = <%=   resource[:persistent]  %><% end%>
 <% if resource[:dev_prefix]  %>DEV_PREFIX = "<%=  resource[:dev_prefix]  %>"<% end%>
 <% if resource[:driver]      %>DRIVER = "<%=      resource[:driver]      %>"<% end %>
 <% if resource[:path]        %>PATH = <%=         resource[:path]        %><% end%>
