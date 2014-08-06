@@ -30,7 +30,8 @@ EOF
 
   # Destroy a VM using onevm delete
   def destroy
-    onevm "delete", resource[:name]
+    output = "onevm delete #{resource[:name]} ", self.class.login
+    `#{output}`
   end
 
   # Return a list of existing VM's using the onevm -x list command
