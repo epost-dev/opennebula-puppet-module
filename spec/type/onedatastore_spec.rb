@@ -33,7 +33,7 @@ describe res_type do
       end
   end
 
-  properties = [:preset, :cluster, :type, :dm, :tm, :disktype, :safedirs, :restricteddirs]
+  properties = [:type, :dm, :tm, :disktype ]
   properties.each do |property|
     it "should have a #{property} property" do
       described_class.attrclass(property).ancestors.should be_include(Puppet::Property)
@@ -42,16 +42,6 @@ describe res_type do
     it "should have documentation for its #{property} property" do
       described_class.attrclass(property).doc.should be_instance_of(String)
     end
-  end
-
-  it 'should have property :preset' do
-      @datastore[:preset] = 'filesystem'
-      @datastore[:preset].should == 'filesystem'
-  end
-
-  it 'should have property :cluster' do
-      @datastore[:cluster] = 'foo'
-      @datastore[:cluster].should == 'foo'
   end
 
   it 'should have property :type' do
@@ -72,16 +62,6 @@ describe res_type do
   it 'should have property :disktype' do
       @datastore[:disktype] = 'file'
       @datastore[:disktype].should == 'file'
-  end
-
-  it 'should have property :safedirs' do
-      @datastore[:safedirs] = ['/','/bin']
-      @datastore[:safedirs].should == ['/','/bin']
-  end
-
-  it 'should have property :restrciteddirs' do
-      @datastore[:restricteddirs] = ['/','/tmp']
-      @datastore[:restricteddirs].should == ['/','/tmp']
   end
 
   parameter_tests = {

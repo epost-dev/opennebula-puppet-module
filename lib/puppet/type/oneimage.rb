@@ -23,6 +23,8 @@ Puppet::Type.newtype(:oneimage) do
 
   newproperty(:datastore) do
       desc "Selects the datastore"
+      defaultto :default
+      newvalues(/^\w+$/)
   end
 
   newproperty(:description) do

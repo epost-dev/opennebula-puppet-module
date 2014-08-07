@@ -29,13 +29,13 @@ Puppet::Type.newtype(:onedatastore) do
       desc "OneAdmin password"
   end
 
-  newproperty(:preset) do
-      desc "Use a preset. Valid values: filesystem, vmfs, iscsi, lvm, ceph"
-  end
+#  newproperty(:preset) do
+#      desc "Use a preset. Valid values: filesystem, vmfs, iscsi, lvm, ceph"
+#  end
 
-  newproperty(:cluster) do
-      desc "Add datastore to a cluster"
-  end
+#  newproperty(:cluster) do
+#      desc "Add datastore to a cluster"
+#  end
 
   newproperty(:type) do
       desc "Choose type of datastore. Valid values: images, system, files"
@@ -53,12 +53,12 @@ Puppet::Type.newtype(:onedatastore) do
       desc "Choose a disk type: file, block, rdb"
   end
 
-  newproperty(:safedirs, :array_matching => :all) do
-      desc "Array of safe directories"
-  end
+#  newproperty(:safedirs, :array_matching => :all) do
+#      desc "Array of safe directories"
+#  end
 
-  newproperty(:restricteddirs, :array_matching => :all) do
-      desc "Array of restricted directory names"
-  end
+#  newproperty(:restricteddirs, :array_matching => :all) do
+#      desc "Array of restricted directory names"
+#  end
 
 end

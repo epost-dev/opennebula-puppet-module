@@ -38,62 +38,62 @@ Puppet::Type.newtype(:onevnet) do
 
   newproperty(:network_address) do
     desc "Base network address for IPv4 networks."
-    validate do |value|
-        unless resource[:ensure] == :present and resource[:protocol] == :ipv4
-            fail("Network address is required when using IPv4 protocol")
-        end
-        if value == :undef and resource[:ensure] == :present
-            fail("network_address is required when using ipv4")
-        end
-    end
+#    validate do |value|
+#        unless resource[:ensure] == :present and resource[:protocol] == :ipv4
+#            fail("Network address is required when using IPv4 protocol")
+#        end
+#        if value == :undef and resource[:ensure] == :present
+#            fail("network_address is required when using ipv4")
+#        end
+#    end
   end
 
   newproperty(:network_mask) do
     desc "Base network mask for IPv4 networks."
-    validate do |value|
-        unless resource[:ensure] == :present and resource[:protocol] == :ipv4
-            fail("Network mask is required when using IPv4 protocol")
-        end
-        if value == :undef and resource[:ensure] == :present
-            fail("network_mask is required when using ipv4")
-        end
-    end
+#    validate do |value|
+#        unless resource[:ensure] == :present and resource[:protocol] == :ipv4
+#            fail("Network mask is required when using IPv4 protocol")
+#        end
+#        if value == :undef and resource[:ensure] == :present
+#            fail("network_mask is required when using ipv4")
+#        end
+#    end
   end
 
   newproperty(:siteprefix) do
-    desc "Siteprefix for IPv6 network"
-    validate do |value|
-        unless resource[:ensure] == :present and resource[:protocol] == :ipv6
-            fail("Siteprefix is required when using IPv6 protocol")
-        end
-    end
+#    desc "Siteprefix for IPv6 network"
+#    validate do |value|
+#        unless resource[:ensure] == :present and resource[:protocol] == :ipv6
+#            fail("Siteprefix is required when using IPv6 protocol")
+#        end
+#    end
   end
 
   newproperty(:globalprefix) do
     desc "Global prefix for IPv6 network"
-    validate do |value|
-        unless resource[:ensure] == :present and resource[:protocol] == :ipv6
-            fail("Global prefix is required when using IPv6 protocol")
-        end
-    end
+#    validate do |value|
+#        unless resource[:ensure] == :present and resource[:protocol] == :ipv6
+#            fail("Global prefix is required when using IPv6 protocol")
+#        end
+#    end
   end
 
   newproperty(:dnsservers, :array_matching => :all) do
       desc "Array of DNS servers to use"
-      validate do |value|
-          unless resource[:ensure] == :present and value != :undef
-              fail("DNS servers are required")
-          end
-      end
+#      validate do |value|
+#          unless resource[:ensure] == :present and value != :undef
+#              fail("DNS servers are required")
+#          end
+#      end
   end
 
   newproperty(:gateway) do
       desc "Gateway for network"
-      validate do |value|
-          unless resource[:ensure] == :present and value != :undef
-              fail("Gateway is required")
-          end
-      end
+#      validate do |value|
+#          unless resource[:ensure] == :present and value != :undef
+#              fail("Gateway is required")
+#          end
+#      end
   end
 
   newproperty(:type) do
@@ -128,24 +128,24 @@ Puppet::Type.newtype(:onevnet) do
 
   newproperty(:macstart) do
       desc "IPv6 MAC start address for ranged IPv6 networks"
-      validate do |value|
-        if resource[:protocol] == :ipv4
-            fail("You may not use IPv6 macstart attribute on IPv4 networks")
-        else
-             unless value =~ /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/ 
-               raise ArgumentError, "macstart must be a mac address, not #{value}"
-             end
-        end
-      end
+#      validate do |value|
+#        if resource[:protocol] == :ipv4
+#            fail("You may not use IPv6 macstart attribute on IPv4 networks")
+#        else
+#             unless value =~ /^([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}$/ 
+#               raise ArgumentError, "macstart must be a mac address, not #{value}"
+#             end
+#        end
+#      end
   end
 
   newproperty(:network_size) do
       desc "Network size for IPv6 ranged networks"
-      validate do |value|
-        unless resource[:protocol] == :ipv6
-            fail("You may not use network_site attribute on IPv4 networks. Your protocol is #{resource[:protocol]}")
-        end
-      end
+#      validate do |value|
+#        unless resource[:protocol] == :ipv6
+#            fail("You may not use network_site attribute on IPv4 networks. Your protocol is #{resource[:protocol]}")
+#        end
+#      end
   end
 
   newproperty(:leases, :array_matching => :all) do
@@ -165,7 +165,16 @@ Puppet::Type.newtype(:onevnet) do
     desc "Name of the physical bridge on each host to use."
   end
 
+  newproperty(:phydev) do
+    desc "Name of the physical device on which the vnet is available"
+  end
+
   newproperty(:context) do
     desc "A hash of context information to also store in the template."
+  end
+
+  # disable instances at the moment - needs to long to fetch all attributes
+  def self.instances
+    return []
   end
 end

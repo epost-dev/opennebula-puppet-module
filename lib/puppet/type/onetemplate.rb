@@ -90,6 +90,11 @@ Puppet::Type.newtype(:onetemplate) do
     desc "Array of nic definitions."
   end
 
+  newproperty(:nic_model) do
+      desc "Model to use for all network interfaces" +
+          "e.g. virtio for kvm"
+  end
+
   # Template Input/Output config
   newproperty(:graphics_type) do
     desc "Graphics type - vnc or sdl"
@@ -109,14 +114,10 @@ Puppet::Type.newtype(:onetemplate) do
 
   newproperty(:graphics_passwd) do
     desc "VNC password."
-
-    defaultto ""
   end
 
   newproperty(:graphics_keymap) do
     desc "keyboard configuration locale to use in the VNC display"
-
-    defaultto ""
   end
 
   # Template Context config
@@ -164,5 +165,10 @@ Puppet::Type.newtype(:onetemplate) do
   # policy section
   newproperty(:context_policy) do
       desc "Activate policy how to distribute vm using this template"
+  end
+
+  # disable instances at the moment - needs to long to fetch all attributes
+  def self.instances
+    return []
   end
 end

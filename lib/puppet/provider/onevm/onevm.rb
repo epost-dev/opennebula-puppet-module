@@ -6,89 +6,38 @@ Puppet::Type.type(:onevm).provide(:onevm) do
   desc "onevm provider"
 
   commands :onevm => "onevm"
+  commands :onetemplate => "onetemplate"
 
   # Create a VM with onevm by passing in a temporary template.
   def create
-    file = Tempfile.new("onevm-#{resource[:name].to_s}")
-
-    os_array = []
-    ["arch","kernel","initrd","root","kernel_cmd","bootloader","boot"].each { |k|
-      sym = "os_#{k.to_s}".to_sym
-      if resource[sym] then
-        os_array << "#{k.to_s.upcase} = #{resource[sym]}"
-      end
-    }
-
-    debug("Start building up template for create command")
-    template = ERB.new <<-EOF
-NAME = "<%= resource[:name].to_s %>"
-MEMORY = <%= resource[:memory].to_s %>
-CPU = <%= resource[:cpu].to_s %>
-VCPU = <%= resource[:vcpu].to_s %>
-
-OS = [ <%= os_array.join(", \n") %> ]
-
-<%
-resource[:disks].each { |disk|
-disk_array = []
-next if !disk.is_a?(Hash)
-next if disk.size < 1
-disk.each { |key,value|
-disk_array << key.to_s.upcase + " = " + value.to_s
-} %>
-DISK = [ <%= disk_array.join(", \n") %> ]
-<%
-}
-
-resource[:nics].each { |nic|
-nic_array = []
-next if !nic.is_a?(Hash)
-next if nic.size < 1
-nic.each { |key,value|
-nic_array << key.to_s.upcase + " = " + value.to_s
-} %>
-NIC = [ <%= nic_array.join(", \n") %> ]
-<%
-}
-
-graph_array = []
-["type","listen","port","passwd","keymap"].each { |param|
-res = ("graphics_"+param.to_s).to_sym
-if resource[res] then
-graph_array << param.to_s.upcase + " = " + resource[res]
-end
-}
-%>
-GRAPHICS = [ <%= graph_array.join(", \n") %> ]
-
-<%
-if resource[:context] then
-context_array = []
-resource[:context].each { |key,value|
-context_array << key.to_s.upcase + ' = "' + value.to_s + '"'
-} %>
-CONTEXT = [ <%= context_array.join(", \n") %> ]
-<%
-end
-%>
+      # create template content from template
+      template_output = "onetemplate show #{resource[:template]}", self.class.login
+      template_content = `#{template_output} | grep -A 100000 'TEMPLATE CONTENT' | grep -v 'TEMPLATE CONTENT'`
+      file = Tempfile.new("onevm-#{resource[:name]}")
+      template = ERB.new <<-EOF
+NAME = <%= resource[:name] %>
+<%= template_content %>
 EOF
-
-    debug("Created template, lets try and parse it")
-    tempfile = template.result(binding)
-    debug("template is:\n#{tempfile}")
-    file.write(tempfile)
-    file.close
-    onevm "create", file.path
+      
+      tempfile = template.result(binding)
+      file.write(tempfile)
+      file.close
+      self.debug "Creating onevm with template content: #{tempfile}"
+      output = "onevm create #{file.path}", self.class.login
+      self.debug "Running command #{output}"
+      `#{output}`
   end
 
   # Destroy a VM using onevm delete
   def destroy
-    onevm "delete", resource[:name]
+    output = "onevm delete #{resource[:name]} ", self.class.login
+    `#{output}`
   end
 
   # Return a list of existing VM's using the onevm -x list command
   def self.onevm_list
-    xml = REXML::Document.new(`onevm -x list`)
+    output = "onevm list --xml ", login
+    xml = REXML::Document.new(`#{output}`)
     onevm = []
     xml.elements.each("VM_POOL/VM/NAME") do |element|
       onevm << element.text
@@ -98,7 +47,10 @@ EOF
 
   # Check if a VM exists by scanning the onevm list
   def exists?
-    self.class.onevm_list().include?(resource[:name])
+    if self.class.onevm_list().include?(resource[:name])
+        self.debug "Found VM: #{resource[:name]}"
+        true
+    end
   end
 
   # Return the full hash of all existing onevm resources
@@ -112,22 +64,48 @@ EOF
       hash[:name] = vm
 
       # Open onevm xml output using REXML
-      xml = REXML::Document.new(`onevm -x show #{vm}`)
+      output = "onevm show #{vm} --xml ", login
+      xml = REXML::Document.new(`#{output}`)
 
       # Traverse the XML document and populate the common attributes
-      xml.elements.each("VM/MEMORY") { |element|
-        hash[:memory] = element.text
-      }
-      xml.elements.each("VM/CPU") { |element|
-        hash[:cpu] = element.text
-      }
-      xml.elements.each("VM/VCPU") { |element|
-        hash[:vcpu] = element.text
+      xml.elements.each("VM/TEMPLATE/TEMPLATE_ID") { |element|
+          template_output = "onetemplate show #{element} --xml ", login
+          template_xml = REXML::Document.new(`#{template_output}`)
+          template_xml.elements.each("VMTEMPLATE/NAME") { |template_element|
+            hash[:template] = template_element.text
+          }
       }
 
       instances << new(hash)
     end
 
     instances
+  end
+
+  def self.login
+    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
+    user = credentials[0]
+    password = credentials[1]
+    login = " --user #{user} --password #{password}"
+    login
+  end
+
+  # getters
+  def template
+      result = ''
+      output = "onevm show #{resource[:name]} --xml ", self.class.login
+      xml = REXML::Document.new(`#{output}`)
+      xml.elements.each("VM/TEMPLATE/TEMPLATE_ID") { |element|
+          template_output = "onetemplate show #{element} --xml ", self.class.login
+          template_xml = REXML::Document.new(`#{template_output}`)
+          template_xml.elements.each("VMTEMPLATE/NAME") { |template_element|
+            result = template_element.text
+          }
+      }
+      result
+  end
+  # setters
+  def template=(value)
+      raise "Can not modify a VM template"
   end
 end

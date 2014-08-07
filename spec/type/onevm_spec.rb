@@ -32,11 +32,6 @@ describe res_type do
       @vm[:template].should == 'abc'
   end
 
-  it 'should have property :amount' do
-      @vm[:amount] = '2'
-      @vm[:amount].should == '2'
-  end
-
   parameter_tests = {
     :name => {
       :valid => ["test", "foo"],

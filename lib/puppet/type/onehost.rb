@@ -31,11 +31,8 @@ EOS
     desc "Virtualization Driver"
   end
 
-  newproperty(:tm_mad) do
-    desc "Transfer Driver"
+  newproperty(:vn_mad) do
+      desc "Network Driver"
   end
 
-  newproperty(:cluster) do
-      desc "Cluster to add a host to"
-  end
 end
