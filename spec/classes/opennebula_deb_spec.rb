@@ -132,6 +132,14 @@ describe 'one' do
               command   = "\/usr\/share\/one\/hooks\/dnsupdate\.sh",
               arguments = "\$TEMPLATE",
               remote    = "no" \]
+          VM_HOOK = \[
+            name      = "dnsupdate_custom",
+            on        = "CUSTOM",
+            state     = "PENDING",
+            lcm_state = "LCM_INIT",
+            command   = "\/usr\/share\/one\/hooks\/dnsupdate\.sh",
+            arguments = "\$TEMPLATE",
+            remote    = "no" \]
           }
           expected_host_hook=%q{
             HOST_HOOK = \[

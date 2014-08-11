@@ -680,9 +680,15 @@ HOST_HOOK = [
 
 <%- if @vm_hook_scripts != nil -%>
   <%- @vm_hook_scripts.each_key do |hook| -%>
-VM_HOOK = [
+  VM_HOOK = [
   name      = "<%= hook %>",
   on        = "<%= @vm_hook_scripts[hook]['state'] %>",
+  <%- if @vm_hook_scripts[hook]['custom_state'] -%>
+  state     = "<%= @vm_hook_scripts[hook]['custom_state'] %>",
+  <% end -%>
+  <%- if @vm_hook_scripts[hook]['lcm_state'] -%>
+  lcm_state     = "<%= @vm_hook_scripts[hook]['lcm_state'] %>",
+  <% end -%>
   command   = "<%= @vm_hook_scripts[hook]['command'] %>",
   arguments = "<%= @vm_hook_scripts[hook]['arguments'] %>",
   remote    = "<%= @vm_hook_scripts[hook]['remote'] %>" ]
