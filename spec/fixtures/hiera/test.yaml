@@ -17,6 +17,14 @@ one::head::hook_scripts:
       command:    '/usr/share/one/hooks/dnsupdate.sh'
       arguments:  '$TEMPLATE'
       remote:      'no'
+    dnsupdate_custom:
+      state:        'CUSTOM'
+      custom_state: 'PENDING'
+      lcm_state:    'LCM_INIT'
+      command:    '/usr/share/one/hooks/dnsupdate.sh'
+      arguments:  '$TEMPLATE'
+      remote:      'no'
+
   HOST:
     error:
       state:      'ERROR'
