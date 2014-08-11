@@ -54,6 +54,8 @@ tabs:
             User.update_password: true
             User.quotas_dialog: true
             User.chgrp: true
+            User.addgroup: true
+            User.delgroup: true
             User.chauth: true
             User.delete: true
     groups-tab:
@@ -182,6 +184,7 @@ tabs:
             input_output: true
             context: true
             scheduling: true
+            other: true
     images-tab:
         panel_tabs:
             image_info_panel: true
