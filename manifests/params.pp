@@ -49,7 +49,13 @@ class one::params (
 
   $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh'),
   $ssh_priv_key_param = hiera('one::head::ssh_priv_key',undef),
-  $ssh_pub_key  = hiera('one::head::ssh_pub_key',undef)
+  $ssh_pub_key  = hiera('one::head::ssh_pub_key',undef),
+
+  $xmlrpc_maxconn            = hiera('one::oned::xmlrpc_maxconn', '15'),
+  $xmlrpc_maxconn_backlog    = hiera('one::oned::xmlrpc_maxconn_backlog', '15'),
+  $xmlrpc_keepalive_timeout  = hiera('one::oned::xmlrpc_keepalive_timeout', '15'),
+  $xmlrpc_keepalive_max_conn = hiera('one::oned::xmlrpc_keepalive_max_conn', '30'),
+  $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15')
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
@@ -64,6 +70,9 @@ class one::params (
     validate_string($ssh_priv_key_param)
     $ssh_priv_key = $ssh_priv_key_param
   }
+
+  # ensure xmlrpctuning is in string
+  validate_string($xmlrpc_maxconn, $xmlrpc_maxconn_backlog, $xmlrpc_keepalive_timeout, $xmlrpc_keepalive_max_conn, $xmlrpc_timeout)
 
   #
   # hook script installation

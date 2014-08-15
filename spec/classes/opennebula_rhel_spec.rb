@@ -132,6 +132,9 @@ describe 'one' do
           } }
           it { expect { should contain_class('one::oned') }.to raise_error(Puppet::Error) }
         end
+        context 'with xmlrpc tuning' do
+          it { should contain_file('/etc/one/oned.conf').with_content(/MAX_CONN = 5000/) }
+        end
         context 'with hookscripts configured in oned.conf' do
           expected_vm_hook=%q{
             VM_HOOK = \[

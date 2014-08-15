@@ -89,3 +89,5 @@ one::node::preseed::ohd_deb_repo: 'deb http://example.com/debian/ one/'
 
 one::node::preseed::data:
   does: 'notmatter'
+
+one::oned::xmlrpc_maxconn: '5000'

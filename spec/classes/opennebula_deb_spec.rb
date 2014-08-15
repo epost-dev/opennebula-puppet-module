@@ -132,7 +132,7 @@ describe 'one' do
               command   = "\/usr\/share\/one\/hooks\/dnsupdate\.sh",
               arguments = "\$TEMPLATE",
               remote    = "no" \]
-          VM_HOOK = \[
+            VM_HOOK = \[
             name      = "dnsupdate_custom",
             on        = "CUSTOM",
             state     = "PENDING",
@@ -155,6 +155,9 @@ describe 'one' do
           expected_host_hook=expected_host_hook.gsub(/\s+/, '\\s+')
           it { should contain_file(oned_config).with_content(/^#{expected_vm_hook}/m) }
           it { should contain_file(oned_config).with_content(/^#{expected_host_hook}/m) }
+        end
+        context 'with xmlrpc tuning' do
+          it { should contain_file('/etc/one/oned.conf').with_content(/MAX_CONN = 5000/) }
         end
         context 'with default hook scripts rolled out' do
           it { should contain_file('/usr/share/one/hooks').with_source('puppet:///modules/one/hookscripts') }
