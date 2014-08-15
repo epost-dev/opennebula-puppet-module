@@ -636,7 +636,8 @@ HM_MAD = [
 #    remote    = "no" ]
 
 <%- if @host_hook_scripts != nil -%>
-  <%- @host_hook_scripts.each_key do |hook| -%>
+  <%- host_hook_keys = @host_hook_scripts.keys.sort -%>
+  <%- host_hook_keys.each do |hook| -%>
 HOST_HOOK = [
     name      = "<%= hook %>",
     on        = "<%= @host_hook_scripts[hook]['state'] %>",
@@ -679,7 +680,8 @@ HOST_HOOK = [
 #  remote    = "no" ]
 
 <%- if @vm_hook_scripts != nil -%>
-  <%- @vm_hook_scripts.each_key do |hook| -%>
+  <%- vm_hook_keys = @vm_hook_scripts.keys.sort -%>
+  <%- vm_hook_keys.each do |hook| -%>
   VM_HOOK = [
   name      = "<%= hook %>",
   on        = "<%= @vm_hook_scripts[hook]['state'] %>",

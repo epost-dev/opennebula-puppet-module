@@ -132,7 +132,7 @@ describe 'one' do
               command   = "\/usr\/share\/one\/hooks\/dnsupdate\.sh",
               arguments = "\$TEMPLATE",
               remote    = "no" \]
-          VM_HOOK = \[
+            VM_HOOK = \[
             name      = "dnsupdate_custom",
             on        = "CUSTOM",
             state     = "PENDING",
