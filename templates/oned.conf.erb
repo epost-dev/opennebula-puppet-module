@@ -89,27 +89,27 @@ VNC_BASE_PORT = 5900
 #  These are configuration parameters for oned's xmlrpc-c server
 #
 #  MAX_CONN: Maximum number of simultaneous TCP connections the server
-#  will maintain
+#  will maintain - default 15
 #
 #  MAX_CONN_BACKLOG: Maximum number of TCP connections the operating system
 #  will accept on the server's behalf without the server accepting them from
-#  the operating system
+#  the operating system - default 15
 #
 #  KEEPALIVE_TIMEOUT: Maximum time in seconds that the server allows a
-#  connection to be open between RPCs
+#  connection to be open between RPCs - default 15
 #
 #  KEEPALIVE_MAX_CONN: Maximum number of RPCs that the server will execute on
-#  a single connection
+#  a single connection - default 30
 #
 #  TIMEOUT: Maximum time in seconds the server will wait for the client to
-#  do anything while processing an RPC
+#  do anything while processing an RPC - default 15
 #*******************************************************************************
 
-#MAX_CONN            = 15
-#MAX_CONN_BACKLOG    = 15
-#KEEPALIVE_TIMEOUT   = 15
-#KEEPALIVE_MAX_CONN  = 30
-#TIMEOUT             = 15
+MAX_CONN = <%= scope.lookupvar('one::params::xmlrpc_maxconn') %>
+MAX_CONN_BACKLOG = <%= scope.lookupvar('one::params::xmlrpc_maxconn_backlog') %>
+KEEPALIVE_TIMEOUT = <%= scope.lookupvar('one::params::xmlrpc_keepalive_timeout') %>
+KEEPALIVE_MAX_CONN = <%= scope.lookupvar('one::params::xmlrpc_keepalive_max_conn') %>
+TIMEOUT = <%= scope.lookupvar('one::params::xmlrpc_timeout') %>
 
 #*******************************************************************************
 # Physical Networks configuration
