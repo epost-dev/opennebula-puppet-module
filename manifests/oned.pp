@@ -30,8 +30,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned (
-    $backend    = $one::backend,
-    $ldap       = $one::ldap
+    $backend           = $one::backend,
+    $ldap              = $one::ldap,
+    $hook_scripts_path = $one::hook_scripts_path,
 ) {
   include one::prerequisites
   include one::params

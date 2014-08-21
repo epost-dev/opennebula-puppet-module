@@ -19,7 +19,7 @@
 class one::oned::config(
   $ssh_priv_key         = $one::params::ssh_priv_key,
   $ssh_pub_key          = $one::params::ssh_pub_key,
-  $hook_scripts_path    = $one::params::hook_scripts_path,
+  $hook_scripts_path    = $one::oned::hook_scripts_path,
   $hook_scripts         = $one::params::hook_scripts,
   $vm_hook_scripts      = $one::params::vm_hook_scripts,
   $host_hook_scripts    = $one::params::host_hook_scripts,
