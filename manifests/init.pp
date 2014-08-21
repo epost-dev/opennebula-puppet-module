@@ -113,6 +113,7 @@ class one ( $oneid              = 'one-cloud',
             $backend            = 'sqlite',
             $ha_setup           = false,
             $puppetdb           = false,
+            $hook_scripts_path  = $one::params::hook_scripts_path,
             ) {
   include one::params
   if ($oned) {
