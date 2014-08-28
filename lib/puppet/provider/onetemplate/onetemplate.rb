@@ -5,7 +5,8 @@ require 'puppet/util/opennebula'
 
 Puppet::Type.type(:onetemplate).provide(:onetemplate) do
   desc "onetemplate provider"
-  extend Puppet::Util::Opennebula::CLI
+
+  include Puppet::Util::Opennebula::CLI
   extend Puppet::Util::Opennebula::Properties
 
   commands :onetemplate => "onetemplate"
@@ -40,28 +41,24 @@ Puppet::Type.type(:onetemplate).provide(:onetemplate) do
 
   # Create a VM template with onetemplate by passing in a temporary template definition file.
   def create
+    content = Puppet::Util::Opennebula::Templates.onetemplate.result(binding)
     file = Tempfile.new("onetemplate-#{resource[:name]}")
-    template = ERB.new(Puppet::Util::Opennebula::Templates.onetemplate)
-    tempfile = template.result(binding)
-    file.write(tempfile)
+    file.write content
     file.close
-    self.debug "Creating template using #{tempfile}"
-    output = "onetemplate create #{file.path} ", self.class.login
-return output
-    `#{output}`
+    self.debug "Creating template using #{content}"
+    self.invoke 'create', file.path
     file.delete
   end
 
   # Destroy a VM using onevm delete
   def destroy
-    output = "onetemplate delete #{resource[:name]} ", self.class.login
-    `#{output}`
+    self.invoke 'delete', resource[:name]
   end
 
   # Return a list of existing VM's using the onevm -x list command
   def self.onetemplate_list
-    output = "onetemplate list --xml ", login
-    xml = REXML::Document.new(`#{output}`)
+    output = invoke 'list', '--xml'
+    xml = REXML::Document.new(output)
     onevm = []
     xml.elements.each("VMTEMPLATE_POOL/VMTEMPLATE/NAME") do |element|
       onevm << element.text
@@ -71,25 +68,25 @@ return output
 
   # Check if a VM exists by scanning the onevm list
   def exists?
-    if self.class.onetemplate_list().include?(resource[:name])
-        self.debug "Found template #{resource[:name]}"
-        true
-    end
+    self.class.onetemplate_list().include?(resource[:name])
   end
 
   # Return the full hash of all existing onevm resources
-  def self.instances
-    instances = []
-    onetemplate_list.each do |template|
+  def self.resources
+    onetemplate_list.map do |template|
       hash = {}
 
       # Obvious resource attributes
       hash[:provider] = self.name.to_s
       hash[:name] = template
 
+      hash[:disks] = []
+      hash[:nics] = []
+      hash[:context_files] = []
+
       # Open onevm xml output using REXML
-      output = "onetemplate show #{template} --xml ", login
-      xml = REXML::Document.new(`#{output}`)
+      output = invoke('show', template, '--xml')
+      xml = REXML::Document.new(output)
 
       # Traverse the XML document and populate the common attributes
       xml.elements.each("VMTEMPLATE/TEMPLATE/MEMORY") { |element|
@@ -111,7 +108,7 @@ return output
         hash[:graphics_keymap] = element.text
       }
       xml.elements.each("VMTEMPLATE/TEMPLATE/GRAPHICS/LISTEN") { |element|
-        hash[:graphics_listen] = elemetn.text
+        hash[:graphics_listen] = element.text
       }
       xml.elements.each("VMTEMPLATE/TEMPLATE/GRAPHICS/TYPE") { |element|
         hash[:graphics_type] = element.text
@@ -137,10 +134,12 @@ return output
       xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/SSH_PUBLIC_KEY") { |element|
         hash[:context_ssh_pubkey] = element.text
       }
-
-      instances << new(hash)
+      new(hash)
     end
-
-    instances
+  end
+  class << self
+    alias instances resources
+  end
+  def context
   end
 end

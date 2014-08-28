@@ -1,0 +1,53 @@
+<TEMPLATE>
+  <NAME>app</NAME>
+  <MEMORY>256</MEMORY>
+  <CPU>2</CPU>
+  <VCPU></VCPU>
+
+  <OS>
+
+
+
+
+
+
+
+  </OS>
+
+  <DISK>
+
+    <IMAGE>one</IMAGE>
+
+    <IMAGE>two</IMAGE>
+
+  </DISK>
+
+  <NIC>
+    
+    <NETWORK>one</NETWORK>
+  </NIC>
+
+  <NIC>
+    
+    <NETWORK>two</NETWORK>
+  </NIC>
+
+
+  <GRAPHICS>
+<TYPE>vnc</TYPE>
+<LISTEN>0.0.0.0</LISTEN>
+
+
+
+  </GRAPHICS>
+  <FEATURES>
+
+
+  </FEATURES>
+  <CONTEXT>
+
+
+
+
+  </CONTEXT>
+</TEMPLATE>

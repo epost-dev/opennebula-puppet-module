@@ -1,6 +1,6 @@
 module Puppet::Util::Opennebula::Templates
   def self.onetemplate
-    <<-EOF
+    ERB.new <<-EOF
 <TEMPLATE>
   <NAME><%=   resource[:name]   %></NAME>
   <MEMORY><%= resource[:memory] %></MEMORY>
