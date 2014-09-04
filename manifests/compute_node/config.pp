@@ -136,14 +136,18 @@ class one::compute_node::config (
     require => File['/var/lib/one/etc'],
   }
 
-  $data_keys = keys ($data)
-  one::compute_node::add_kickstart { $data_keys:
-    data => $data,
+  if $data {
+    $data_keys = keys ($data)
+    one::compute_node::add_kickstart { $data_keys:
+      data => $data,
+    }
   }
 
-  $preseed_keys = keys ($preseed_data)
-  one::compute_node::add_preseed { $preseed_keys:
-    data => $preseed_data,
+  if $preseed_data {
+    $preseed_keys = keys ($preseed_data)
+    one::compute_node::add_preseed { $preseed_keys:
+      data => $preseed_data,
+    }
   }
 
   file { '/var/lib/one/bin/imaginator':
