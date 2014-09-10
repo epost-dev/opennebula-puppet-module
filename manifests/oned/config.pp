@@ -17,8 +17,6 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::config(
-  $ssh_priv_key         = $one::params::ssh_priv_key,
-  $ssh_pub_key          = $one::params::ssh_pub_key,
   $hook_scripts_path    = $one::params::hook_scripts_path,
   $hook_scripts         = $one::params::hook_scripts,
   $vm_hook_scripts      = $one::params::vm_hook_scripts,
@@ -62,16 +60,6 @@ class one::oned::config(
     purge   => 'true',
     force   => 'true',
     source  => $hook_scripts_path,
-  }
-
-  file { '/var/lib/one/.ssh/id_dsa':
-    content => $ssh_priv_key,
-    mode    => '0600',
-  }
-
-  file { '/var/lib/one/.ssh/id_dsa.pub':
-    content => $ssh_pub_key,
-    mode    => '0644',
   }
 
   if ($one::backend == 'mysql') {
