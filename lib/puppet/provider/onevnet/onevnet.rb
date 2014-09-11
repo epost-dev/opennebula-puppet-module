@@ -139,6 +139,33 @@ EOF
     end
   end
 
+  def flush
+    file = Tempfile.new('onevnet')
+    file << @property_hash.map { |k, v|
+      unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
+        case k
+        #when :dnsservers
+        when :network_end
+          [ 'IP_END', v ]
+        when :network_start
+          [ 'IP_START', v ]
+        when :type
+          # Is it really updatable ?
+          v.to_s.upcase == 'FIXED' ? 1 : 0
+        when :vlanid
+          [ 'VLAN_ID', v ]
+        else
+          [ k.to_s.upcase, v ]
+        end
+      end
+    }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    file.close
+    self.debug(IO.read file.path)
+    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
+    `#{output}`
+    file.delete
+  end
+
   # login credentials
   def self.login
     credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
@@ -148,194 +175,4 @@ EOF
     login
   end
 
-  # setters
-  def network_address=(value)
-    self.debug "Setting", self.name.to_s, " address on resource onevnet #{resource[:name]} to #{value}"
-    file = Tempfile.new("onevnet-network_address-#{resource[:name]}")
-    template = ERB.new <<-EOF
-NETWORK_ADDRESS = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    self.debug "Wrote tempfile: #{file.path} for update of ", self.name.to_s
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    self.debug "Will run #{output} to update ", self.name.to_s
-    `#{output}`
-    file.delete
-    @property_hash[:network_address] = value
-  end
-
-  def network_mask=(value)
-    self.debug "Setting netowrk mask for resource onevnet #{resource[:name]} to #{value}"
-    file = Tempfile.new("onevnet-network_mask-#{resource[:name]}")
-    template = ERB.new <<-EOF
-NETWORK_MASK = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:network_mask] = value
-  end
-
-  def siteprefix=(value)
-    file = Tempfile.new("onevnet-siteprefix-#{resource[:name]}")
-    template = ERB.new <<-EOF
-SITE_PREFIX = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:siteprefix] = value
-  end
-
-  def globalprefix=(value)
-    file = Tempfile.new("onevnet-globalprefix-#{resource[:name]}")
-    template = ERB.new <<-EOF
-GLOBAL_PREFIX = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:globalprefix] = value
-  end
-
-  def dnsservers=(value)
-    file = Tempfile.new("onevnet-dnsservers-#{resource[:name]}")
-    template = ERB.new <<-EOF
-DNSSERVERS = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:dnsservers] = value
-  end
-
-  def gateway=(value)
-    file = Tempfile.new("onevnet-gateway-#{resource[:name]}")
-    template = ERB.new <<-EOF
-GATEWAY = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:gateway] = value
-  end
-
-  def type=(value)
-    file = Tempfile.new("onevnet-type-#{resource[:name]}")
-    template = ERB.new <<-EOF
-TYPE = <% value.to_s.upcase == 'FIXED' ? 1 : 0 %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:type] = value
-  end
-
-  def network_start=(value)
-    file = Tempfile.new("onevnet-network_start-#{resource[:name]}")
-    template = ERB.new <<-EOF
-IP_START = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.open
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.close
-    @property_hash[:network_start] = value
-  end
-
-  def network_end=(value)
-    file = Tempfile.new("onevnet-network_end-#{resource[:name]}")
-    template = ERB.new <<-EOF
-IP_END = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:network_end] = value
-  end
-
-  def model=(value)
-    file = Tempfile.new("onevnet-model-#{resource[:name]}")
-    template = ERB.new <<-EOF
-MODEL = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:model] = value
-  end
-
-  def vlanid=(value)
-    file = Tempfile.new("onevnet-vlanid-#{resource[:name]}")
-    template = ERB.new <<-EOF
-VLAN_ID = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:vlanid] = value
-  end
-
-  def bridge=(value)
-    file = Tempfile.new("onevnet-bridge-#{resource[:name]}")
-    template = ERB.new <<-EOF
-BRIDGE = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:bridge] = value
-  end
-
-  def phydev=(value)
-    file = Tempfile.new("onevnet-phydev-#{resource[:name]}")
-    template = ERB.new <<-EOF
-PHYDEV = <%= value %>
-EOF
-    tempfile = template.result(binding)
-    file.write(tempfile)
-    file.close
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
-    file.delete
-    @property_hash[:phydev] = value
-  end
-
-  def context=(value)
-    # todo
-  end
 end
