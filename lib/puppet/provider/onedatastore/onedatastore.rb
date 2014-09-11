@@ -20,6 +20,8 @@ Puppet::Type.type(:onedatastore).provide(:onedatastore) do
 
   commands :onedatastore => "onedatastore"
 
+  mk_resource_methods
+
   def create
     file = Tempfile.new("onedatastore-#{resource[:name]}")
     template = ERB.new <<-EOF
@@ -35,28 +37,18 @@ EOF
     file.close
     output = "onedatastore create #{file.path} ", self.class.login
     `#{output}`
+    @property_hash[:ensure] = :present
   end
 
   def destroy
       output = "onedatastore delete #{resource[:name]} ", self.class.login()
       self.debug "Running command #{output}"
       `#{output}`
+    @property_hash.clear
   end
 
   def exists?
-    if self.class.onedatastore_list().include?(resource[:name])
-        self.debug "Found datastore #{resource[:name]}"
-        true
-    end
-  end
-
-  def self.onedatastore_list
-    xml = REXML::Document.new(`onedatastore list -x`)
-    list = []
-    xml.elements.each("DATASTORE_POOL/DATASTORE/NAME") do |datastore|
-      list << datastore.text
-    end
-    list
+    @property_hash[:ensure] == :present
   end
 
   def self.instances
@@ -71,7 +63,15 @@ EOF
         :disktype => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.elements["DISK_TYPE"].text]
        )
     end
+  end
 
+  def self.prefetch(resources)
+    datastores = instances
+    resources.keys.each do |name|
+      if provider = datastores.find{ |datastore| datastore.name == name }
+        resources[name].provider = provider
+      end
+    end
   end
 
   # login credentials
@@ -81,54 +81,6 @@ EOF
     password = credentials[1]
     login = " --user #{user} --password #{password}"
     login
-  end
-
-  #getters
-  def disktype
-      result = ''
-      output = "onedatastore show --xml #{resource[:name]} ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("DATASTORE/DISK_TYPE") { |element|
-          case element.text
-          when '0'
-              result = 'file'
-          when '1'
-              result = 'block'
-          when '2'
-              result = 'rdb'
-          end
-      }
-      result
-  end
-
-  def dm
-      result = ''
-      output = "onedatastore show --xml #{resource[:name]} ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("DATASTORE/TEMPLATE/DS_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def tm
-      result = ''
-      output = "onedatastore show --xml #{resource[:name]} ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("DATASTORE/TEMPLATE/TM_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def type
-      result = ''
-      output = "onedatastore show --xml #{resource[:name]} ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("DATASTORE/TEMPLATE/TYPE") { |element|
-          result = element.text
-      }
-      result
   end
 
   #setters
