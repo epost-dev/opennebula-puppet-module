@@ -101,69 +101,46 @@ EOF
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    instances = []
-    onetemplate_list.each do |template|
-      hash = {}
-
-      # Obvious resource attributes
-      hash[:provider] = self.name.to_s
-      hash[:name] = template
-
-      # Open onevm xml output using REXML
-      output = "onetemplate show #{template} --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-
-      # Traverse the XML document and populate the common attributes
-      xml.elements.each("VMTEMPLATE/TEMPLATE/MEMORY") { |element|
-        hash[:memory] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/CPU") { |element|
-        hash[:cpu] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/VCPU") { |element|
-        hash[:vcpu] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/DISK/IMAGE") { |element|
-        hash[:disks] << element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/FEATURES/ACPI") { |element|
-        hash[:acpi] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/GRAPHICS/KEYMAP") { |element|
-        hash[:graphics_keymap] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/GRAPHICS/LISTEN") { |element|
-        hash[:graphics_listen] = elemetn.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/GRAPHICS/TYPE") { |element|
-        hash[:graphics_type] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/NIC/NETWORK") { |element|
-        hash[:nics] << element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/NIC/MODEL") { |element|
-        hash[:nic_model] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/OS/ARCH") { |element|
-        hash[:os_arch] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/OS/BOOT") { |element|
-        hash[:os_boot] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/FILES_DS") { |element|
-        hash[:context_files] << element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/NETWORK") { |element|
-        hash[:context_network] = element.text
-      }
-      xml.elements.each("VMTEMPLATE/TEMPLATE/CONTEXT/SSH_PUBLIC_KEY") { |element|
-        hash[:context_ssh_pubkey] = element.text
-      }
-
-      instances << new(hash)
+    output = "onetemplate list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("VMTEMPLATE_POOL/VMTEMPLATE") do |template|
+      elements = template.elements
+      new(
+        :name                      => elements["NAME"].text,
+        :ensure                    => :present,
+        :acpi                      => (elements["TEMPLATE/FEATURES/ACPI"].text unless elements["TEMPLATE/FEATURES/ACPI"].nil?),
+        :context                   => (elements["TEMPLATE/CONTEXT"].text unless elements["TEMPLATE/CONTEXT"].nil?),
+        :context_files             => (elements["TEMPLATE/CONTEXT/FILES_DS"].text.to_a unless elements["TEMPLATE/CONTEXT/FILES_DS"].nil?),
+        :context_network           => (elements["TEMPLATE/CONTEXT/NETWORK"].text unless elements["TEMPLATE/CONTEXT/NETWORK"].nil?),
+        :context_onegate           => (elements["TEMPLATE/CONTEXT/ONEGATE"].text unless elements["TEMPLATE/CONTEXT/ONEGATE"].nil?),
+        :context_placement_cluster => (elements["TEMPLATE/CONTEXT/PLACEMENT/CLUSTER"].text unless elements["TEMPLATE/CONTEXT/PLACEMENT/CLUSTER"].nil?),
+        :context_placement_host    => (elements["TEMPLATE/CONTEXT/PLACEMENT/HOST"].text unless elements["TEMPLATE/CONTEXT/PLACEMENT/HOST"].nil?),
+        :context_policy            => (elements["TEMPLATE/CONTEXT/POLICY"].text unless elements["TEMPLATE/CONTEXT/POLICY"].nil?),
+        :context_ssh               => (elements["TEMPLATE/CONTEXT/SSH"].text unless elements["TEMPLATE/CONTEXT/SSH"].nil?),
+        :context_ssh_pubkey        => (elements["TEMPLATE/CONTEXT/SSH_PUBLIC_KEY"].text unless elements["TEMPLATE/CONTEXT/SSH_PUBLIC_KEY"].nil?),
+        :context_variables         => (elements["TEMPLATE/CONTEXT/VARIABLES"].text unless elements["TEMPLATE/CONTEXT/VARIABLES"].nil?),
+        :cpu                       => (elements["TEMPLATE/CPU"].text unless elements["TEMPLATE/CPU"].nil?),
+        :disks                     => (elements["TEMPLATE/DISK/IMAGE"].text.to_a unless elements["TEMPLATE/DISK/IMAGE"].nil?),
+        :graphics_keymap           => (elements["TEMPLATE/GRAPHICS/KEYMAP"].text unless elements["TEMPLATE/GRAPHICS/KEYMAP"].nil?),
+        :graphics_listen           => (elements["TEMPLATE/GRAPHICS/LISTEN"].text unless elements["TEMPLATE/GRAPHICS/LISTEN"].nil?),
+        :graphics_passwd           => (elements["TEMPLATE/GRAPHICS/PASSWORD"].text unless elements["TEMPLATE/GRAPHICS/PASSWORD"].nil?),
+        :graphics_port             => (elements["TEMPLATE/GRAPHICS/PORT"].text unless elements["TEMPLATE/GRAPHICS/PORT"].nil?),
+        :graphics_type             => (elements["TEMPLATE/GRAPHICS/TYPE"].text unless elements["TEMPLATE/GRAPHICS/TYPE"].nil?),
+        :memory                    => (elements["TEMPLATE/MEMORY"].text unless elements["TEMPLATE/MEMORY"].nil?),
+        :nic_model                 => (elements["TEMPLATE/NIC/MODEL"].text unless elements["TEMPLATE/NIC/MODEL"].nil?),
+        :nics                      => (elements["TEMPLATE/NIC/NETWORK"].text.to_a unless elements["TEMPLATE/NIC/NETWORK"].nil?),
+        :os_arch                   => (elements["TEMPLATE/OK/ARCH"].text unless elements["TEMPLATE/OK/ARCH"].nil?),
+        :os_boot                   => (elements["TEMPLATE/OK/BOOT"].text unless elements["TEMPLATE/OK/BOOT"].nil?),
+        :os_bootloader             => (elements["TEMPLATE/OK/BOOTLOADER"].text unless elements["TEMPLATE/OK/BOOTLOADER"].nil?),
+        :os_initrd                 => (elements["TEMPLATE/OK/INITRD"].text unless elements["TEMPLATE/OK/INITRD"].nil?),
+        :os_kernel                 => (elements["TEMPLATE/OK/KERNEL"].text unless elements["TEMPLATE/OK/KERNEL"].nil?),
+        :os_kernel_cmd             => (elements["TEMPLATE/OK/KERNELCMD"].text unless elements["TEMPLATE/OK/KERNELCMD"].nil?),
+        :os_root                   => (elements["TEMPLATE/OK/ROOT"].text unless elements["TEMPLATE/OK/ROOT"].nil?),
+        :pae                       => (elements["TEMPLATE/FEATURES/PAE"].text unless elements["TEMPLATE/FEATURES/PAE"].nil?),
+        :pci_bridge                => (elements["TEMPLATE/FEATURES/PCI_BRIDGE"].text unless elements["TEMPLATE/FEATURES/PCI_BRIDGE"].nil?),
+        :vcpu                      => (elements["TEMPLATE/VCPU"].text unless elements["TEMPLATE/VCPU"].nil?)
+      )
     end
 
-    instances
   end
 
   # login credentials
