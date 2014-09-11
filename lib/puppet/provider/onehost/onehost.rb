@@ -35,28 +35,16 @@ Puppet::Type.type(:onehost).provide(:onehost) do
   end
 
   def self.instances
-    instances = []
-    onehost_list().each do |host|
-      hash = {}
-      hash[:provider] = self.name.to_s
-      hash[:name] = host
-
-      output = "onehost show #{host} --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/IM_MAD") { |element|
-          hash[:im_mad] = element.text
-      }
-      xml.elements.each("HOST/VM_MAD") { |element|
-          hash[:vm_mad] = element.text
-      }
-      xml.elements.each("HOST/VN_MAD") { |element|
-          hash[:vn_mad] = element.text
-      }
-
-      instances << new(hash)
+    output = "onehost list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("HOST_POOL/HOST") do |host|
+      new(
+        :name   => host.elements["NAME"].text,
+        :ensure => :present,
+        :im_mad => host.elements["IM_MAD"].text,
+        :vm_mad => host.elements["VM_MAD"].text,
+        :vn_mad => host.elements["VN_MAD"].text
+      )
     end
-
-    instances
   end
 
   # login credentials
