@@ -7,31 +7,22 @@ Puppet::Type.type(:onehost).provide(:onehost) do
 
   commands :onehost => "onehost"
 
+  mk_resource_methods
+
   def create
     output = "onehost create #{resource[:name]} --im #{resource[:im_mad]} --vm #{resource[:vm_mad]} --net #{resource[:vn_mad]} ", self.class.login
     `#{output}`
+    @property_hash[:ensure] = :present
   end
 
   def destroy
     output = "onehost delete #{resource[:name]} ", self.class.login
     `#{output}`
-  end
-
-  def self.onehost_list
-    output = "onehost list --xml ", login
-    xml = REXML::Document.new(`#{output}`)
-    onehosts = []
-    xml.elements.each("HOST_POOL/HOST/NAME") do |element|
-      onehosts << element.text
-    end
-    onehosts
+    @property_hash.clear
   end
 
   def exists?
-    if self.class.onehost_list().include?(resource[:name])
-        self.debug "Found host: #{resource[:name]}"
-        true
-    end
+    @property_hash[:ensure] == :present
   end
 
   def self.instances
@@ -47,6 +38,15 @@ Puppet::Type.type(:onehost).provide(:onehost) do
     end
   end
 
+  def self.prefetch(resources)
+    hosts = instances
+    resources.keys.each do |name|
+      if provider = hosts.find{ |host| host.name == name }
+        resources[name].provider = provider
+      end
+    end
+  end
+
   # login credentials
   def self.login
     credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
@@ -54,37 +54,6 @@ Puppet::Type.type(:onehost).provide(:onehost) do
     password = credentials[1]
     login = " --user #{user} --password #{password}"
     login
-  end
-
-  # getters
-  def im_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/IM_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def vm_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/VM_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def vn_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/VN_MAD") { |element|
-          result = element.text
-      }
-      result
   end
 
   # setters
