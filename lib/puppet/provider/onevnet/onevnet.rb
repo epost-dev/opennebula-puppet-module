@@ -103,110 +103,43 @@ EOF
     end
   end
 
-#  # Return the full hash of all existing onevnet resources
+  # Return the full hash of all existing onevnet resources
   def self.instances
-    instances = []
-    # Read all onevent into doc
-    output = "onevnet list --xml", login
-    doc = REXML::Document.new(`#{output}`)
-    # Iterate over all onevent
-    doc.elements.each("VNET_POOL/VNET/NAME") do |element|
-      vnet = element.text
-      hash = {}
-      self.debug "Getting properties for vnet : #{vnet}"
-
-      # Obvious resource attributes
-      hash[:provider] = self.name.to_s
-      hash[:name] = vnet
-
-      # Put xml tree for single vent into new xml document
-      doc.each_element_with_text("#{vnet}", 1, 'VNET_POOL/VNET/NAME') { |name|
-	    vnetelement = name.parent
-	    xml = REXML::Document.new()
-	    xml.add_element(vnetelement)
-
-	    # Traverse the XML document and populate the common attributes
-	    xml.elements.each("VNET/TYPE") { |element|
-	      hash[:type] = element.text == "1" ? 'fixed' : 'ranged'
-	    }
-        xml.elements.each("VNET/BRIDGE") { |element|
-          hash[:bridge] = element.text
-	    }
-        xml.elements.each("VNET/TEMPLATE/BRIDGE") { |element|
-          hash[:bridge] = element.text
-        }
-	    xml.elements.each("VNET/PHYDEV") { |element|
-	      hash[:phydev] = element.text
-	    }
-        xml.elements.each("VNET/TEMPLATE/PHYDEV") { |element|
-          hash[:phydev] = element.text
-        }
-	    xml.elements.each("VNET/VLAN_ID") { |element|
-          hash[:vlanid] = element.text
-	    }
-	    xml.elements.each("VNET/TEMPLATE/VLAN_ID") { |element|
-          hash[:vlanid] = element.text
-        }
-	    xml.elements.each("VNET/PUBLIC") { |element|
-          hash[:public] = element.text == "1" ? true : false
-	    }
-
-	    # Populate ranged or fixed specific resource attributes
-	    if hash[:type] == "ranged" then
-          xml.elements.each("VNET/TEMPLATE/NETWORK_MASK") { |element|
-            hash[:network_size] = element.text
+    output = 'onevnet list -x ', login
+    REXML::Document.new(`#{output}`).elements.collect('VNET_POOL/VNET') do |vnet|
+      elements = vnet.elements
+      hash = {
+        :name            => elements['NAME'].text,
+        :ensure          => :present,
+        :bridge          => (elements['TEMPLATE/BRIDGE'] || elements['BRIDGE']).text,
+        :context         => nil, # TODO
+        :dnsservers      => (elements['TEMPLATE/DNSSERVERS'].text.to_a unless elements['TEMPLATE/DNSSERVERS'].nil?),
+        :gateway         => (elements['TEMPLATE/GATEWAY'].text unless elements['TEMPLATE/GATEWAY'].nil?),
+        :macstart        => '', # TODO
+        :model           => (elements['TEMPLATE/MODEL'].text unless elements['TEMPLATE/MODEL'].nil?),
+        :network_size    => '', # TODO
+        :phydev          => (elements['TEMPLATE/PHYDEV'] || elements['PHYDEV']).text,
+        :type            => elements['TYPE'].text == '0' ? 'ranged' : 'fixed',
+        :vlanid          => (elements['TEMPLATE/VLAN_ID'] || elements['VLAN_ID']).text,
+      }.merge(
+        if elements['TYPE'].text == '0'
+          {
+            :globalprefix    => (elements['TEMPLATE/GLOBAL_PREFIX'] || elements['GLOBAL_PREFIX']).text,
+            :network_address => elements['TEMPLATE/NETWORK_ADDRESS'].text,
+            :network_end     => (elements['TEMPLATE/IP_END'] || elements['RANGE/IP_END']).text,
+            :network_mask    => elements['TEMPLATE/NETWORK_MASK'].text,
+            :network_start   => (elements['TEMPLATE/IP_START'] || elements['RANGE/IP_START']).text,
+            :protocol        => elements['TEMPLATE/NETWORK_ADDRESS'].nil? ? :ipv6 : :ipv4,
+            :siteprefix      => (elements['TEMPLATE/SITE_PREFIX'] || elements['SITE_PREFIX']).text,
           }
-          xml.elements.each("VNET/TEMPLATE/NETWORK_ADDRESS") { |element|
-            hash[:network_address] = element.text
-            hash[:protocol] = 'ipv4'
-          }
-          # IP_START can either be set during creating (in RANGE section)
-          # or modified afterwards and be set in TEMPLATE section
-          xml.elements.each("VNET/RANGE/IP_START") { |element|
-            hash[:network_start] = element.text
-          }
-          xml.elements.each("VNET/TEMPLATE/IP_START") { |element|
-            hash[:network_start] = element.text
-          }
-          # IP_END can either be set during creating (in RANGE section)
-          # or modified afterwards and be set in TEMPLATE section
-          xml.elements.each("VNET/RANGE/IP_END") { |element|
-            hash[:network_end] = element.text
-          } 
-          xml.elements.each("VNET/TEMPLATE/IP_END") { |element|
-            hash[:network_end] = element.text
-          } 
-          # GLOBAL_PREFIX can either be set during creating (in VNET section)
-          # or modified afterwards and be set in TEMPLATE section
-          xml.elements.each("VNET/GLOBAL_PREFIX") { |element|
-            hash[:globalprefix] = element.text
-            hash[:protocol] = 'ipv6'
-          }
-          xml.elements.each("VNET/TEMPLATE/GLOBAL_PREFIX") { |element|
-            hash[:globalprefix] = element.text
-            hash[:protocol] = 'ipv6'
-          }
-          # SITE_PREFIX can either be set during creating (in VNET section)
-          # or modified afterwards and be set in TEMPLATE section
-          xml.elements.each("VNET/SITE_PREFIX") { |element|
-            hash[:siteprefix] = element.text
-            hash[:protocol] = 'ipv6'
-          }
-          xml.elements.each("VNET/TEMPLATE/SITE_PREFIX") { |element|
-            hash[:siteprefix] = element.text
-            hash[:protocol] = 'ipv6'
-          }
-	    elsif hash[:type] == "fixed"
-          hash[:leases] = []
-          xml.elements.each("VNET/LEASES/LEASE/IP") { |element|
-            hash[:leases] << element.text
+        elsif elements['TYPE'].text == '1'
+          {
+            :leases          => vnet.elements.collect('LEASES/LEASE/IP') { |e| e.text },
           }
         end
-
-	    instances << new(hash)
-      }
+      )
+      new(hash)
     end
-    instances
   end
 
   # login credentials
