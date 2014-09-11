@@ -167,8 +167,4 @@ Puppet::Type.newtype(:onetemplate) do
       desc "Activate policy how to distribute vm using this template"
   end
 
-  # disable instances at the moment - needs to long to fetch all attributes
-  def self.instances
-    return []
-  end
 end
