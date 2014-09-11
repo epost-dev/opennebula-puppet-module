@@ -55,31 +55,15 @@ EOF
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    instances = []
-    onevm_list.each do |vm|
-      hash = {}
-
-      # Obvious resource attributes
-      hash[:provider] = self.name.to_s
-      hash[:name] = vm
-
-      # Open onevm xml output using REXML
-      output = "onevm show #{vm} --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-
-      # Traverse the XML document and populate the common attributes
-      xml.elements.each("VM/TEMPLATE/TEMPLATE_ID") { |element|
-          template_output = "onetemplate show #{element} --xml ", login
-          template_xml = REXML::Document.new(`#{template_output}`)
-          template_xml.elements.each("VMTEMPLATE/NAME") { |template_element|
-            hash[:template] = template_element.text
-          }
-      }
-
-      instances << new(hash)
+    output = "onevm list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("VM_POOL/VM") do |vm|
+      new(
+        :name     => vm.elements["NAME"].text,
+        :ensure   => :present,
+        :template => vm.elements["TEMPLATE/TEMPLATE_ID"]  # TODO get template name insted of ID
+      )
     end
 
-    instances
   end
 
   def self.login
