@@ -60,39 +60,18 @@ EOF
   end
 
   def self.instances
-    instances = []
-
-    onedatastore_list().each do |datastore|
-      self.debug "getting properties for ds: #{datastore}"
-      hash = {}
-      hash[:provider] = self.class.name.to_s
-      hash[:name] = datastore
-      output = "onedatastore show --xml #{datastore} ", login
-      self.debug "Running command #{output}"
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("DATASTORE/TEMPLATE/TM_MAD") { |element|
-          hash[:tm] = element.text
-      }
-      xml.elements.each("DATASTORE/TEMPLATE/DS_MAD") { |element|
-          hash[:dm] = element.text
-      }
-      xml.elements.each("DATASTORE/TEMPLATE/TYPE") { |element|
-          hash[:type] = element.text
-      }
-      xml.elements.each("DATASTORE/DISK_TYPE") { |element|
-          case element.text
-          when '0'
-              hash[:disktype] = 'file'
-          when '1'
-              hash[:disktype] = 'block'
-          when '2'
-              hash[:disktype] = 'rdb'
-          end
-      }
-      instances << new(hash)
+    output = "onedatastore list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("DATASTORE_POOL/DATASTORE") do |datastore|
+      new(
+        :name     => datastore.elements["NAME"].text,
+        :ensure   => :present,
+        :type     => datastore.elements["TEMPLATE/TYPE"].text,
+        :dm       => (datastore.elements["TEMPLATE/DS_MAD"].text unless datastore.elements["TEMPLATE/DS_MAD"].nil?),
+        :tm       =>( datastore.elements["TEMPLATE/TM_MAD"].text unless datastore.elements["TEMPLATE/TM_MAD"].nil?),
+        :disktype => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.elements["DISK_TYPE"].text]
+       )
     end
 
-    instances
   end
 
   # login credentials
