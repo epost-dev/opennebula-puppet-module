@@ -23,13 +23,13 @@ class one::oned::install {
     require   => Class['one::prerequisites'],
   }
   package { $one::params::oned_packages :
-    ensure  => present,
+    ensure  => latest,
     require => Class['one::prerequisites'],
   }
 
   if ($one::params::hook_scripts_pkgs) {
     package { $one::params::hook_scripts_pkgs :
-      ensure  => present,
+      ensure  => latest,
       require => Class['one::prerequisites'],
     }
   }
