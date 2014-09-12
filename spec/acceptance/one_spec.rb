@@ -4,14 +4,6 @@ describe 'onevm class' do
   describe 'without parameters' do
     it 'should idempotently run' do
       pp = <<-EOS
-        yumrepo {'epel':
-          descr    => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \\$basearch",
-          baseurl  => "http://download.fedoraproject.org/pub/epel/${::operatingsystemmajrelease}/\\$basearch",
-          enabled  => 1,
-          gpgkey   => "http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
-          gpgcheck => 1,
-        }
-        ->
         class { 'one': }
       EOS
 

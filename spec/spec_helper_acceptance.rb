@@ -19,6 +19,24 @@ RSpec.configure do |c|
   c.before :suite do
     # Install module
     puppet_module_install(:source => proj_root, :module_name => 'one')
+
+    # Configure EPEL if appropriate.
+    if fact('osfamily') == 'RedHat'
+      pp = <<-EOS
+        if $::osfamily == 'RedHat' {
+          yumrepo {'epel':
+            descr    => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \\$basearch",
+            baseurl  => "http://download.fedoraproject.org/pub/epel/${::operatingsystemmajrelease}/\\$basearch",
+            enabled  => 1,
+            gpgkey   => "http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
+            gpgcheck => 1,
+          }
+        }
+      EOS
+
+      apply_manifest_on(hosts, pp, :catch_failures => false)
+    end
+
     hosts.each do |host|
       # Configure hiera
       on host, "/bin/touch #{default['puppetpath']}/hiera.yaml"
