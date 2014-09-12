@@ -83,27 +83,17 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
   end
 
   def self.instances
-    instances = []
-
-    onecluster_list().each do |cluster|
-      hash = {}
-      hash[:provider] = self.class.name.to_s
-      hash[:name] = cluster
-      output = "onecluster list --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("CLUSTER/VNETS") { |element|
-          hash[:vnets] = element.text.to_a
-      }
-      xml.elements.each("CLUSTER/HOSTS") { |element|
-          hash[:hosts] = element.text
-      }
-      xml.elements.each("CLUSTER/DATASTORES") { |element|
-          hash[:datastores] = element.text.to_a
-      }
-      instances << new(hash)
+    output = "onecluster list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
+      new(
+        :name       => cluster.elements["NAME"].text,
+        :ensure     => :present,
+        :datastores => cluster.elements["DATASTORES"].text.to_a,
+        :hosts      => cluster.elements["HOSTS"].text,
+        :vnets      => cluster.elements["VNETS"].text.to_a
+      )
     end
 
-    instances
   end
 
   # login credentials
