@@ -15,6 +15,8 @@ describe 'one' do
     onehome = '/var/lib/one'
     oned_config = "#{configdir}/oned.conf"
     context 'with one module' do
+      sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
+      sshprivkey = hiera.lookup('one::head::ssh_priv_key', nil, nil)
       it { should contain_class('one') }
       it { should contain_class('one::prerequisites') }
       it { should contain_class('one::params') }
@@ -26,6 +28,8 @@ describe 'one' do
       it { should contain_file('/usr/share/one').with_ensure('directory') }
       it { should contain_file("#{onehome}/.ssh").with_ensure('directory') }
       it { should contain_file("#{onehome}/.ssh/config").with_ensure('present') }
+      it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
+      it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
       it { should contain_file('/sbin/brctl').with_ensure('link') }
       it { should contain_file('/etc/libvirt/qemu.conf').with_ensure('present') }
       it { should contain_file('/etc/sudoers.d/20_imaginator').with_ensure('present') }
@@ -87,8 +91,6 @@ describe 'one' do
             :oned => true,
             :node => false,
         } }
-        sshprivkey = hiera.lookup('one::head::ssh_priv_key', nil, nil)
-        sshpubkey = hiera.lookup('one::head::ssh_pub_key', nil, nil)
         it { should contain_class('one::oned') }
         it { should contain_class('one::oned::install') }
         it { should contain_class('one::oned::config') }
@@ -96,8 +98,6 @@ describe 'one' do
         it { should contain_package('opennebula') }
         it { should contain_package('opennebula-tools') }
         it { should contain_package('ruby-opennebula') }
-        it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
-        it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
         it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
         context 'with sqlite backend' do
           it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }

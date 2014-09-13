@@ -7,56 +7,44 @@ Puppet::Type.type(:onehost).provide(:onehost) do
 
   commands :onehost => "onehost"
 
+  mk_resource_methods
+
   def create
     output = "onehost create #{resource[:name]} --im #{resource[:im_mad]} --vm #{resource[:vm_mad]} --net #{resource[:vn_mad]} ", self.class.login
     `#{output}`
+    @property_hash[:ensure] = :present
   end
 
   def destroy
     output = "onehost delete #{resource[:name]} ", self.class.login
     `#{output}`
-  end
-
-  def self.onehost_list
-    output = "onehost list --xml ", login
-    xml = REXML::Document.new(`#{output}`)
-    onehosts = []
-    xml.elements.each("HOST_POOL/HOST/NAME") do |element|
-      onehosts << element.text
-    end
-    onehosts
+    @property_hash.clear
   end
 
   def exists?
-    if self.class.onehost_list().include?(resource[:name])
-        self.debug "Found host: #{resource[:name]}"
-        true
-    end
+    @property_hash[:ensure] == :present
   end
 
   def self.instances
-    instances = []
-    onehost_list().each do |host|
-      hash = {}
-      hash[:provider] = self.name.to_s
-      hash[:name] = host
-
-      output = "onehost show #{host} --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/IM_MAD") { |element|
-          hash[:im_mad] = element.text
-      }
-      xml.elements.each("HOST/VM_MAD") { |element|
-          hash[:vm_mad] = element.text
-      }
-      xml.elements.each("HOST/VN_MAD") { |element|
-          hash[:vn_mad] = element.text
-      }
-
-      instances << new(hash)
+    output = "onehost list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("HOST_POOL/HOST") do |host|
+      new(
+        :name   => host.elements["NAME"].text,
+        :ensure => :present,
+        :im_mad => host.elements["IM_MAD"].text,
+        :vm_mad => host.elements["VM_MAD"].text,
+        :vn_mad => host.elements["VN_MAD"].text
+      )
     end
+  end
 
-    instances
+  def self.prefetch(resources)
+    hosts = instances
+    resources.keys.each do |name|
+      if provider = hosts.find{ |host| host.name == name }
+        resources[name].provider = provider
+      end
+    end
   end
 
   # login credentials
@@ -66,37 +54,6 @@ Puppet::Type.type(:onehost).provide(:onehost) do
     password = credentials[1]
     login = " --user #{user} --password #{password}"
     login
-  end
-
-  # getters
-  def im_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/IM_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def vm_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/VM_MAD") { |element|
-          result = element.text
-      }
-      result
-  end
-
-  def vn_mad
-      result = ''
-      output = "onehost show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("HOST/VN_MAD") { |element|
-          result = element.text
-      }
-      result
   end
 
   # setters
