@@ -18,6 +18,8 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
 
   commands :onecluster => "onecluster"
 
+  mk_resource_methods
+
   def create
     output = "onecluster create #{resource[:name]} ", self.class.login()
     `#{output}`
@@ -43,6 +45,7 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
         ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
         `#{ds_command}`
     }
+    @property_hash[:ensure] = :present
   end
 
   def destroy
@@ -64,46 +67,34 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
       output = "onecluster delete #{resource[:name]} ", self.class.login()
       self.debug "Running command #{output}"
       `#{output}`
+      @property_hash.clear
   end
 
   def exists?
-    if self.class.onecluster_list().include?(resource[:name])
-        self.debug "Found cluster #{resource[:name]}"
-        true
-    end
+    @property_hash[:ensure] == :present
   end
 
-  def self.onecluster_list
-    xml = REXML::Document.new(`onecluster list -x`)
-    list = []
-    xml.elements.each("CLUSTER_POOL/CLUSTER/NAME") do |cluster|
-      list << cluster.text
-    end
-    list
-  end
 
   def self.instances
-    instances = []
-
-    onecluster_list().each do |cluster|
-      hash = {}
-      hash[:provider] = self.class.name.to_s
-      hash[:name] = cluster
-      output = "onecluster list --xml ", login
-      xml = REXML::Document.new(`#{output}`)
-      xml.elements.each("CLUSTER/VNETS") { |element|
-          hash[:vnets] = element.text.to_a
-      }
-      xml.elements.each("CLUSTER/HOSTS") { |element|
-          hash[:hosts] = element.text
-      }
-      xml.elements.each("CLUSTER/DATASTORES") { |element|
-          hash[:datastores] = element.text.to_a
-      }
-      instances << new(hash)
+    output = "onecluster list -x ", login
+    REXML::Document.new(`#{output}`).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
+      new(
+        :name       => cluster.elements["NAME"].text,
+        :ensure     => :present,
+        :datastores => cluster.elements["DATASTORES"].text.to_a,
+        :hosts      => cluster.elements["HOSTS"].text,
+        :vnets      => cluster.elements["VNETS"].text.to_a
+      )
     end
+  end
 
-    instances
+  def self.prefetch(resources)
+    clusters = instances
+    resources.keys.each do |name|
+      if provider = clusters.find{ |cluster| cluster.name == name }
+        resources[name].provider = provider
+      end
+    end
   end
 
   # login credentials
@@ -113,46 +104,6 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
     password = credentials[1]
     login = " --user #{user} --password #{password}"
     login
-  end
-
-  #getters
-  def hosts
-      result = []
-      getter_output = "onecluster show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{getter_output}`)
-      xml.elements.each("CLUSTER/HOSTS/ID") { |element|
-          host_getter_output = "onehost show #{element.text} --xml ", self.class.login
-          host_xml = REXML::Document.new(`#{host_getter_output}`)
-          host_xml.elements.each("HOST/NAME") { |host_element|
-            result << host_element.text
-          }
-      }
-      result
-  end
-  def vnets
-      result = []
-      getter_output = "onecluster show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{getter_output}`)
-      xml.elements.each("CLUSTER/VNETS/ID") { |element|
-          vnet_getter_output = "onevnet show #{element.text} --xml ", self.class.login
-          vnet_xml = REXML::Document.new(`#{vnet_getter_output}`)
-          vnet_xml.elements.each("VNET/NAME") { |vnet_element|
-            result << vnet_element.text
-          }
-      }
-      result
-  end
-  def datastores
-      result = []
-      getter_output = "onecluster show #{resource[:name]} --xml ", self.class.login
-      xml = REXML::Document.new(`#{getter_output}`)
-      xml.elements.each("CLUSTER/DATASTORES/ID") { |element|
-          ds_getter_output = "onedatastore show #{element.text} --xml ", self.class.login
-          ds_xml = REXML::Document.new(`#{ds_getter_output}`) { |ds_element|
-            result << ds_element.text
-          }
-      }
-      result
   end
 
   #setters
