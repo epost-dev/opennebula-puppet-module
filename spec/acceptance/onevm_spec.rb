@@ -14,8 +14,6 @@ describe 'onevm type' do
         }
         ->
         onevnet { 'new_vnet':
-          user            => 'oneadmin',
-          password        => 'oneadmin',
           bridge          => 'vbr0',
           network_address => '192.168.0.0',
         } 

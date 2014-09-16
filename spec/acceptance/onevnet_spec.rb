@@ -10,8 +10,6 @@ describe 'onevnet type' do
         }
         ->
         onevnet { 'ranged_vnet':
-          user            => 'oneadmin',
-          password        => 'oneadmin',
           type            => 'ranged',
           bridge          => 'vbr0',
           network_address => '192.168.0.0/24',
@@ -57,8 +55,6 @@ describe 'onevnet type' do
     it 'should idempotently run' do
       pp =<<-EOS
         onevnet { 'ranged_vnet':
-          user            => 'oneadmin',
-          password        => 'oneadmin',
           type            => 'ranged',
           bridge          => 'vbr0',
           network_address => '192.168.0.0/24',

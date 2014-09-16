@@ -11,14 +11,6 @@ Puppet::Type.newtype(:onecluster) do
     end
   end
 
-  newparam(:user) do
-      desc "OneAdmin user name"
-  end
-
-  newparam(:password) do
-      desc "OneAdmin password"
-  end
-
   newproperty(:hosts, :array_matching => :all) do
       desc "Array with names of nodes to add to a cluster"
   end

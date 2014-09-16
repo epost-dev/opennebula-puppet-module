@@ -11,14 +11,6 @@ Puppet::Type.newtype(:onedatastore) do
     end
   end
 
-  newparam(:user) do
-      desc "OneAdmin user name"
-  end
-
-  newparam(:password) do
-      desc "OneAdmin password"
-  end
-
 #  newproperty(:preset) do
 #      desc "Use a preset. Valid values: filesystem, vmfs, iscsi, lvm, ceph"
 #  end

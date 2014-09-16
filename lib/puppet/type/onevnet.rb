@@ -12,14 +12,6 @@ Puppet::Type.newtype(:onevnet) do
     end
   end
 
-  newparam(:user) do
-      desc "Oneadmin user name."
-  end
-
-  newparam(:password) do
-      desc "Oneadmin password."
-  end
-
   newparam(:protocol) do
       desc "IP protocol version to use - IPv4 or IPv6"
       defaultto :ipv4
