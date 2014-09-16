@@ -2,17 +2,7 @@ Puppet::Type.newtype(:onetemplate) do
   @doc = "Type for managing templates in OpenNebula using the onevm" +
          "wrapper command."
 
-  ensurable do
-    newvalue(:present) do
-      provider.create
-    end
-
-    newvalue(:absent) do
-      provider.destroy
-    end
-
-    defaultto :present
-  end
+  ensurable
 
   # General template config
   newparam(:name, :namevar => true) do

@@ -30,7 +30,7 @@ describe res_type do
     res_type.key_attributes.should == [:name]
   end
 
-  parameters = [:user, :password, :protocol]
+  parameters = [:protocol]
 
   parameters.each do |params|
       it "should have a #{params} parameter" do

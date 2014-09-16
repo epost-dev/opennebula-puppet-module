@@ -2,31 +2,13 @@ Puppet::Type.newtype(:onedatastore) do
   @doc = "Type for managing datastores in OpenNebula using the onedatastore" +
          "wrapper command."
 
-  ensurable do
-    newvalue(:present) do
-      provider.create
-    end
-
-    newvalue(:absent) do
-      provider.destroy
-    end
-
-    defaultto :present
-  end
+  ensurable
 
   newparam(:name, :namevar => true) do
     desc "Name of datastore."
     validate do |value|
         fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
     end
-  end
-
-  newparam(:user) do
-      desc "OneAdmin user name"
-  end
-
-  newparam(:password) do
-      desc "OneAdmin password"
   end
 
 #  newproperty(:preset) do

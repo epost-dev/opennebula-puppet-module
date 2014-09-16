@@ -7,8 +7,6 @@ describe provider_class do
   let(:resource ) {
     Puppet::Type::Onevnet.new({
       :name => 'new_vnet',
-      :username => 'oneadmin',
-      :password => 'oneadmin',
     })
   }
 

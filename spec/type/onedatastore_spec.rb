@@ -26,13 +26,6 @@ describe res_type do
     res_type.key_attributes.should == [:name]
   end
 
-  parameters = [:user, :password]
-  parameters.each do |params|
-      it "should have a #{params} parameter" do
-          expect(described_class.attrtype(params)).to eq :param
-      end
-  end
-
   properties = [:type, :dm, :tm, :disktype ]
   properties.each do |property|
     it "should have a #{property} property" do

@@ -17,7 +17,7 @@ Puppet::Type.type(:onevm).provide(:onevm) do
   # Create a VM with onevm by passing in a temporary template.
   def create
       # create template content from template
-      template_output = "onetemplate show #{resource[:template]}", self.class.login
+      template_output = onetemplate('show', resource[:template])
       template_content = `#{template_output} | grep -A 100000 'TEMPLATE CONTENT' | grep -v 'TEMPLATE CONTENT'`
       file = Tempfile.new("onevm-#{resource[:name]}")
       template = ERB.new <<-EOF

@@ -2,17 +2,7 @@ Puppet::Type.newtype(:oneimage) do
   @doc = "Type for managing Images, Files and Kernels in OpenNebula using the oneimage " +
          "wrapper command."
 
-  ensurable do
-    newvalue(:present) do
-      provider.create
-    end
-
-    newvalue(:absent) do
-      provider.destroy
-    end
-
-    defaultto :present
-  end
+  ensurable
 
   newparam(:name, :namevar => true) do
     desc "Name of image."

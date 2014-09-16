@@ -3,31 +3,13 @@ Puppet::Type.newtype(:onevnet) do
   @doc = "Type for managing networks in OpenNebula using the onevnet" +
          "wrapper command."
 
-  ensurable do
-    newvalue(:present) do
-      provider.create
-    end
-
-    newvalue(:absent) do
-      provider.destroy
-    end
-
-    defaultto :present
-  end
+  ensurable
 
   newparam(:name, :namevar => true) do
     desc "Name of network."
     validate do |value|
         fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
     end
-  end
-
-  newparam(:user) do
-      desc "Oneadmin user name."
-  end
-
-  newparam(:password) do
-      desc "Oneadmin password."
   end
 
   newparam(:protocol) do
