@@ -97,9 +97,9 @@ EOF
         :context         => nil, # TODO
         :dnsservers      => (elements['TEMPLATE/DNSSERVERS'].text.to_a unless elements['TEMPLATE/DNSSERVERS'].nil?),
         :gateway         => (elements['TEMPLATE/GATEWAY'].text unless elements['TEMPLATE/GATEWAY'].nil?),
-        :macstart        => '', # TODO
+        :macstart        => (elements['TEMPLATE/MACSTART'].text unless elements['TEMPLATE/MACSTART'].nil?),
         :model           => (elements['TEMPLATE/MODEL'].text unless elements['TEMPLATE/MODEL'].nil?),
-        :network_size    => '', # TODO
+        :network_size    => (elements['TEMPLATE/NETWORK_SIZE'].text unless elements['TEMPLATE/NETWORK_SIZE'].nil?),
         :phydev          => (elements['TEMPLATE/PHYDEV'] || elements['PHYDEV']).text,
         :type            => elements['TYPE'].text == '0' ? 'ranged' : 'fixed',
         :vlanid          => (elements['TEMPLATE/VLAN_ID'] || elements['VLAN_ID']).text,
@@ -107,9 +107,9 @@ EOF
         if elements['TYPE'].text == '0'
           {
             :globalprefix    => (elements['TEMPLATE/GLOBAL_PREFIX'] || elements['GLOBAL_PREFIX']).text,
-            :network_address => elements['TEMPLATE/NETWORK_ADDRESS'].text,
+            :network_address => (elements['TEMPLATE/NETWORK_ADDRESS'].text unless elements['TEMPLATE/NETWORK_ADDRESS'].nil?),
             :network_end     => (elements['TEMPLATE/IP_END'] || elements['RANGE/IP_END']).text,
-            :network_mask    => elements['TEMPLATE/NETWORK_MASK'].text,
+            :network_mask    => (elements['TEMPLATE/NETWORK_MASK'].text unless elements['TEMPLATE/NETWORK_MASK'].nil?),
             :network_start   => (elements['TEMPLATE/IP_START'] || elements['RANGE/IP_START']).text,
             :protocol        => elements['TEMPLATE/NETWORK_ADDRESS'].nil? ? :ipv6 : :ipv4,
             :siteprefix      => (elements['TEMPLATE/SITE_PREFIX'] || elements['SITE_PREFIX']).text,

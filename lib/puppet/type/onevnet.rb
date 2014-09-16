@@ -8,14 +8,14 @@ Puppet::Type.newtype(:onevnet) do
   newparam(:name, :namevar => true) do
     desc "Name of network."
     validate do |value|
-        fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
     end
   end
 
   newparam(:protocol) do
-      desc "IP protocol version to use - IPv4 or IPv6"
-      defaultto :ipv4
-      newvalues(:ipv4, :ipv6)
+    desc "IP protocol version to use - IPv4 or IPv6"
+    defaultto :ipv4
+    newvalues(:ipv4, :ipv6)
   end
 
   newproperty(:network_address) do
@@ -61,7 +61,7 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:dnsservers, :array_matching => :all) do
-      desc "Array of DNS servers to use"
+    desc "Array of DNS servers to use"
 #      validate do |value|
 #          unless resource[:ensure] == :present and value != :undef
 #              fail("DNS servers are required")
@@ -109,7 +109,7 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:macstart) do
-      desc "IPv6 MAC start address for ranged IPv6 networks"
+    desc "IPv6 MAC start address for ranged IPv6 networks"
 #      validate do |value|
 #        if resource[:protocol] == :ipv4
 #            fail("You may not use IPv6 macstart attribute on IPv4 networks")
@@ -122,7 +122,7 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:network_size) do
-      desc "Network size for IPv6 ranged networks"
+    desc "Network size for IPv6 ranged networks"
 #      validate do |value|
 #        unless resource[:protocol] == :ipv6
 #            fail("You may not use network_site attribute on IPv4 networks. Your protocol is #{resource[:protocol]}")
@@ -135,12 +135,12 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:model) do
-      desc "Network model to use. Can be any of vlan (=8021q), ebtables, ovswitch, vmware"
-      newvalues(:vlan, :ebtables, :ovswitch, :vmware, :dummy)
+    desc "Network model to use. Can be any of vlan (=8021q), ebtables, ovswitch, vmware"
+    newvalues(:vlan, :ebtables, :ovswitch, :vmware, :dummy)
   end
 
   newproperty(:vlanid) do
-      desc "ID of 802.1Q VLAN ID"
+    desc "ID of 802.1Q VLAN ID"
   end
 
   newproperty(:bridge) do

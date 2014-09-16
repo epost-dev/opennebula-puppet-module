@@ -1,38 +1,37 @@
 require 'spec_helper_acceptance'
 
 describe 'onevnet type' do
+  before :all do
+    pp =<<-EOS
+      class { 'one':
+        oned => true,
+      }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes => true)
+  end
 
-  describe 'when creating a ranged vnet' do
-    it 'should idempotently run' do
-      pp = <<-EOS
-        class { 'one':
-          oned => true,
-        }
-        ->
-        onevnet { 'ranged_vnet':
-          type            => 'ranged',
-          bridge          => 'vbr0',
-          network_address => '192.168.0.0/24',
-          network_start   => '192.168.0.3',
-          #gateway         => '192.168.0.1', # create does not support it yet
-          #dnsservers      => '192.168.0.1', # create does not support it yet
-        }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
+  after :all do
+    pp =<<-EOS
+      onevnet { 'Blue LAN':
+        ensure => absent,
+      }
+      onevnet { 'Red LAN':
+        ensure => absent,
+      }
+      onevnet { 'Red LAN 6':
+        ensure => absent,
+      }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes => true)
   end
 
   describe 'when creating a fixed vnet' do
     it 'should idempotently run' do
       pending "It looks like onevnet doesn't take the leases"
-      pp = <<-EOS
-        class { 'one':
-          oned => true,
-        }
-        ->
-        onevnet { 'fixed_vnet':
+      pp =<<-EOS
+        onevnet { 'Blue LAN':
           type       => 'fixed',
           bridge     => 'vbr1',
           leases     => [
@@ -41,8 +40,8 @@ describe 'onevnet type' do
             '130.10.0.3',
             '130.10.0.4',
           ],
-          #gateway    => '130.10.0.1', # create does not support it yet
-          #dnsservers => '130.10.0.1', # create does not support it yet
+          #gateway    => '130.10.0.1', # FIXME: create does not support it yet
+          #dnsservers => '130.10.0.1', # FIXME: create does not support it yet
         }
       EOS
 
@@ -51,16 +50,34 @@ describe 'onevnet type' do
     end
   end
 
-  describe 'when updating a ranged vnet' do
+  describe 'when creating a ranged vnet' do
     it 'should idempotently run' do
       pp =<<-EOS
-        onevnet { 'ranged_vnet':
+        onevnet { 'Red LAN':
           type            => 'ranged',
           bridge          => 'vbr0',
           network_address => '192.168.0.0/24',
           network_start   => '192.168.0.3',
-          gateway         => '192.168.0.1',
-          dnsservers      => '192.168.0.1',
+          #gateway         => '192.168.0.1', # FIXME: create does not support it yet
+          #dnsservers      => '192.168.0.1', # FIXME: create does not support it yet
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when creating an IPv6 Network' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+        onevnet { 'Red LAN 6':
+          type         => 'ranged',
+          bridge       => 'vbr0',
+          macstart     => '02:00:c0:a8:00:01',
+          network_size => 'C',
+          siteprefix   => 'fd12:33a:df34:1a::',
+          globalprefix => '2004:a128::',
         }
       EOS
 
@@ -73,7 +90,7 @@ describe 'onevnet type' do
     it 'should idempotently run' do
       pending "It looks like onevnet doesn't take the leases"
       pp =<<-EOS
-        onevnet { 'fixed_vnet':
+        onevnet { 'Blue LAN':
           type       => 'fixed',
           bridge     => 'vbr1',
           leases     => [
@@ -93,13 +110,17 @@ describe 'onevnet type' do
     end
   end
 
-  describe 'when destroying a ranged vnet' do
+  describe 'when updating a ranged vnet' do
     it 'should idempotently run' do
-      pending 'Need fix'
       pp =<<-EOS
-      onevnet { 'ranged_vnet':
-        ensure => absent,
-      }
+        onevnet { 'Red LAN':
+          type            => 'ranged',
+          bridge          => 'vbr0',
+          network_address => '192.168.0.0/24',
+          network_start   => '192.168.0.3',
+          gateway         => '192.168.0.1',
+          dnsservers      => '192.168.0.1',
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -107,12 +128,17 @@ describe 'onevnet type' do
     end
   end
 
-  describe 'when destroying a fixed vnet' do
+  describe 'when updateing an IPv6 Network' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevnet { 'fixed_vnet':
-        ensure => absent,
-      }
+        onevnet { 'Red LAN 6':
+          type         => 'ranged',
+          bridge       => 'vbr0',
+          macstart     => '03:00:c0:a8:00:01',
+          network_size => 'C',
+          siteprefix   => 'fd12:33a:df34:1a::',
+          globalprefix => '2004:a128::',
+        }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
