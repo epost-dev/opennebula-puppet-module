@@ -20,6 +20,18 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
   end
 
+  has_command(:onedatastore, "onedatastore") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
+
+  has_command(:onehost, "onehost") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
+
+  has_command(:onevnet, "onevnet") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
+
   mk_resource_methods
 
   def create
@@ -68,12 +80,21 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
 
   def self.instances
     REXML::Document.new(onecluster('list', '-x')).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
+      datastores = cluster.elements.collect("DATASTORES/ID") do |id|
+        REXML::Document.new(onedatastore('show', id.text, '-x')).elements["DATASTORE/NAME"].text
+      end
+      hosts = cluster.elements.collect("HOSTS/ID") do |id|
+        REXML::Document.new(onehost('show', id.text, '-x')).elements["HOST/NAME"].text
+      end
+      vnets = cluster.elements.collect("VNETS/ID") do |id|
+        REXML::Document.new(onevnet('show', id.text, '-x')).elements["VNET/NAME"].text
+      end
       new(
         :name       => cluster.elements["NAME"].text,
         :ensure     => :present,
-        :datastores => cluster.elements["DATASTORES"].text.to_a,
-        :hosts      => cluster.elements["HOSTS"].text,
-        :vnets      => cluster.elements["VNETS"].text.to_a
+        :datastores => datastores,
+        :hosts      => hosts,
+        :vnets      => vnets
       )
     end
   end
