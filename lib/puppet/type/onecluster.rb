@@ -13,14 +13,17 @@ Puppet::Type.newtype(:onecluster) do
 
   newproperty(:hosts, :array_matching => :all) do
       desc "Array with names of nodes to add to a cluster"
+    defaultto []
   end
 
   newproperty(:vnets, :array_matching => :all) do
       desc "Virtual Networks to add to the cluster - optional"
+    defaultto []
   end
 
   newproperty(:datastores, :array_matching => :all) do
       desc "Datastores to add to the cluster - optional"
+    defaultto []
   end
 
 end
