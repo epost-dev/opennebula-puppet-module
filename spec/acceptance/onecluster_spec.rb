@@ -1,17 +1,48 @@
 require 'spec_helper_acceptance'
 
 describe 'onecluster type' do
+  before :all do
+    pp = <<-EOS
+      class { 'one':
+        oned => true,
+      }
+      ->
+      onehost { 'host01':
+        im_mad => 'kvm',
+        vm_mad => 'kvm',
+        vn_mad => 'dummy',
+      }
+      ->
+      onehost { 'host02':
+        im_mad => 'kvm',
+        vm_mad => 'kvm',
+        vn_mad => 'dummy',
+      }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes => true)
+  end
+
+  after :all do
+    pp = <<-EOS
+      onecluster { 'production':
+        ensure => absent,
+      }
+      onehost { 'host01':
+        ensure => absent,
+      }
+      onehost { 'host02':
+        ensure => absent,
+      }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes => true)
+  end
 
   describe 'when creating a cluster' do
     it 'should idempotently run' do
-      pending 'Need fix'
       pp = <<-EOS
-        class { 'one':
-          oned => true,
-        } ->
-        onecluster { 'new_cluster': }
-        ->
-        onecluster { 'new_cluster2': }
+        onecluster { 'production': }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -21,15 +52,9 @@ describe 'onecluster type' do
 
   describe 'when adding a host to a cluster' do
     it 'should idempotently run' do
-      pending 'Need fix'
       pp =<<-EOS
-      onehost { 'new_host':
-        im_mad => 'kvm',
-        vm_mad => 'kvm',
-        vn_mad => 'dummy',
-      } ->
-      onecluster { 'new_cluster':
-        hosts => 'new_host',
+      onecluster { 'production':
+        hosts => 'host01',
       }
       EOS
 
@@ -40,33 +65,9 @@ describe 'onecluster type' do
 
   describe 'when adding an array of hosts to a cluster' do
     it 'should idempotently run' do
-      pending 'Need fix'
       pp =<<-EOS
-      onehost { 'new_host':
-        im_mad => 'kvm',
-        vm_mad => 'kvm',
-        vn_mad => 'dummy',
-      } ->
-      onehost { 'new_host2':
-        im_mad => 'kvm',
-        vm_mad => 'kvm',
-        vn_mad => 'dummy',
-      } ->
-      onecluster { 'new_cluster':
-        hosts => ['new_host', 'new_host2'],
-      }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
-  end
-
-  describe 'when destroying a cluster' do
-    it 'should idempotently run' do
-      pp =<<-EOS
-      onecluster { 'new_cluster2':
-        ensure => absent,
+      onecluster { 'production':
+        hosts => ['host01', 'host02'],
       }
       EOS
 
