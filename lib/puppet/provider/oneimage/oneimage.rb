@@ -5,7 +5,9 @@ require 'erb'
 Puppet::Type.type(:oneimage).provide(:oneimage) do
   desc "oneimage provider"
 
-  commands :oneimage => "oneimage"
+  has_command(:oneimage, "oneimage") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
   mk_resource_methods
 
@@ -31,15 +33,13 @@ EOF
     self.debug "Creating image using tempfile: #{tempfile}"
     file.write(tempfile)
     file.close
-    output = "oneimage create -d #{resource[:datastore]} #{file.path} ", self.class.login
-    `#{output}`
+    oneimage('create', '-d', resource[:datastore], file.path)
     @property_hash[:ensure] = :present
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    output = "oneimage delete #{resource[:name]} ", self.class.login
-    `#{output}`
+    oneimage('delete', resource[:name])
     @property_hash.clear
   end
 
@@ -50,8 +50,7 @@ EOF
 
   # Return the full hash of all existing oneimage resources
   def self.instances
-    output = "oneimage list -x ", login
-    REXML::Document.new(`#{output}`).elements.collect("IMAGE_POOL/IMAGE") do |image|
+    REXML::Document.new(oneimage('list', '-x')).elements.collect("IMAGE_POOL/IMAGE") do |image|
       elements = image.elements
       new(
         :name        => elements["NAME"].text,
@@ -79,15 +78,6 @@ EOF
         resources[name].provider = provider
       end
     end
-  end
-
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
   end
 
   #setters

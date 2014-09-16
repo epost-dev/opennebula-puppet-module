@@ -5,19 +5,19 @@ require 'tempfile'
 Puppet::Type.type(:onehost).provide(:onehost) do
   desc "onehost provider"
 
-  commands :onehost => "onehost"
+  has_command(:onehost, "onehost") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
   mk_resource_methods
 
   def create
-    output = "onehost create #{resource[:name]} --im #{resource[:im_mad]} --vm #{resource[:vm_mad]} --net #{resource[:vn_mad]} ", self.class.login
-    `#{output}`
+    onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad])
     @property_hash[:ensure] = :present
   end
 
   def destroy
-    output = "onehost delete #{resource[:name]} ", self.class.login
-    `#{output}`
+    onehost('delete', resource[:name])
     @property_hash.clear
   end
 
@@ -26,8 +26,7 @@ Puppet::Type.type(:onehost).provide(:onehost) do
   end
 
   def self.instances
-    output = "onehost list -x ", login
-    REXML::Document.new(`#{output}`).elements.collect("HOST_POOL/HOST") do |host|
+    REXML::Document.new(onehost('list', '-x')).elements.collect("HOST_POOL/HOST") do |host|
       new(
         :name   => host.elements["NAME"].text,
         :ensure => :present,
@@ -45,15 +44,6 @@ Puppet::Type.type(:onehost).provide(:onehost) do
         resources[name].provider = provider
       end
     end
-  end
-
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
   end
 
   # setters

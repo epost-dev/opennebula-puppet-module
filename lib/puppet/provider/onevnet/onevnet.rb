@@ -22,13 +22,10 @@ require 'erb'
 Puppet::Type.type(:onevnet).provide :onevnet do
   desc "onevnet provider"
 
-  # we only define the command, but we will not use it
-  # ruby seems to have an ugly way to append options to commands.
-  # this is only used as a confine so we run this provider only if the command is available.
-  commands :onevnet => "onevnet"
+  has_command(:onevnet, "onevnet") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
-  # we can not use the mk_reosurce_methods helper.
-  # opennebula has different ways of getting and reading properties.
   mk_resource_methods
 
   # Create a network with onevnet by passing in a temporary template.
@@ -73,16 +70,14 @@ EOF
     file.write(tempfile)
     file.close
     self.debug "Adding new network using template: #{tempfile}"
-    output = "onevnet create #{file.path} ", self.class.login
-    `#{output}`
+    onevnet('create', file.path)
     file.delete
     @property_hash[:ensure] = :present
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    output = "onevnet delete #{resource[:name]} ", self.class.login
-    `#{output}`
+    onevnet('delete', resource[:name])
     @property_hash.clear
   end
 
@@ -93,8 +88,7 @@ EOF
 
   # Return the full hash of all existing onevnet resources
   def self.instances
-    output = 'onevnet list -x ', login
-    REXML::Document.new(`#{output}`).elements.collect('VNET_POOL/VNET') do |vnet|
+    REXML::Document.new(onevnet('list', '-x')).elements.collect('VNET_POOL/VNET') do |vnet|
       elements = vnet.elements
       hash = {
         :name            => elements['NAME'].text,
@@ -161,18 +155,8 @@ EOF
     }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
     file.close
     self.debug(IO.read file.path)
-    output = "onevnet update #{resource[:name]} ", file.path, self.class.login, " --append"
-    `#{output}`
+    onevnet('update', resource[:name], file.path, '--append')
     file.delete
-  end
-
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
   end
 
 end
