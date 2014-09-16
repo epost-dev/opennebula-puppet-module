@@ -4,17 +4,7 @@ Type for managing hypervisor hosts in OpenNebula using the onehost wrapper
 command.
 EOS
 
-  ensurable do
-    newvalue(:present) do
-      provider.create
-    end
-
-    newvalue(:absent) do
-      provider.destroy
-    end
-
-    defaultto :present
-  end
+  ensurable
 
   newparam(:name, :namevar => true) do
     desc "Name of host."
