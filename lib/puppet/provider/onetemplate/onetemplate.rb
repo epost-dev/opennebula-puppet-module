@@ -5,7 +5,9 @@ require 'erb'
 Puppet::Type.type(:onetemplate).provide(:onetemplate) do
   desc "onetemplate provider"
 
-  commands :onetemplate => "onetemplate"
+  has_command(:onetemplate, "onetemplate") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
   mk_resource_methods
 
@@ -71,16 +73,14 @@ EOF
     file.write(tempfile)
     file.close
     self.debug "Creating template using #{tempfile}"
-    output = "onetemplate create #{file.path} ", self.class.login
-    `#{output}`
+    onetemplate('create', file.path)
     file.delete
     @property_hash[:ensure] = :present
   end
 
   # Destroy a VM using onevm delete
   def destroy
-    output = "onetemplate delete #{resource[:name]} ", self.class.login
-    `#{output}`
+    onetemplate('delete', resource[:name])
     @property_hash.clear
   end
 
@@ -91,8 +91,7 @@ EOF
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    output = "onetemplate list -x ", login
-    REXML::Document.new(`#{output}`).elements.collect("VMTEMPLATE_POOL/VMTEMPLATE") do |template|
+    REXML::Document.new(onetemplate('list', '-x')).elements.collect("VMTEMPLATE_POOL/VMTEMPLATE") do |template|
       elements = template.elements
       new(
         :name                      => elements["NAME"].text,
@@ -139,15 +138,6 @@ EOF
         resources[name].provider = provider
       end
     end
-  end
-
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
   end
 
   # setters

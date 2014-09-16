@@ -16,58 +16,49 @@ require 'rexml/document'
 Puppet::Type.type(:onecluster).provide(:onecluster) do
   desc "onecluster provider"
 
-  commands :onecluster => "onecluster"
+  has_command(:onecluster, "onecluster") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
   mk_resource_methods
 
   def create
-    output = "onecluster create #{resource[:name]} ", self.class.login()
-    `#{output}`
+    onecluster('create', resource[:name])
     self.debug "We have hosts: #{resource[:hosts]}"
     self.debug "We have vnets: #{resource[:vnets]}"
-    hosts = []
-    hosts << resource[:hosts]
-    hosts.each { |host|
-      host_command = "onecluster addhost #{resource[:name]} #{host} ", self.class.login()
-      self.debug "Running host add command : #{host_command}"
-      `#{host_command}`
+    resource[:hosts].each { |host|
+      self.debug "Adding host #{host} to cluster #{resource[:name]}"
+      onecluster('addhost', resource[:name], host)
     }
-    vnets = []
-    vnets << resource[:vnets]
-    vnets.each { |vnet|
-        vnet_command = "onecluster addvnet #{resource[:name]} #{vnet} ", self.class.login()
-        self.debug "Running vnet add command: #{vnet_command}"
-        `#{vnet_command}`
+    resource[:vnets].each { |vnet|
+      self.debug "Adding vnet #{vnet} to cluster #{resource[:name]}"
+      onecluster('addvnet', resource[:name], vnet)
     }
-    ds = []
-    ds << resource[:datastores]
-    ds.each { |datastore|
-        ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
-        `#{ds_command}`
+    resource[:datastores].each { |datastore|
+      self.debug "Adding datastore #{datastore} to cluster #{resource[:name]}"
+      onecluster('adddatastore', resource[:name], datastore)
     }
     @property_hash[:ensure] = :present
   end
 
   def destroy
-      hosts_output = "onecluster show #{resource[:name]} --xml ", self.class.login()
-      xml = REXML::Document.new(`#{hosts_output}`)
-      self.debug "Removing hosts vnets and datastores from cluster #{resource[:name]}"
-      xml.elements.each("CLUSTER/HOSTS/ID") { |host|
-          host_command = "onecluster delhost #{resource[:name]} #{host.text} ", self.class.login
-          `#{host_command}`
-      }
-      xml.elements.each("CLUSTER/VNETS/ID") { |vnet|
-          vnet_command = "onecluster delvnet #{resource[:name]} #{vnet.text} ", self.class.login
-          `#{vnet_command}`
-      }
-      xml.elements.each("CLUSTER/DATASTORES/ID") { |ds|
-          ds_command = "onecluster deldatastore #{resource[:name]} #{ds.text} ", self.class.login
-          `#{ds_command}`
-      }
-      output = "onecluster delete #{resource[:name]} ", self.class.login()
-      self.debug "Running command #{output}"
-      `#{output}`
-      @property_hash.clear
+    xml = REXML::Document.new(onecluster('show', resource[:name], '-x'))
+    self.debug "Removing hosts vnets and datastores from cluster #{resource[:name]}"
+    xml.elements.each("CLUSTER/HOSTS/ID") { |host|
+      self.debug "Removing host #{host} from cluster #{resource[:name]}"
+      onecluster('delhost', resource[:name], host.text)
+    }
+    xml.elements.each("CLUSTER/VNETS/ID") { |vnet|
+      self.debug "Removing vnet #{vnet} from cluster #{resource[:name]}"
+      onecluster('delvnet', resource[:name], vnet.text)
+    }
+    xml.elements.each("CLUSTER/DATASTORES/ID") { |ds|
+      self.debug "Removing datastore #{ds} from cluster #{resource[:name]}"
+      onecluster('deldatastore', resource[:name], ds.text)
+    }
+    self.debug "Removing cluster #{resource[:name]}"
+    onecluster('delete', resource[:name])
+    @property_hash.clear
   end
 
   def exists?
@@ -76,8 +67,7 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
 
 
   def self.instances
-    output = "onecluster list -x ", login
-    REXML::Document.new(`#{output}`).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
+    REXML::Document.new(onecluster('list', '-x')).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
       new(
         :name       => cluster.elements["NAME"].text,
         :ensure     => :present,
@@ -97,37 +87,26 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
     end
   end
 
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
-  end
-
   #setters
   def hosts=(value)
-      value.each { |host|
-        host_command = "onecluster addhost #{resource[:name]} #{host} ", self.class.login()
-        self.debug "Running host add command : #{host_command}"
-        `#{host_command}`
-      }
-      # todo: remove hosts which are no longer in list
+    value.each { |host|
+      self.debug "Adding host #{host} to cluster #{resource[:name]}"
+      onecluster('addhost', resource[:name], host)
+    }
+    # TODO: remove hosts which are no longer in list
   end
   def vnets=(value)
-      value.each { |vnet|
-        vnet_command = "onecluster addvnet #{resource[:name]} #{vnet} ", self.class.login()
-        self.debug "Running vnet add command: #{vnet_command}"
-        `#{vnet_command}`
-      }
-      # todo: remove vnets which are no longer in list
+    value.each { |vnet|
+      self.debug "Adding vnet #{vnet} to cluster #{resource[:name]}"
+      oncluster('addvnet', resource[:name], vnet)
+    }
+    # TODO: remove vnets which are no longer in list
   end
   def datastores=(value)
-      value.each { |ds|
-        ds_command = "onecluster adddatastore #{resource[:name]} #{datastore} ", self.class.login()
-        `#{ds_command}`
-      }
-      # todo: remove datastores which are no longer in list
+    value.each { |datastore|
+      self.debug "Adding datastore #{datastore} to cluster #{resource[:name]}"
+      oncluster('adddatastore', resource[:name], datastore)
+    }
+    # TODO: remove datastores which are no longer in list
   end
 end

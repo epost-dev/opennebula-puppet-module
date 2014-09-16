@@ -18,7 +18,9 @@ require 'tempfile'
 Puppet::Type.type(:onedatastore).provide(:onedatastore) do
   desc "onedatastore provider"
 
-  commands :onedatastore => "onedatastore"
+  has_command(:onedatastore, "onedatastore") do
+    environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
+  end
 
   mk_resource_methods
 
@@ -35,15 +37,13 @@ EOF
     tempfile = template.result(binding)
     file.write(tempfile)
     file.close
-    output = "onedatastore create #{file.path} ", self.class.login
-    `#{output}`
+    onedatastore('create', file.path)
     @property_hash[:ensure] = :present
   end
 
   def destroy
-      output = "onedatastore delete #{resource[:name]} ", self.class.login()
-      self.debug "Running command #{output}"
-      `#{output}`
+    self.debug "Deleting datastore #{resource[:name]}"
+    onedatastore('delete', resource[:name])
     @property_hash.clear
   end
 
@@ -52,8 +52,7 @@ EOF
   end
 
   def self.instances
-    output = "onedatastore list -x ", login
-    REXML::Document.new(`#{output}`).elements.collect("DATASTORE_POOL/DATASTORE") do |datastore|
+    REXML::Document.new(onedatastore('list', '-x')).elements.collect("DATASTORE_POOL/DATASTORE") do |datastore|
       new(
         :name     => datastore.elements["NAME"].text,
         :ensure   => :present,
@@ -72,15 +71,6 @@ EOF
         resources[name].provider = provider
       end
     end
-  end
-
-  # login credentials
-  def self.login
-    credentials = File.read('/var/lib/one/.one/one_auth').strip.split(':')
-    user = credentials[0]
-    password = credentials[1]
-    login = " --user #{user} --password #{password}"
-    login
   end
 
   #setters
