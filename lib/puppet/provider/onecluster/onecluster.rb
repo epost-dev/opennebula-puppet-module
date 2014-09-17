@@ -86,9 +86,9 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
       new(
         :name       => cluster.elements["NAME"].text,
         :ensure     => :present,
-        :datastores => datastores,
-        :hosts      => hosts,
-        :vnets      => vnets
+        :datastores => datastores.sort,
+        :hosts      => hosts.sort,
+        :vnets      => vnets.sort
       )
     end
   end
