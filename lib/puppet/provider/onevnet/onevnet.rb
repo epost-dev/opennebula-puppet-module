@@ -155,7 +155,7 @@ EOF
     }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
     file.close
     self.debug(IO.read file.path)
-    onevnet('update', resource[:name], file.path, '--append')
+    onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
     file.delete
   end
 
