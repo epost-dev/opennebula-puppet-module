@@ -104,24 +104,30 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
 
   #setters
   def hosts=(value)
-    value.each { |host|
-      self.debug "Adding host #{host} to cluster #{resource[:name]}"
+    hosts = @property_hash[:hosts] || []
+    (hosts - value).each do |host|
+      onecluster('delhost', resource[:name], host)
+    end
+    (value - hosts).each do |host|
       onecluster('addhost', resource[:name], host)
-    }
-    # TODO: remove hosts which are no longer in list
+    end
   end
   def vnets=(value)
-    value.each { |vnet|
-      self.debug "Adding vnet #{vnet} to cluster #{resource[:name]}"
-      oncluster('addvnet', resource[:name], vnet)
-    }
-    # TODO: remove vnets which are no longer in list
+    vnets = @property_hash[:vnets] || []
+    (vnets - value).each do |vnet|
+      onecluster('delvnet', resource[:name], vnet)
+    end
+    (value - vnets).each do |vnet|
+      onecluster('addvnet', resource[:name], vnet)
+    end
   end
   def datastores=(value)
-    value.each { |datastore|
-      self.debug "Adding datastore #{datastore} to cluster #{resource[:name]}"
-      oncluster('adddatastore', resource[:name], datastore)
-    }
-    # TODO: remove datastores which are no longer in list
+    datastores = @property_hash[:datastores] || []
+    (datastores - value).each do |datastore|
+      onecluster('deldatastore', resource[:name], datastore)
+    end
+    (value - datastores).each do |datastore|
+      onecluster('adddatastore', resource[:name], datastore)
+    end
   end
 end
