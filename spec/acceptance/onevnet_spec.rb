@@ -8,28 +8,10 @@ describe 'onevnet type' do
       }
     EOS
     apply_manifest(pp, :catch_failures => true)
-    apply_manifest(pp, :catch_changes => true)
-  end
-
-  after :all do
-    pp =<<-EOS
-      onevnet { 'Blue LAN':
-        ensure => absent,
-      }
-      onevnet { 'Red LAN':
-        ensure => absent,
-      }
-      onevnet { 'Red LAN 6':
-        ensure => absent,
-      }
-    EOS
-    apply_manifest(pp, :catch_failures => true)
-    apply_manifest(pp, :catch_changes => true)
   end
 
   describe 'when creating a fixed vnet' do
     it 'should idempotently run' do
-      pending "It looks like onevnet doesn't take the leases"
       pp =<<-EOS
         onevnet { 'Blue LAN':
           type       => 'fixed',
@@ -40,12 +22,13 @@ describe 'onevnet type' do
             '130.10.0.3',
             '130.10.0.4',
           ],
-          #gateway    => '130.10.0.1', # FIXME: create does not support it yet
-          #dnsservers => '130.10.0.1', # FIXME: create does not support it yet
+          gateway    => '130.10.0.1',
+          dnsservers => '130.10.0.1',
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      pending "It looks like onevnet doesn't take the leases"
       apply_manifest(pp, :catch_changes => true)
     end
   end
@@ -56,14 +39,15 @@ describe 'onevnet type' do
         onevnet { 'Red LAN':
           type            => 'ranged',
           bridge          => 'vbr0',
-          network_address => '192.168.0.0/24',
-          network_start   => '192.168.0.3',
-          #gateway         => '192.168.0.1', # FIXME: create does not support it yet
-          #dnsservers      => '192.168.0.1', # FIXME: create does not support it yet
+          network_address => '192.168.0.0',
+          network_size    => 'C',
+          gateway         => '192.168.0.1',
+          dnsservers      => '192.168.0.1',
         }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      pending "create does not support gateway and dnsservers yet"
       apply_manifest(pp, :catch_changes => true)
     end
   end
@@ -82,13 +66,13 @@ describe 'onevnet type' do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      pending "onevnet create does not take macstart and network_size"
       apply_manifest(pp, :catch_changes => true)
     end
   end
 
   describe 'when updating a fixed vnet' do
     it 'should idempotently run' do
-      pending "It looks like onevnet doesn't take the leases"
       pp =<<-EOS
         onevnet { 'Blue LAN':
           type       => 'fixed',
@@ -106,6 +90,7 @@ describe 'onevnet type' do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
+      pending "It looks like onevnet doesn't take the leases"
       apply_manifest(pp, :catch_changes => true)
     end
   end
@@ -116,10 +101,10 @@ describe 'onevnet type' do
         onevnet { 'Red LAN':
           type            => 'ranged',
           bridge          => 'vbr0',
-          network_address => '192.168.0.0/24',
-          network_start   => '192.168.0.3',
-          gateway         => '192.168.0.1',
-          dnsservers      => '192.168.0.1',
+          network_address => '192.168.1.0',
+          network_size    => 'C',
+          gateway         => '192.168.1.1',
+          dnsservers      => '192.168.1.1',
         }
       EOS
 
@@ -128,7 +113,7 @@ describe 'onevnet type' do
     end
   end
 
-  describe 'when updateing an IPv6 Network' do
+  describe 'when updating an IPv6 Network' do
     it 'should idempotently run' do
       pp =<<-EOS
         onevnet { 'Red LAN 6':
@@ -138,6 +123,25 @@ describe 'onevnet type' do
           network_size => 'C',
           siteprefix   => 'fd12:33a:df34:1a::',
           globalprefix => '2004:a128::',
+        }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when deleting a Network' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+        onevnet { 'Blue LAN':
+          ensure => absent,
+        }
+        onevnet { 'Red LAN':
+          ensure => absent,
+        }
+        onevnet { 'Red LAN 6':
+          ensure => absent,
         }
       EOS
 

@@ -3,21 +3,13 @@ require 'spec_helper_acceptance'
 describe 'onecluster type' do
   before :all do
     pp = <<-EOS
-      class { 'one':
-        oned => true,
-      }
-      ->
-      onehost { 'host01':
-        im_mad => 'kvm',
-        vm_mad => 'kvm',
-        vn_mad => 'dummy',
-      }
-      ->
-      onehost { 'host02':
-        im_mad => 'kvm',
-        vm_mad => 'kvm',
-        vn_mad => 'dummy',
-      }
+    class { 'one':
+      oned => true,
+    }
+    ->
+    onehost { ['host01', 'host02']:
+      ensure  => present, # FIXME: ensurable should default to :present...
+    }
     EOS
     apply_manifest(pp, :catch_failures => true)
     apply_manifest(pp, :catch_changes => true)
@@ -25,15 +17,9 @@ describe 'onecluster type' do
 
   after :all do
     pp = <<-EOS
-      onecluster { 'production':
-        ensure => absent,
-      }
-      onehost { 'host01':
-        ensure => absent,
-      }
-      onehost { 'host02':
-        ensure => absent,
-      }
+    onehost { ['host01', 'host02']:
+      ensure => absent,
+    }
     EOS
     apply_manifest(pp, :catch_failures => true)
     apply_manifest(pp, :catch_changes => true)
@@ -42,7 +28,7 @@ describe 'onecluster type' do
   describe 'when creating a cluster' do
     it 'should idempotently run' do
       pp = <<-EOS
-        onecluster { 'production': }
+      onecluster { 'production': }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -68,6 +54,33 @@ describe 'onecluster type' do
       pp =<<-EOS
       onecluster { 'production':
         hosts => ['host01', 'host02'],
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when removing a hosts from a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        hosts => 'host02',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when destroying a cluster' do
+    it 'should idempotently run' do
+      pending 'Fail in acceptance tests only???'
+      pp =<<-EOS
+      onecluster { 'production':
+        ensure => absent,
       }
       EOS
 

@@ -48,7 +48,7 @@ LEASES = [IP=<%= lease%>]
 <% end %>
 <% elsif resource[:type]== :ranged %>
 # RANGED NETWORK
-<% if resource[:network_size]    %>NETWORK_MASK = <%=    resource[:network_size]    %><% end %>
+<% if resource[:network_size]    %>NETWORK_SIZE = <%=    resource[:network_size]    %><% end %>
 <% if resource[:network_address] %>NETWORK_ADDRESS = <%= resource[:network_address] %><% end %>
 <% if resource[:network_start]   %>IP_START = <%=        resource[:network_start]   %><% end %>
 <% if resource[:network_end]     %>IP_END = <%=          resource[:network_end]     %><% end %>
@@ -155,7 +155,7 @@ EOF
     }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
     file.close
     self.debug(IO.read file.path)
-    onevnet('update', resource[:name], file.path, '--append')
+    onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
     file.delete
   end
 
