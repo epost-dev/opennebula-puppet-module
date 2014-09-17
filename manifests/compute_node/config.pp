@@ -74,13 +74,15 @@ class one::compute_node::config (
     target => '/usr/sbin/brctl',
   }
 
-  if ($::osfamiliy == 'RedHat') {
-    file { '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla':
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0644',
-      source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
-    }
+  file { 'polkit-opennebula':
+    path => $::osfamily ? {
+      'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
+      'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
+    },
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
+    source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
   }
 
   file { '/etc/libvirt/qemu.conf':
