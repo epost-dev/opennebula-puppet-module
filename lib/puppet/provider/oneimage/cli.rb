@@ -19,7 +19,7 @@ Puppet::Type.type(:oneimage).provide(:cli) do
     template = ERB.new <<-EOF
 NAME = "<%= resource[:name] %>"
 <% if resource[:description] %>DESCRIPTION = "<%= resource[:description] %>"<% end%>
-<% if resource[:type]        %>TYPE = <%=         resource[:type].upcase %><% end%>
+<% if resource[:type]        %>TYPE = <%=         resource[:type].to_s.upcase %><% end%>
 <% if resource[:persistent]  %>PERSISTENT = <%=   resource[:persistent]  %><% end%>
 <% if resource[:dev_prefix]  %>DEV_PREFIX = "<%=  resource[:dev_prefix]  %>"<% end%>
 <% if resource[:driver]      %>DRIVER = "<%=      resource[:driver]      %>"<% end %>
@@ -59,14 +59,18 @@ EOF
         :description => elements["TEMPLATE/DESCRIPTION"].text,
         :dev_prefix  => elements["TEMPLATE/DEV_PREFIX"].text,
         :disk_type   => elements["DISK_TYPE"].text,
-        :driver      => elements["DRIVER"].text,
+        :driver      => (elements["DRIVER"].text unless elements["DRIVER"].nil?),
         :fstype      => elements["FSTYPE"].text,
         :path        => (elements["TEMPLATE/PATH"] || elements["PATH"]).text,
-        :persistent  => (elements["TEMPLATE/PERSISTENT"] || elements["PERSISTENT"]).text == "1",
+        :persistent  => ((elements["TEMPLATE/PERSISTENT"] || elements["PERSISTENT"]).text == "1").to_s.to_sym,
         :size        => elements["SIZE"].text,
         :source      => (elements["TEMPLATE/SOURCE"] || elements["SOURCE"]).text,
-        :target      => elements["TARGET"].text,
-        :type        => ('context' if (elements["TEMPLATE/TYPE"] || elements["TYPE"]).text == '5')
+        :target      => (elements["TARGET"].text unless elements["TARGET"].nil?),
+        :type        => {
+          '0' => :OS,
+          '1' => :CDROM,
+          '5' => :CONTEXT,
+        }[(elements["TEMPLATE/TYPE"] || elements["TYPE"]).text]
       )
     end
   end
