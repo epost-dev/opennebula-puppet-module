@@ -12,9 +12,9 @@ Puppet::Type.newtype(:oneimage) do
   end
 
   newproperty(:datastore) do
-      desc "Selects the datastore"
-      defaultto :default
-      newvalues(/^\w+$/)
+    desc "Selects the datastore"
+    defaultto :default
+    newvalues(/^\w+$/)
   end
 
   newproperty(:description) do
@@ -23,12 +23,17 @@ Puppet::Type.newtype(:oneimage) do
 
   newproperty(:type) do
     desc "Type of image: os, cdrom, datablock, kernel, ramdisk or context"
+    defaultto :OS
+    newvalues(:OS, :os, :CDROM, :cdrom, :DATABLOCK, :datablock, :KERNEL, :kernel, :RAMDISK, :ramdisk, :CONTEXT, :context)
+    munge do |value|
+      value.to_s.upcase.to_sym
+    end
   end
 
-  newproperty(:persistent) do
+  newproperty(:persistent, :boolean => true) do
     desc "Persistence of the image."
-
     defaultto :false
+    newvalues(:true, :false)
   end
 
   newproperty(:dev_prefix) do
@@ -44,11 +49,11 @@ Puppet::Type.newtype(:oneimage) do
   end
 
   newproperty(:driver) do
-      desc "Driver to use for image: KVM: raw or qcow2, XEN: tap:aio or file:"
+    desc "Driver to use for image: KVM: raw or qcow2, XEN: tap:aio or file:"
   end
 
   newproperty(:disk_type) do
-      desc "Type of the image (BLOCK, CDROM, RBD, FILE, KERNEL, RAMDISK or CONTEXT)"
+    desc "Type of the image (BLOCK, CDROM, RBD, FILE, KERNEL, RAMDISK or CONTEXT)"
   end
 
   newparam(:source) do
