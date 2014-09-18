@@ -101,7 +101,7 @@ describe 'onedatastore type' do
   describe 'when destroying a System datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'nfs_ds':
+      onedatastore { 'nfs_ds':
         ensure => absent,
       }
       EOS
@@ -114,7 +114,7 @@ describe 'onedatastore type' do
   describe 'when destroying a Files datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'kernels':
+      onedatastore { 'kernels':
         ensure => absent,
       }
       EOS
@@ -127,7 +127,7 @@ describe 'onedatastore type' do
   describe 'when destroying a Filesystem datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'production':
+      onedatastore { 'production':
         ensure => absent,
       }
       EOS
@@ -140,7 +140,7 @@ describe 'onedatastore type' do
   describe 'when destroying a VMFS datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'vmfs_ds':
+      onedatastore { 'vmfs_ds':
         ensure => absent,
       }
       EOS
@@ -153,7 +153,7 @@ describe 'onedatastore type' do
   describe 'when destroying a LVM datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'lvm_ds':
+      onedatastore { 'lvm_ds':
         ensure => absent,
       }
       EOS
@@ -166,7 +166,7 @@ describe 'onedatastore type' do
   describe 'when destroying a Ceph datastore' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onevm { 'ceph_ds':
+      onedatastore { 'ceph_ds':
         ensure => absent,
       }
       EOS
