@@ -14,16 +14,25 @@ Puppet::Type.newtype(:onecluster) do
   newproperty(:hosts, :array_matching => :all) do
     desc "Array with names of nodes to add to a cluster"
     defaultto []
+    def insync?(is)
+      is.sort == should.sort
+    end
   end
 
   newproperty(:vnets, :array_matching => :all) do
     desc "Virtual Networks to add to the cluster - optional"
     defaultto []
+    def insync?(is)
+      is.sort == should.sort
+    end
   end
 
   newproperty(:datastores, :array_matching => :all) do
     desc "Datastores to add to the cluster - optional"
     defaultto []
+    def insync?(is)
+      is.sort == should.sort
+    end
   end
 
 end
