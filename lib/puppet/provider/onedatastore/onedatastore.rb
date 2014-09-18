@@ -29,7 +29,7 @@ Puppet::Type.type(:onedatastore).provide(:onedatastore) do
     template = ERB.new <<-EOF
 NAME = <%= resource[:name] %>
 TM_MAD = <%= resource[:tm] %>
-TYPE = <%= resource[:type].upcase %>
+TYPE = <%= resource[:type].to_s.upcase %>
 <% if resource[:dm] %>
 DS_MAD = <%= resource[:dm] %>
 <% end %>

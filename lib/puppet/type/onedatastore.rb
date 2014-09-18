@@ -20,19 +20,24 @@ Puppet::Type.newtype(:onedatastore) do
 #  end
 
   newproperty(:type) do
-      desc "Choose type of datastore. Valid values: images, system, files"
+    desc "Choose type of datastore. Valid values: images, system, files"
+    defaultto :IMAGE_DS
+    newvalues(:IMAGE_DS, :SYSTEM_DS, :FILE_DS, :image_ds, :system_ds, :file_ds)
+    munge do |value|
+      value.to_s.upcase.to_sym
+    end
   end
 
   newproperty(:dm) do
-      desc "Choose a datastore manager: filesystem, vmware, iscsi, lvm, vmfs, ceph"
+    desc "Choose a datastore manager: filesystem, vmware, iscsi, lvm, vmfs, ceph"
   end
 
   newproperty(:tm) do
-      desc "Choose a transport manager: shared, ssh, qcow2, iscsi, lvm, vmfs, ceph, dummy"
+    desc "Choose a transport manager: shared, ssh, qcow2, iscsi, lvm, vmfs, ceph, dummy"
   end
 
   newproperty(:disktype) do
-      desc "Choose a disk type: file, block, rdb"
+    desc "Choose a disk type: file, block, rdb"
   end
 
 #  newproperty(:safedirs, :array_matching => :all) do
