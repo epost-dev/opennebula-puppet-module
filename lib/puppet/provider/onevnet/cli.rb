@@ -19,7 +19,7 @@ require 'rexml/document'
 require 'tempfile'
 require 'erb'
 
-Puppet::Type.type(:onevnet).provide :onevnet do
+Puppet::Type.type(:onevnet).provide(:cli) do
   desc "onevnet provider"
 
   has_command(:onevnet, "onevnet") do

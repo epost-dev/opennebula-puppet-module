@@ -13,7 +13,7 @@
 
 require 'rexml/document'
 
-Puppet::Type.type(:onecluster).provide(:onecluster) do
+Puppet::Type.type(:onecluster).provide(:cli) do
   desc "onecluster provider"
 
   has_command(:onecluster, "onecluster") do
@@ -86,9 +86,9 @@ Puppet::Type.type(:onecluster).provide(:onecluster) do
       new(
         :name       => cluster.elements["NAME"].text,
         :ensure     => :present,
-        :datastores => datastores.sort,
-        :hosts      => hosts.sort,
-        :vnets      => vnets.sort
+        :datastores => datastores,
+        :hosts      => hosts,
+        :vnets      => vnets
       )
     end
   end

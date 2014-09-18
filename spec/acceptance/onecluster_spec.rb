@@ -10,6 +10,11 @@ describe 'onecluster type' do
     onehost { ['host01', 'host02']:
       ensure  => present, # FIXME: ensurable should default to :present...
     }
+    ->
+    onevnet { ['Blue LAN', 'Red LAN']:
+      type       => 'fixed',
+      bridge     => 'vbr1',
+    }
     EOS
     apply_manifest(pp, :catch_failures => true)
     apply_manifest(pp, :catch_changes => true)
@@ -18,6 +23,9 @@ describe 'onecluster type' do
   after :all do
     pp = <<-EOS
     onehost { ['host01', 'host02']:
+      ensure => absent,
+    }
+    onevnet { ['Blue LAN', 'Red LAN']:
       ensure => absent,
     }
     EOS
@@ -49,6 +57,32 @@ describe 'onecluster type' do
     end
   end
 
+  describe 'when adding a datastore to a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        datastores => 'system',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when adding a vnet to a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        vnets => 'Blue LAN',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
   describe 'when adding an array of hosts to a cluster' do
     it 'should idempotently run' do
       pp =<<-EOS
@@ -62,11 +96,63 @@ describe 'onecluster type' do
     end
   end
 
-  describe 'when removing a hosts from a cluster' do
+  describe 'when adding an array of datastores to a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        datastores => ['system','default','files'],
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when adding an array of vnets to a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        vnets => ['Blue LAN', 'Red LAN'],
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when removing a host from a cluster' do
     it 'should idempotently run' do
       pp =<<-EOS
       onecluster { 'production':
         hosts => 'host02',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when removing a datastore from a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        datastores => 'default',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when removing a vnet from a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+        vnets => ['Red LAN'],
       }
       EOS
 

@@ -2,7 +2,7 @@ require 'rexml/document'
 require 'erb'
 require 'tempfile'
 
-Puppet::Type.type(:onehost).provide(:onehost) do
+Puppet::Type.type(:onehost).provide(:cli) do
   desc "onehost provider"
 
   has_command(:onehost, "onehost") do
