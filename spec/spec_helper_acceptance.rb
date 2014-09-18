@@ -17,9 +17,6 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-    # Install module
-    puppet_module_install(:source => proj_root, :module_name => 'one')
-
     # Configure EPEL if appropriate.
     if fact('osfamily') == 'RedHat'
       pp = <<-EOS
@@ -38,6 +35,9 @@ RSpec.configure do |c|
     end
 
     hosts.each do |host|
+      # Install module
+      copy_module_to(host, :source => proj_root, :module_name => 'one')
+
       # Configure hiera
       on host, "/bin/touch #{default['puppetpath']}/hiera.yaml"
       on host, "mkdir -p /var/lib/hiera"
