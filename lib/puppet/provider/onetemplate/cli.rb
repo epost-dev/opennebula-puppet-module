@@ -2,7 +2,7 @@ require 'rexml/document'
 require 'tempfile'
 require 'erb'
 
-Puppet::Type.type(:onetemplate).provide(:onetemplate) do
+Puppet::Type.type(:onetemplate).provide(:cli) do
   desc "onetemplate provider"
 
   has_command(:onetemplate, "onetemplate") do

@@ -13,7 +13,7 @@
 
 require 'rexml/document'
 
-Puppet::Type.type(:onecluster).provide(:onecluster) do
+Puppet::Type.type(:onecluster).provide(:cli) do
   desc "onecluster provider"
 
   has_command(:onecluster, "onecluster") do

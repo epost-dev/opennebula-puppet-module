@@ -15,7 +15,7 @@ require 'rexml/document'
 require 'erb'
 require 'tempfile'
 
-Puppet::Type.type(:onedatastore).provide(:onedatastore) do
+Puppet::Type.type(:onedatastore).provide(:cli) do
   desc "onedatastore provider"
 
   has_command(:onedatastore, "onedatastore") do

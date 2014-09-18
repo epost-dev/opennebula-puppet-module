@@ -2,7 +2,7 @@ require 'rexml/document'
 require 'tempfile'
 require 'erb'
 
-Puppet::Type.type(:onevm).provide(:onevm) do
+Puppet::Type.type(:onevm).provide(:cli) do
   desc "onevm provider"
 
   has_command(:onevm, "onevm") do

@@ -2,7 +2,7 @@ require 'rexml/document'
 require 'tempfile'
 require 'erb'
 
-Puppet::Type.type(:oneimage).provide(:oneimage) do
+Puppet::Type.type(:oneimage).provide(:cli) do
   desc "oneimage provider"
 
   has_command(:oneimage, "oneimage") do
