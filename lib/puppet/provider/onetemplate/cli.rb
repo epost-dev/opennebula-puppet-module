@@ -31,11 +31,11 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
 <% if resource[:os_boot]       %>    <BOOT><%=       resource[:os_boot]       %></BOOT><% end %>
   </OS>
 
-  <DISK>
 <% resource[:disks].each do |disk| %>
+  <DISK>
     <IMAGE><%= disk %></IMAGE>
-<% end %>
   </DISK>
+<% end %>
 <% resource[:nics].each do |nic| %>
   <NIC>
     <% if resource[:nic_model] %><MODEL><%= resource[:nic_model] %></MODEL><% end %>
