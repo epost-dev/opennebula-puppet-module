@@ -58,16 +58,19 @@ Puppet::Type.newtype(:onetemplate) do
   end
 
   # Features section
-  newproperty(:acpi) do
-      desc "Enable ACPI"
+  newproperty(:acpi, :boolean => true) do
+    desc "Enable ACPI"
+    newvalues(:true, :false)
   end
 
-  newproperty(:pae) do
-      desc "Enable PAE"
+  newproperty(:pae, :boolean => true) do
+    desc "Enable PAE"
+    newvalues(:true, :false)
   end
 
-  newproperty(:pci_bridge) do
-      desc "PCI Bridging"
+  newproperty(:pci_bridge, :boolean => true) do
+    desc "PCI Bridging"
+    newvalues(:true, :false)
   end
 
   # Template Storage config
