@@ -31,11 +31,11 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
 <% if resource[:os_boot]       %>    <BOOT><%=       resource[:os_boot]       %></BOOT><% end %>
   </OS>
 
-  <DISK>
 <% resource[:disks].each do |disk| %>
+  <DISK>
     <IMAGE><%= disk %></IMAGE>
-<% end %>
   </DISK>
+<% end %>
 <% resource[:nics].each do |nic| %>
   <NIC>
     <% if resource[:nic_model] %><MODEL><%= resource[:nic_model] %></MODEL><% end %>
@@ -108,7 +108,7 @@ EOF
         :context_ssh_pubkey        => (elements["TEMPLATE/CONTEXT/SSH_PUBLIC_KEY"].text unless elements["TEMPLATE/CONTEXT/SSH_PUBLIC_KEY"].nil?),
         :context_variables         => (elements["TEMPLATE/CONTEXT/VARIABLES"].text unless elements["TEMPLATE/CONTEXT/VARIABLES"].nil?),
         :cpu                       => (elements["TEMPLATE/CPU"].text unless elements["TEMPLATE/CPU"].nil?),
-        :disks                     => (elements["TEMPLATE/DISK/IMAGE"].text.to_a unless elements["TEMPLATE/DISK/IMAGE"].nil?),
+        :disks                     => elements.collect("TEMPLATE/DISK/IMAGE") { |image| image.text },
         :graphics_keymap           => (elements["TEMPLATE/GRAPHICS/KEYMAP"].text unless elements["TEMPLATE/GRAPHICS/KEYMAP"].nil?),
         :graphics_listen           => (elements["TEMPLATE/GRAPHICS/LISTEN"].text unless elements["TEMPLATE/GRAPHICS/LISTEN"].nil?),
         :graphics_passwd           => (elements["TEMPLATE/GRAPHICS/PASSWORD"].text unless elements["TEMPLATE/GRAPHICS/PASSWORD"].nil?),
@@ -116,14 +116,14 @@ EOF
         :graphics_type             => (elements["TEMPLATE/GRAPHICS/TYPE"].text unless elements["TEMPLATE/GRAPHICS/TYPE"].nil?),
         :memory                    => (elements["TEMPLATE/MEMORY"].text unless elements["TEMPLATE/MEMORY"].nil?),
         :nic_model                 => (elements["TEMPLATE/NIC/MODEL"].text unless elements["TEMPLATE/NIC/MODEL"].nil?),
-        :nics                      => (elements["TEMPLATE/NIC/NETWORK"].text.to_a unless elements["TEMPLATE/NIC/NETWORK"].nil?),
-        :os_arch                   => (elements["TEMPLATE/OK/ARCH"].text unless elements["TEMPLATE/OK/ARCH"].nil?),
-        :os_boot                   => (elements["TEMPLATE/OK/BOOT"].text unless elements["TEMPLATE/OK/BOOT"].nil?),
-        :os_bootloader             => (elements["TEMPLATE/OK/BOOTLOADER"].text unless elements["TEMPLATE/OK/BOOTLOADER"].nil?),
-        :os_initrd                 => (elements["TEMPLATE/OK/INITRD"].text unless elements["TEMPLATE/OK/INITRD"].nil?),
-        :os_kernel                 => (elements["TEMPLATE/OK/KERNEL"].text unless elements["TEMPLATE/OK/KERNEL"].nil?),
-        :os_kernel_cmd             => (elements["TEMPLATE/OK/KERNELCMD"].text unless elements["TEMPLATE/OK/KERNELCMD"].nil?),
-        :os_root                   => (elements["TEMPLATE/OK/ROOT"].text unless elements["TEMPLATE/OK/ROOT"].nil?),
+        :nics                      => elements.collect("TEMPLATE/NIC/NETWORK") { |nic| nic.text },
+        :os_arch                   => (elements["TEMPLATE/OS/ARCH"].text unless elements["TEMPLATE/OS/ARCH"].nil?),
+        :os_boot                   => (elements["TEMPLATE/OS/BOOT"].text unless elements["TEMPLATE/OS/BOOT"].nil?),
+        :os_bootloader             => (elements["TEMPLATE/OS/BOOTLOADER"].text unless elements["TEMPLATE/OS/BOOTLOADER"].nil?),
+        :os_initrd                 => (elements["TEMPLATE/OS/INITRD"].text unless elements["TEMPLATE/OS/INITRD"].nil?),
+        :os_kernel                 => (elements["TEMPLATE/OS/KERNEL"].text unless elements["TEMPLATE/OS/KERNEL"].nil?),
+        :os_kernel_cmd             => (elements["TEMPLATE/OS/KERNEL_CMD"].text unless elements["TEMPLATE/OS/KERNEL_CMD"].nil?),
+        :os_root                   => (elements["TEMPLATE/OS/ROOT"].text unless elements["TEMPLATE/OS/ROOT"].nil?),
         :pae                       => (elements["TEMPLATE/FEATURES/PAE"].text unless elements["TEMPLATE/FEATURES/PAE"].nil?),
         :pci_bridge                => (elements["TEMPLATE/FEATURES/PCI_BRIDGE"].text unless elements["TEMPLATE/FEATURES/PCI_BRIDGE"].nil?),
         :vcpu                      => (elements["TEMPLATE/VCPU"].text unless elements["TEMPLATE/VCPU"].nil?)
