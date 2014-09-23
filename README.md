@@ -26,6 +26,10 @@ And run the tests and puppet-lint:
 
      bundle exec rake
 
+To run acceptance tests:
+
+     bundle exec rspec spec/acceptance
+
 Support
 -------
 
