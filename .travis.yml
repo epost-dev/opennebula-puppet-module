@@ -8,27 +8,27 @@ language: ruby
 bundler_args: --without development
 script: "bundle exec rake lint && bundle exec rake spec SPEC_OPTS='--format documentation'"
 env:
-  - PUPPET_VERSION=2.6.18
-  - PUPPET_VERSION=2.7.23
-  - PUPPET_VERSION=3.0.2
-  - PUPPET_VERSION=3.1.1
-  - PUPPET_VERSION=3.2.4
-  - PUPPET_VERSION=3.3.2
-  - PUPPET_VERSION=3.4.1
+  - PUPPET_GEM_VERSION=2.6.18
+  - PUPPET_GEM_VERSION=2.7.23
+  - PUPPET_GEM_VERSION=3.0.2
+  - PUPPET_GEM_VERSION=3.1.1
+  - PUPPET_GEM_VERSION=3.2.4
+  - PUPPET_GEM_VERSION=3.3.2
+  - PUPPET_GEM_VERSION=3.4.1
 matrix:
   fast_finish: true
   exclude:
     - rvm: 1.9.2
-      env: PUPPET_VERSION=2.6.18
+      env: PUPPET_GEM_VERSION=2.6.18
     - rvm: 1.9.3
-      env: PUPPET_VERSION=2.6.18
+      env: PUPPET_GEM_VERSION=2.6.18
     - rvm: 2.0.0
-      env: PUPPET_VERSION=2.6.18
+      env: PUPPET_GEM_VERSION=2.6.18
     - rvm: 2.0.0
-      env: PUPPET_VERSION=2.7.23
+      env: PUPPET_GEM_VERSION=2.7.23
     - rvm: 2.0.0
-      env: PUPPET_VERSION=3.0.2
+      env: PUPPET_GEM_VERSION=3.0.2
     - rvm: 2.0.0
-      env: PUPPET_VERSION=3.1.1
+      env: PUPPET_GEM_VERSION=3.1.1
 notifications:
   email: false
