@@ -12,25 +12,39 @@ describe 'onevm type' do
       memory => 128,
 
       # OS
-      os_kernel     => '/vmlinuz',
-      os_initrd     => '/initrd.img',
-      os_root       => 'sda1',
-      os_kernel_cmd => 'ro xencons=tty console=tty1',
+      os     => {
+        kernel     => '/vmlinuz',
+        initrd     => '/initrd.img',
+        root       => 'sda1',
+        kernel_cmd => 'ro xencons=tty console=tty1',
+      },
 
       # Features
-      acpi        => true,
-      pae         => true,
+      features => {
+        acpi        => true,
+        pae         => true,
+      },
 
       # Disks
-      disks  => [ 'Data', 'Experiments', ],
+      disks  => [
+        { image => 'Data',},
+        { image => 'Experiments',},
+        { type => 'fs', size => 4096, format => 'ext3',},
+        { type => 'swap', size => 1024, },
+      ],
 
       # Network
-      nics   => [ 'Blue', 'Red', ],
+      nics   => [
+        { network => 'Blue', bridge => 'vbr0', },
+        { network => 'Red', bridge => 'vbr1', },
+      ],
 
       # I/O Devices
-      graphics_type   => 'vnc',
-      graphics_listen => '0.0.0.0',
-      graphics_port   => 5,
+      graphics => {
+        type   => 'vnc',
+        listen => '0.0.0.0',
+        port   => 5,
+      },
     }
     EOS
     apply_manifest(pp, :catch_failures => true)
