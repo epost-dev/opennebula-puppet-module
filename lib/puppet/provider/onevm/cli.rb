@@ -14,23 +14,10 @@ Puppet::Type.type(:onevm).provide(:cli) do
 
   mk_resource_methods
 
-  # Create a VM with onevm by passing in a temporary template.
+  # Create a VM with onetemplate instantiate.
   def create
-      # create template content from template
-      template_output = onetemplate('show', resource[:template])
-      template_content = `#{template_output} | grep -A 100000 'TEMPLATE CONTENT' | grep -v 'TEMPLATE CONTENT'`
-      file = Tempfile.new("onevm-#{resource[:name]}")
-      template = ERB.new <<-EOF
-NAME = <%= resource[:name] %>
-<%= template_content %>
-EOF
-      
-      tempfile = template.result(binding)
-      file.write(tempfile)
-      file.close
-      self.debug "Creating onevm with template content: #{tempfile}"
-      onevm('create', file.path)
-      @property_hash[:ensure] = :present
+    onetemplate('instantiate', resource[:template], '--name', resource[:name])
+    @property_hash[:ensure] = :present
   end
 
   # Destroy a VM using onevm delete
