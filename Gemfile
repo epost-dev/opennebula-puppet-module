@@ -20,6 +20,9 @@ end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
   gem 'puppet', puppetversion, :require => false
+  if puppetversion < '3.0'
+    gem 'hiera-puppet', :require => false
+  end
 else
   gem 'puppet', :require => false
 end
