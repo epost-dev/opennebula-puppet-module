@@ -30,6 +30,9 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
 NAME = <%= resource[:name] %>
 TM_MAD = <%= resource[:tm] %>
 TYPE = <%= resource[:type].to_s.upcase %>
+<% if resource[:safe_dirs] %>
+SAFE_DIRS = <%= resource[:safe_dirs].join(' ') %>
+<% end %>
 <% if resource[:dm] %>
 DS_MAD = <%= resource[:dm] %>
 <% end %>
@@ -54,12 +57,13 @@ EOF
   def self.instances
     REXML::Document.new(onedatastore('list', '-x')).elements.collect("DATASTORE_POOL/DATASTORE") do |datastore|
       new(
-        :name     => datastore.elements["NAME"].text,
-        :ensure   => :present,
-        :type     => datastore.elements["TEMPLATE/TYPE"].text,
-        :dm       => (datastore.elements["TEMPLATE/DS_MAD"].text unless datastore.elements["TEMPLATE/DS_MAD"].nil?),
-        :tm       =>( datastore.elements["TEMPLATE/TM_MAD"].text unless datastore.elements["TEMPLATE/TM_MAD"].nil?),
-        :disktype => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.elements["DISK_TYPE"].text]
+        :name      => datastore.elements["NAME"].text,
+        :ensure    => :present,
+        :type      => datastore.elements["TEMPLATE/TYPE"].text,
+        :dm        => (datastore.elements["TEMPLATE/DS_MAD"].text unless datastore.elements["TEMPLATE/DS_MAD"].nil?),
+        :safe_dirs => (datastore.elements["TEMPLATE/SAFE_DIRS"].text.split(' ') unless datastore.elements["TEMPLATE/SAFE_DIRS"].nil?),
+        :tm        => ( datastore.elements["TEMPLATE/TM_MAD"].text unless datastore.elements["TEMPLATE/TM_MAD"].nil?),
+        :disktype  => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.elements["DISK_TYPE"].text]
        )
     end
   end

@@ -27,7 +27,6 @@ describe 'onedatastore type' do
 
   describe 'when creating a Files datastore' do
     it 'should idempotently run' do
-      pending 'missing safe_dirs property'
       pp = <<-EOS
       onedatastore { 'kernels':
         dm        => 'fs',

@@ -40,9 +40,9 @@ Puppet::Type.newtype(:onedatastore) do
     desc "Choose a disk type: file, block, rdb"
   end
 
-#  newproperty(:safedirs, :array_matching => :all) do
-#      desc "Array of safe directories"
-#  end
+  newproperty(:safe_dirs, :array_matching => :all) do
+    desc "Array of safe directories"
+  end
 
 #  newproperty(:restricteddirs, :array_matching => :all) do
 #      desc "Array of restricted directory names"
