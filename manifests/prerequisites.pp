@@ -23,7 +23,7 @@ class one::prerequisites {
         'RedHat': {
             if ( $one::params::one_repo_enable == true ) {
                 yumrepo { 'opennebula':
-                    baseurl  => 'http://downloads.opennebula.org/repo/4.10/CentOS/6/stable/$basearch/',
+                    baseurl  => 'http://downloads.opennebula.org/repo/4.10/CentOS/6/x86_64/',
                     descr    => 'OpenNebula',
                     enabled  => 1,
                     gpgcheck => 0,
