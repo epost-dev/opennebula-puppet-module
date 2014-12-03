@@ -24,7 +24,7 @@ class one::oned::sunstone {
   include one::oned::sunstone::service
   Class['one::prerequisites'] -> Class['one::params'] ->
   Class['one::oned::sunstone::install'] ->
-    Class['one::oned::sunstone::config'] ->
+    Class['one::oned::sunstone::config'] ~>
     Class['one::oned::sunstone::service']
   if $one::oned::ldap {
     include one::oned::sunstone::ldap

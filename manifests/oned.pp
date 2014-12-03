@@ -45,7 +45,7 @@ class one::oned (
   Class['one::params'] ->
   Class['one::install'] ->
   Class['one::oned::install'] ->
-  Class['one::oned::config'] ->
+  Class['one::oned::config'] ~>
   Class['one::oned::service'] ->
   Class['one::service']
 
