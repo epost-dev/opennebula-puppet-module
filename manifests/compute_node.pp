@@ -40,8 +40,8 @@ class one::compute_node {
   Class['one::install'] ->
   Class['one::config'] ->
   Class['one::compute_node::install'] ->
-  Class['one::compute_node::config'] ->
-  Class['one::compute_node::service'] ->
+  Class['one::compute_node::config'] ~>
+  Class['one::compute_node::service'] ~>
   Class['one::service']
 
   if ($one::puppetdb == true) {

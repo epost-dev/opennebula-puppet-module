@@ -46,7 +46,7 @@ class one::oned (
   Class['one::install'] ->
   Class['one::oned::install'] ->
   Class['one::oned::config'] ~>
-  Class['one::oned::service'] ->
+  Class['one::oned::service'] ~>
   Class['one::service']
 
   if ( $backend != 'mysql' and $backend != 'sqlite') {
