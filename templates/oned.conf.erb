@@ -84,6 +84,28 @@ VNC_BASE_PORT = 5900
 #VM_SUBMIT_ON_HOLD = "NO"
 
 #*******************************************************************************
+# Federation configuration attributes
+#-------------------------------------------------------------------------------
+# Control the federation capabilities of oned. Operation in a federated setup
+# requires a special DB configuration.
+#
+#  FEDERATION: Federation attributes
+#   MODE: Operation mode of this oned.
+#       STANDALONE no federated.This is the default operational mode
+#       MASTER     this oned is the master zone of the federation
+#       SLAVE      this oned is a slave zone
+#   ZONE_ID: The zone ID as returned by onezone command
+#   MASTER_ONED: The xml-rpc endpoint of the master oned, e.g.
+#   http://master.one.org:2633/RPC2
+#*******************************************************************************
+
+FEDERATION = [
+    MODE = "STANDALONE",
+    ZONE_ID = 0,
+    MASTER_ONED = ""
+]
+
+#*******************************************************************************
 # XML-RPC server configuration
 #-------------------------------------------------------------------------------
 #  These are configuration parameters for oned's xmlrpc-c server
