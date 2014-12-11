@@ -1,9 +1,10 @@
 vendor
 *bundle
-Gemfile.lock
 *.swp
 spec/fixtures/modules
 spec/fixtures/manifests
 .idea
-/.project
+.project
 .vagrant
+pkg
+Gemfile.lock

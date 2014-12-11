@@ -1,0 +1,15 @@
+{
+  "name": "epost-one",
+  "version": "1.0.1",
+  "author": "Deutsche Post E-Post Development GmbH",
+  "summary": "OpenNebula management module - Manage OpenNebula nodes, management oned, sunstone webinterface",
+  "license": "Licensed under (Apache 2.0)",
+  "source": "https://github.com/epost-dev/opennebula-puppet-module",
+  "project_page": "https://github.com/epost-dev/opennebula-puppet-module",
+  "issues_url": "https://github.com/epost-dev/opennebula-puppet-module/issues",
+  "tags": ["opennebula", "sunstone", "management", "oned", "kvm"],
+  "dependencies": [
+    { "name": "puppetlabs/stdlib", "version_requirement": "> 2.2.0" },
+    { "name": "puppetlabs/apt" }
+  ]
+}
