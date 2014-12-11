@@ -7,3 +7,4 @@ spec/fixtures/manifests
 .project
 .vagrant
 pkg
+Gemfile.lock
