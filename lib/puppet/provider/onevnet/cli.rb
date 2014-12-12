@@ -15,9 +15,7 @@
 # we read onevnet structure by using xml
 # we write tempfiles as erb templates for creating resources and setting properties
 #
-require 'rexml/document'
-require 'tempfile'
-require 'erb'
+require 'nokogiri'
 
 Puppet::Type.type(:onevnet).provide(:cli) do
   desc "onevnet provider"
@@ -31,42 +29,60 @@ Puppet::Type.type(:onevnet).provide(:cli) do
   # Create a network with onevnet by passing in a temporary template.
   def create
     file = Tempfile.new("onevnet-#{resource[:name]}")
-    template = ERB.new <<-EOF
-NAME = "<%= resource[:name] %>"
-TYPE = <%= resource[:type]%>
-BRIDGE = <%= resource[:bridge] %>
-
-<% if resource[:phydev] %>
-PHYDEV = <%= resource[:phydev] %>
-<% end %>
-<% if resource[:type]== :fixed %>
-# FIXED NETWORK
-<% if resource[:leases] %>
-<% resource[:leases].each { |lease| %>
-LEASES = [IP=<%= lease%>]
-<% } %>
-<% end %>
-<% elsif resource[:type]== :ranged %>
-# RANGED NETWORK
-<% if resource[:network_size]    %>NETWORK_SIZE = <%=    resource[:network_size]    %><% end %>
-<% if resource[:network_address] %>NETWORK_ADDRESS = <%= resource[:network_address] %><% end %>
-<% if resource[:network_start]   %>IP_START = <%=        resource[:network_start]   %><% end %>
-<% if resource[:network_end]     %>IP_END = <%=          resource[:network_end]     %><% end %>
-<% if resource[:macstart]        %>MAC_START = <%=       resource[:macstart]        %><% end %>
-<% if resource[:siteprefix]      %>SITE_PREFIX = <%=     resource[:siteprefix]      %><% end %>
-<% if resource[:globalprefix]    %>GLOBAL_PREFIX = <%=   resource[:globalprefix]    %><% end %>
-<% end %>
-<% if resource[:vlanid]       %>VLAN_ID = <%=       resource[:vlanid]        %><% end %>
-
-# Context information
-<% if resource[:context] %>
-<% resource[:context].each { |key,value| %>
-<%= key.upcase %> = <%= value %>
-<% } %>
-<% end %>
-EOF
-
-    tempfile = template.result(binding)
+    builder = Nokogiri::XML::Builder.new do |xml|
+        xml.VNET do
+            xml.NAME resource[:name]
+            xml.TYPE resource[:type]
+            xml.BRIDGE resource[:bridge]
+            xml.PHYDEV do
+                resource[:phydev]
+            end if resource[:phydev]
+            if resource[:type] == :fixed do
+                resource[:leases].each do |leases|
+                    xml.LEASES do
+                        leases.each  do |k,v|
+                            xml.send(k.upcase, v)
+                        end
+                    end
+                end if resource[:leases]
+            end
+            if resource[:type] == :ranged do
+                xml.NETWORK_SIZE do
+                    resource[:network_size]
+                end if resource[:network_size]
+                xml.NETWORK_ADDRESS do
+                    resource[:network_address]
+                end if resource[:network_address]
+                xml.IP_START do
+                    resource[:network_start]
+                end if resource[:network_start]
+                xml.IP_END do
+                    resource[:network_end]
+                end if resource[:network_end]
+                xml.MAC_START do
+                    resource[:macstart]
+                end if resource[:macstart]
+                xml.SITE_PREFIX do
+                    resource[:siteprefix]
+                end if resource[:siteprefix]
+                xml.GLOBAL_PREFIX do
+                    resource[:globalprefix]
+                end if resource[:globalprefix]
+            end
+            # end if type ranged
+            xml.VLAN_ID do
+                resource[:vlanid]
+            end if resource[:vlanid]
+            xml.CONTEXT do
+                resource[:context].each do |k,v|
+                    xml.send(k.upcase, v)
+                end if resource[:context]
+            end
+        end
+        # enf xml vnet do
+    end
+    # end builder
+    tempfile = builder.to_xml
     file.write(tempfile)
     file.close
     self.debug "Adding new network using template: #{tempfile}"
@@ -88,40 +104,39 @@ EOF
 
   # Return the full hash of all existing onevnet resources
   def self.instances
-    REXML::Document.new(onevnet('list', '-x')).elements.collect('VNET_POOL/VNET') do |vnet|
-      elements = vnet.elements
-      hash = {
-        :name            => elements['NAME'].text,
-        :ensure          => :present,
-        :bridge          => (elements['TEMPLATE/BRIDGE'] || elements['BRIDGE']).text,
-        :context         => nil, # TODO
-        :dnsservers      => (elements['TEMPLATE/DNSSERVERS'].text.to_a unless elements['TEMPLATE/DNSSERVERS'].nil?),
-        :gateway         => (elements['TEMPLATE/GATEWAY'].text unless elements['TEMPLATE/GATEWAY'].nil?),
-        :macstart        => (elements['TEMPLATE/MACSTART'].text unless elements['TEMPLATE/MACSTART'].nil?),
-        :model           => (elements['TEMPLATE/MODEL'].text unless elements['TEMPLATE/MODEL'].nil?),
-        :network_size    => (elements['TEMPLATE/NETWORK_SIZE'].text unless elements['TEMPLATE/NETWORK_SIZE'].nil?),
-        :phydev          => (elements['TEMPLATE/PHYDEV'] || elements['PHYDEV']).text,
-        :type            => elements['TYPE'].text == '0' ? 'ranged' : 'fixed',
-        :vlanid          => (elements['TEMPLATE/VLAN_ID'] || elements['VLAN_ID']).text,
-      }.merge(
-        if elements['TYPE'].text == '0'
-          {
-            :globalprefix    => (elements['TEMPLATE/GLOBAL_PREFIX'] || elements['GLOBAL_PREFIX']).text,
-            :network_address => (elements['TEMPLATE/NETWORK_ADDRESS'].text unless elements['TEMPLATE/NETWORK_ADDRESS'].nil?),
-            :network_end     => (elements['TEMPLATE/IP_END'] || elements['RANGE/IP_END']).text,
-            :network_mask    => (elements['TEMPLATE/NETWORK_MASK'].text unless elements['TEMPLATE/NETWORK_MASK'].nil?),
-            :network_start   => (elements['TEMPLATE/IP_START'] || elements['RANGE/IP_START']).text,
-            :protocol        => elements['TEMPLATE/NETWORK_ADDRESS'].nil? ? :ipv6 : :ipv4,
-            :siteprefix      => (elements['TEMPLATE/SITE_PREFIX'] || elements['SITE_PREFIX']).text,
-          }
-        elsif elements['TYPE'].text == '1'
-          {
-            :leases          => vnet.elements.collect('LEASES/LEASE/IP') { |e| e.text },
-          }
-        end
-      )
-      new(hash)
-    end
+      Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET').map do |vnet|
+          hash = {
+              :name         => vnet.xpath('./NAME').text,
+              :ensure       => :present,
+              :bridge       => (vnet.xpath('./TEMPLATE/BRIDGE') || vnet.xpath('./BRIDGE')).text,
+              :context      => nil,
+              :dnsservers   => (vnet.xpath('./TEMPLATE/DNSSERVERS').text.to_a unless vnet.xpath('./TEMPLATE/DNSSERVERS').nil?),
+              :gateway      => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
+              :macstart     => (vnet.xpath('./TEMPLATE/MACSTART').text unless vnet.xpath('./TEMPLATE/MACSTART').nil?),
+              :model        => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
+              :network_size => (vnet.xpath('./TEMPLATE/NETWORK_SIZE').text unless vnet.xpath('./TEMPLATE/NETWORK_SIZE').nil?),
+              :phydev       => (vnet.xpath('./TEMPLATE/PHYDEV') || vnet.xpath('./PHYDEV')).text,
+              :type         => vnet.xpath('./TYPE').text == '0' ? 'ranged' : 'fixed',
+              :vlanid       => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
+          }.merge(
+              if vnet.xpath('./TYPE').text == '0'
+                  {
+                      :globalprefix    => (vnet.xpath('./TEMPLATE/GLOBAL_PREFIX') || vnet.xpath('./GLOBAL_PREFIX')).text,
+                      :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
+                      :network_end     => (vnet.xpath('./TEMPLATE_IP_END') || vnet.xpath('./RANGE/IP_END')).text,
+                      :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
+                      :network_start   => (vnet.xpath('./TEMPLATE/IP_START') || vnet.xpath('./RANGE/IP_START')).text,
+                      :protocol        => vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil? ? :ipv6 : :ipv4,
+                      :siteprefix      => (vnet.xpath('./TEMPLATE/SITE_PREFIX') || vnet.xpath('./SITE_PREFIX')).text,
+                  }
+              elsif vnet.xpath('./TYPE') == '1'
+                  {
+                      :leases          => vnet.xpath.collect('./LEASES/LEASE/IP') { |e| e.text },
+                  }
+              end
+          )
+          new(hash)
+      end
   end
 
   def self.prefetch(resources)
