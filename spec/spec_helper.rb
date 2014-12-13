@@ -1,4 +1,3 @@
-require 'minitest/autorun'
 require 'test/unit'
 require 'mocha/setup'
 require 'rspec-puppet'

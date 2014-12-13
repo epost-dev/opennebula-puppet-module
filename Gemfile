@@ -7,7 +7,6 @@ group :development, :test do
   gem 'puppet-lint',             :require => false
   gem 'simplecov',               :require => false
   gem 'nokogiri',                '<= 1.5.10'
-  gem 'minitest',                :require => false
 end
 
 group :integration do
