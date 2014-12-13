@@ -6,7 +6,7 @@ group :development, :test do
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint',             :require => false
   gem 'simplecov',               :require => false
-  gem 'nokogiri',                '< 1.6.4'
+  gem 'nokogiri',                '<= 1.5.10'
   gem 'minitest',                :require => false
 end
 
