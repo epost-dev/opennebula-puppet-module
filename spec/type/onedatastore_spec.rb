@@ -38,8 +38,8 @@ describe res_type do
   end
 
   it 'should have property :type' do
-      @datastore[:type] = 'bar'
-      @datastore[:type].should == 'bar'
+      @datastore[:type] = 'IMAGE_DS'
+      @datastore[:type].should == :IMAGE_DS
   end
 
   it 'should have property :dm' do

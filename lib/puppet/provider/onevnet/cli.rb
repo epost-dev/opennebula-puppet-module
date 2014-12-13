@@ -37,7 +37,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
             xml.PHYDEV do
                 resource[:phydev]
             end if resource[:phydev]
-            if resource[:type] == :fixed do
+            if resource[:type] == :fixed
                 resource[:leases].each do |leases|
                     xml.LEASES do
                         leases.each  do |k,v|
@@ -46,7 +46,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
                     end
                 end if resource[:leases]
             end
-            if resource[:type] == :ranged do
+            if resource[:type] == :ranged
                 xml.NETWORK_SIZE do
                     resource[:network_size]
                 end if resource[:network_size]
