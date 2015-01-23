@@ -1,6 +1,4 @@
-require 'rexml/document'
-require 'tempfile'
-require 'erb'
+require 'nokogiri'
 
 Puppet::Type.type(:onetemplate).provide(:cli) do
   desc "onetemplate provider"
@@ -14,69 +12,48 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
   # Create a VM template with onetemplate by passing in a temporary template definition file.
   def create
     file = Tempfile.new("onetemplate-#{resource[:name]}")
-    template = ERB.new <<-EOF
-<TEMPLATE>
-  <NAME><%=   resource[:name]   %></NAME>
-  <MEMORY><%= resource[:memory] %></MEMORY>
-  <CPU><%=    resource[:cpu]    %></CPU>
-  <VCPU><%=   resource[:vcpu]   %></VCPU>
-
-<% if resource[:os] %>
-  <OS>
-    <% resource[:os].each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </OS>
-<% end %>
-
-<% if resource[:disks] %>
-<% resource[:disks].each do |disk| %>
-  <DISK>
-    <% disk.each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </DISK>
-<% end %>
-<% end %>
-
-<% if resource[:nics] %>
-<% resource[:nics].each do |nic| %>
-  <NIC>
-    <% nic.each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </NIC>
-<% end %>
-<% end %>
-
-<% if resource[:graphics] %>
-  <GRAPHICS>
-    <% resource[:graphics].each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </GRAPHICS>
-<% end %>
-
-<% if resource[:features] %>
-  <FEATURES>
-    <% resource[:features].each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </FEATURES>
-<% end %>
-
-<% if resource[:context] %>
-  <CONTEXT>
-    <% resource[:context].each do |key, value| %>
-    <<%= key.upcase %>><%= value %></<%= key.upcase %>>
-    <% end %>
-  </CONTEXT>
-<% end %>
-
-</TEMPLATE>
-EOF
-
-    tempfile = template.result(binding)
+    builder = Nokogiri::XML::Builder.new do |xml|
+        xml.TEMPLATE do
+            xml.NAME resource[:name]
+            xml.MEMORY resource[:memory]
+            xml.CPU resource[:cpu]
+            xml.VCPU resource[:vcpu]
+            xml.OS do
+                resource[:os].each do |k, v|
+                    xml.send(k.upcase, v)
+                end
+            end if resource[:os]
+            resource[:disks].each do |disk|
+                xml.DISK do
+                    disk.each do |k, v|
+                        xml.send(k.upcase, v)
+                    end
+                end
+            end if resource[:disks]
+            resource[:nics].each do |nic|
+                xml.NIC do
+                    nic.each do |k, v|
+                        xml.send(k.upcase, v)
+                    end
+                end
+            end if resource[:nics]
+            xml.GRAPHICS do
+                resource[:graphics].each do |k, v|
+                    xml.send(k.upcase, v)
+                end
+            end if resource[:graphics]
+            xml.FEATURES do
+                resource[:features].each do |k, v|
+                    xml.send(k.upcase, v)
+                end
+            end if resource[:features]
+            xml.CONTEXT do
+                resource[:context].each do |k, v|
+                    xml.send(k.upcase, v)
+                end
+            end if resource[:context]
+        end
+    end
     file.write(tempfile)
     file.close
     self.debug "Creating template using #{tempfile}"
@@ -98,22 +75,21 @@ EOF
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    REXML::Document.new(onetemplate('list', '-x')).elements.collect("VMTEMPLATE_POOL/VMTEMPLATE") do |template|
-      elements = template.elements
-      new(
-        :name     => elements["NAME"].text,
-        :ensure   => :present,
-        :context  => Hash[elements.collect('TEMPLATE/CONTEXT/*') { |e| [e.name.downcase, e.text] } ],
-        :cpu      => (elements["TEMPLATE/CPU"].text unless elements["TEMPLATE/CPU"].nil?),
-        :disks    => elements.collect("TEMPLATE/DISK") { |e| Hash[e.elements.collect { |f| [f.name.downcase, f.text] }] },
-        :features => Hash[elements.collect('TEMPLATE/FEATURES/*') { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text]] } ],
-        :graphics => Hash[elements.collect('TEMPLATE/GRAPHICS/*') { |e| [e.name.downcase, e.text] } ],
-        :memory   => (elements["TEMPLATE/MEMORY"].text unless elements["TEMPLATE/MEMORY"].nil?),
-        :nics     => elements.collect("TEMPLATE/NIC") { |e| Hash[e.elements.collect { |f| [f.name.downcase, f.text] }] },
-        :os       => Hash[elements.collect('TEMPLATE/OS/*') { |e| [e.name.downcase, e.text] } ],
-        :vcpu     => (elements["TEMPLATE/VCPU"].text unless elements["TEMPLATE/VCPU"].nil?)
-      )
-    end
+      Nokogiri::XML(onetemplate('list', '-x')).root.xpath('/VMTEMPLATE_POOL/VMTEMPLATE') do | template|
+        new(
+            :name     => template.xpath('./NAME').text,
+            :ensure   => :present,
+            :context  => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.downcase, e.text] } ],
+            :cpu      => (template.xpath('./TEMPLATE/CPU').text unless template.xapth('./TEMPLATE/CPU').nil?),
+            :disks    => template.xapth('./TEMPLATE/DISK').map { |disk| Hash[disk.xpath('./*').map { |e| [e.name.downcase, e.text] } ] },
+            :features => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text]] } ],
+            :graphics => Hash[template.xpath('./TEMPLATE/GRAPHICS/*').map { |e| [e.name.downcase, e.text] } ],
+            :memory => (template.xpath('./TEMPLATE/MEMORY').text unless template.xpath('./TEMPLATE/MEMORY').nil?),
+            :nics => template.xpath('./TEMPLATE/NIC').map { |nic| Hash[nic.xpath('*').map { |e| [e.name.downcase, e.text] } ] },
+            :os => Hash[template.xpath('./TEMPLATE/OS/*').map { |e| [e.name.downcase, e.text] } ],
+            :vcpu => (template.xpath('./TEMPLATE/VCPU').text unless template.xpath('./TEMPLATE/VCPU').nil?)
+        )
+      end
   end
 
   def self.prefetch(resources)

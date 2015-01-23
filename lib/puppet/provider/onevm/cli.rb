@@ -33,12 +33,12 @@ Puppet::Type.type(:onevm).provide(:cli) do
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    REXML::Document.new(onevm('list', '-x')).elements.collect("VM_POOL/VM") do |vm|
-      new(
-        :name     => vm.elements["NAME"].text,
-        :ensure   => :present,
-        :template => vm.elements["TEMPLATE/TEMPLATE_ID"]  # TODO get template name insted of ID
-      )
+    Nokogiri::XML(omevm('list','-x')).root.xpath('/VM_POOL/VM') do |vm|
+        new(
+            :name    => vm.xpath('./NAME').text,
+            :ensure  => :present,
+            :tempate => vm.xpath('./TEMPLATE/TEMPLATE_ID')
+        )
     end
   end
 

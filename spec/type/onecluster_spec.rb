@@ -16,9 +16,6 @@ describe res_type do
     val.stubs(:defaultprovider).returns provider
     val
   }
-#  let(:resource) {
-#    res_type.new({:name => 'test'})
-#  }
   before :each do
       @cluster = res_type.new(:name => 'test', :hosts => ['node1','node2'])
   end

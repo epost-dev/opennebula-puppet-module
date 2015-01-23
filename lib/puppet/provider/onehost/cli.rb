@@ -1,6 +1,4 @@
-require 'rexml/document'
-require 'erb'
-require 'tempfile'
+require 'nokogiri'
 
 Puppet::Type.type(:onehost).provide(:cli) do
   desc "onehost provider"
@@ -26,15 +24,15 @@ Puppet::Type.type(:onehost).provide(:cli) do
   end
 
   def self.instances
-    REXML::Document.new(onehost('list', '-x')).elements.collect("HOST_POOL/HOST") do |host|
-      new(
-        :name   => host.elements["NAME"].text,
-        :ensure => :present,
-        :im_mad => host.elements["IM_MAD"].text,
-        :vm_mad => host.elements["VM_MAD"].text,
-        :vn_mad => host.elements["VN_MAD"].text
-      )
-    end
+     Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST') do | host|
+       new(
+           :name   => host.xpath('./NAME').text,
+           :ensure => :present,
+           :im_mad => host.xpath('./IM_MAD').text,
+           :vm_mad => host.xpath('./VM_MAD').text,
+           :vn_mad => host.xpath('./VN_MAD').text
+       )
+     end
   end
 
   def self.prefetch(resources)

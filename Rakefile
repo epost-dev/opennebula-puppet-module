@@ -8,7 +8,11 @@ require 'puppet-lint'
 desc 'Run the tests'
 RSpec::Core::RakeTask.new(:do_test) do |t|
   t.rspec_opts = ['--color', '-f d']
-  t.pattern = 'spec/*/*_spec.rb'
+  file_list = FileList['spec/**/*_spec.rb']
+  %w(support fixtures acceptance).each do |exclude|
+      file_list = file_list.exclude("spec/#{exclude}/**/*_spec.rb")
+  end
+  t.pattern = file_list
 end
 
 desc 'Generate the docs'

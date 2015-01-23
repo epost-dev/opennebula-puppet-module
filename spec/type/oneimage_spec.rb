@@ -39,7 +39,7 @@ describe res_type do
 
   it 'should have property :type' do
       @image[:type] = 'os'
-      @image[:type].should == 'os'
+      @image[:type].should == :OS
   end
 
   it 'should have property :persistent' do

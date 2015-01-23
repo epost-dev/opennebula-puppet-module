@@ -11,9 +11,7 @@
 # Deutsche Post E-POST Development GmbH - 2014
 #
 
-require 'rexml/document'
-require 'erb'
-require 'tempfile'
+require 'nokogiri'
 
 Puppet::Type.type(:onedatastore).provide(:cli) do
   desc "onedatastore provider"
@@ -26,18 +24,20 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
 
   def create
     file = Tempfile.new("onedatastore-#{resource[:name]}")
-    template = ERB.new <<-EOF
-NAME = <%= resource[:name] %>
-TM_MAD = <%= resource[:tm] %>
-TYPE = <%= resource[:type].to_s.upcase %>
-<% if resource[:safe_dirs] %>
-SAFE_DIRS = <%= resource[:safe_dirs].join(' ') %>
-<% end %>
-<% if resource[:dm] %>
-DS_MAD = <%= resource[:dm] %>
-<% end %>
-EOF
-    tempfile = template.result(binding)
+    builder = Nokogiri::XML::Builder.new do |xml|
+        xml.DATASTORE do
+            xml.NAME resource[:name]
+            xml.TM_MAD resource[:tm]
+            xml.TYPE resource[:type].to_s_upcase
+            xml.SAFE_DIRS do
+                xml.send(resource[:safe_dirs].join(' '))
+            end if resource[:safe_dirs]
+            xml.DS_MAD do
+                xml.send(resource[:dm])
+            end if resource[:dm]
+        end
+    end
+    tempfile = builder.to_xml
     file.write(tempfile)
     file.close
     onedatastore('create', file.path)
@@ -55,17 +55,17 @@ EOF
   end
 
   def self.instances
-    REXML::Document.new(onedatastore('list', '-x')).elements.collect("DATASTORE_POOL/DATASTORE") do |datastore|
-      new(
-        :name      => datastore.elements["NAME"].text,
-        :ensure    => :present,
-        :type      => datastore.elements["TEMPLATE/TYPE"].text,
-        :dm        => (datastore.elements["TEMPLATE/DS_MAD"].text unless datastore.elements["TEMPLATE/DS_MAD"].nil?),
-        :safe_dirs => (datastore.elements["TEMPLATE/SAFE_DIRS"].text.split(' ') unless datastore.elements["TEMPLATE/SAFE_DIRS"].nil?),
-        :tm        => ( datastore.elements["TEMPLATE/TM_MAD"].text unless datastore.elements["TEMPLATE/TM_MAD"].nil?),
-        :disktype  => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.elements["DISK_TYPE"].text]
-       )
-    end
+      Nokogiri::XML(onedatastore('list','-x')).root.xpath('/DATASTORE_POOL/DATASTORE').map do |datastore|
+        new(
+            :name      => datastore.xpath('./NAME').text,
+            :ensure    => :present,
+            :type      => datastore.xpath('./TEMPLATE/TYPE').text,
+            :dm        => (datastore.xpath('./TEMPLATE/DS_MAD').text unless datastore.xpath('./TEMPLATE/DS_MAD').nil?),
+            :safe_dirs => (datastore.xpath('./TEMPLATE/SAFE_DIRS').text unless datastore.xpath('./TEMPLATE/SAFE_DIRS').nil?),
+            :tm        => (datastore.xpath('./TEMPLATE/TM_MAD').text unless datastore.xpath('./TEMPLATE/TM_MAD').nil?),
+            :disktype  => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.xpath('./DISK_TYPE').text]
+        )
+      end
   end
 
   def self.prefetch(resources)

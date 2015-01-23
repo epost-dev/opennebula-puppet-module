@@ -16,9 +16,6 @@ describe res_type do
     val.stubs(:defaultprovider).returns provider
     val
   }
-#  let(:resource) {
-#    res_type.new({:name => 'test'})
-#  }
   before :each do
       @host = res_type.new(:name => 'test')
   end
@@ -29,12 +26,12 @@ describe res_type do
 
   it 'should have property :im_mad' do
       @host[:im_mad] = 'kvm'
-      @host[:im_mad].should == 'kvm'
+      @host[:im_mad].should == :kvm
   end
 
   it 'should have property :vm_mad' do
       @host[:vm_mad] = 'kvm'
-      @host[:vm_mad].should == 'kvm'
+      @host[:vm_mad].should == :kvm
   end
 
   parameter_tests = {

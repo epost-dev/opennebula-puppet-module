@@ -3,7 +3,8 @@ shared_examples "a puppet type" do |parameter_tests,res_type_name|
 
   let(:provider) {
     prov = stub 'provider'
-    prov.stubs(:name).returns(res_type_name)
+    #prov.stubs(:name).returns(res_type_name)
+    prov.stubs(:name).returns('cli')
     prov
   }
   let(:type) {
