@@ -1,5 +1,5 @@
 {
-  "name": "epostdev-opennebula",
+  "name": "epostdev-one",
   "version": "1.0.1",
   "author": "Deutsche Post E-POST Development GmbH",
   "summary": "OpenNebula management module - Manage OpenNebula nodes, management oned, sunstone webinterface",
@@ -7,7 +7,7 @@
   "source": "https://github.com/epost-dev/opennebula-puppet-module",
   "project_page": "https://github.com/epost-dev/opennebula-puppet-module",
   "issues_url": "https://github.com/epost-dev/opennebula-puppet-module/issues",
-  "tags": ["opennebula", "one", "sunstone", "management", "oned", "kvm"],
+  "tags": ["opennebula", "one", "sunstone", "management", "oned", "kvm", "cloud"],
   "operatingsystem_support": [
     {
     "operatingsystem":"RedHat",
@@ -16,7 +16,11 @@
     {
     "operatingsystem": "Ubuntu",
     "operatingsystemrelease": [ "14.04" ]
-    }
+    },
+    {
+    "operatingsystem": "Debian",
+    "operatingsystemrelease": [ "7.x" ]
+    },
    ],  
   "dependencies": [
     { "name": "puppetlabs/stdlib", "version_requirement": "> 2.2.0" },

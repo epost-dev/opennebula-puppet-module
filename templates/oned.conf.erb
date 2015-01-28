@@ -10,11 +10,17 @@
 #
 #  MONITORING_INTERVAL: Time in seconds between host and VM monitorization.
 #
+#  MONITORING_THREADS: Max. number of threads used to process monitor messages
+#
 #  HOST_PER_INTERVAL: Number of hosts monitored in each interval.
 #  HOST_MONITORING_EXPIRATION_TIME: Time, in seconds, to expire monitoring
 #  information. Use 0 to disable HOST monitoring recording.
 #
-#  VM_PER_INTERVAL: Number of VMs monitored in each interval.
+#  VM_INDIVIDUAL_MONITORING: VM monitoring information is obtained along with the
+#  host information. For some custom monitor drivers you may need activate the
+#  individual VM monitoring process.
+#  VM_PER_INTERVAL: Number of VMs monitored in each interval, if the individual
+#  VM monitoring is set to yes.
 #  VM_MONITORING_EXPIRATION_TIME: Time, in seconds, to expire monitoring
 #  information. Use 0 to disable VM monitoring recording.
 #
@@ -58,6 +64,7 @@ MONITORING_THREADS  = 50
 #HOST_PER_INTERVAL               = 15
 #HOST_MONITORING_EXPIRATION_TIME = 43200
 
+#VM_INDIVIDUAL_MONITORING      = "no"
 #VM_PER_INTERVAL               = 5
 #VM_MONITORING_EXPIRATION_TIME = 14400
 
@@ -125,13 +132,34 @@ FEDERATION = [
 #
 #  TIMEOUT: Maximum time in seconds the server will wait for the client to
 #  do anything while processing an RPC - default 15
+#
+#  RPC_LOG: Create a separated log file for xml-rpc requests, in
+#  "/var/log/one/one_xmlrpc.log".
+#
+#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses. Only relevant for
+#  slave zones.
+#
+#  LOG_CALL_FORMAT: Format string to log XML-RPC calls. Interpreted strings:
+#     %i -- request id
+#     %m -- method name
+#     %u -- user id
+#     %U -- user name
+#     %l -- param list
+#     %p -- user password
+#     %g -- group id
+#     %G -- group name
+#     %a -- auth token
+#     %% -- %
 #*******************************************************************************
 
-MAX_CONN = <%= scope.lookupvar('one::params::xmlrpc_maxconn') %>
-MAX_CONN_BACKLOG = <%= scope.lookupvar('one::params::xmlrpc_maxconn_backlog') %>
-KEEPALIVE_TIMEOUT = <%= scope.lookupvar('one::params::xmlrpc_keepalive_timeout') %>
+MAX_CONN           = <%= scope.lookupvar('one::params::xmlrpc_maxconn') %>
+MAX_CONN_BACKLOG   = <%= scope.lookupvar('one::params::xmlrpc_maxconn_backlog') %>
+KEEPALIVE_TIMEOUT  = <%= scope.lookupvar('one::params::xmlrpc_keepalive_timeout') %>
 KEEPALIVE_MAX_CONN = <%= scope.lookupvar('one::params::xmlrpc_keepalive_max_conn') %>
-TIMEOUT = <%= scope.lookupvar('one::params::xmlrpc_timeout') %>
+TIMEOUT            = <%= scope.lookupvar('one::params::xmlrpc_timeout') %>
+#RPC_LOG            = NO
+#MESSAGE_SIZE       = 1073741824
+#LOG_CALL_FORMAT    = "Req:%i UID:%u %m invoked %l"
 
 #*******************************************************************************
 # Physical Networks configuration
@@ -170,11 +198,14 @@ MAC_PREFIX   = "02:00"
 #       CDROM     Image file holding a CDROM
 #       DATABLOCK Image file holding a datablock,
 #                 always created as an empty block
+#
 #  DEFAULT_DEVICE_PREFIX: This can be set to
 #       hd        IDE prefix
 #       sd        SCSI
 #       xvd       XEN Virtual Disk
 #       vd        KVM virtual disk
+#
+#  DEFAULT_CDROM_DEVICE_PREFIX: Same as above but for CDROM devices.
 #*******************************************************************************
 
 #DATASTORE_LOCATION  = /var/lib/one/datastores
@@ -186,6 +217,7 @@ DATASTORE_CAPACITY_CHECK = "yes"
 DEFAULT_IMAGE_TYPE    = "OS"
 DEFAULT_DEVICE_PREFIX = "hd"
 
+DEFAULT_CDROM_DEVICE_PREFIX = "hd"
 
 #*******************************************************************************
 # Information Driver Configuration
@@ -296,6 +328,17 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+#  vCenter Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
+#IM_MAD = [
+#      name       = "vcenter",
+#      executable = "one_im_sh",
+#      arguments  = "-c -t 15 -r 0 vcenter" ]
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
 #-------------------------------------------------------------------------------
 #IM_MAD = [
@@ -304,14 +347,27 @@ IM_MAD = [
 #      arguments  = "-c -t 1 -r 0 ec2" ]
 #-------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-#  Ganglia Information Driver Manager Configuration
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#  SoftLayer Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
 #IM_MAD = [
-#      name       = "ganglia",
+#      name       = "sl",
 #      executable = "one_im_sh",
-#      arguments  = "ganglia" ]
-#-----------------------------------------------------------------------------
+#      arguments  = "-c -t 1 -r 0 sl" ]
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+#  Azure Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
+#IM_MAD = [
+#      name       = "az",
+#      executable = "one_im_sh",
+#      arguments  = "-c -t 1 -r 0 az" ]
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  Dummy Information Driver Manager Configuration
@@ -359,6 +415,14 @@ VM_MAD = [
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "kvm" ]
 #-------------------------------------------------------------------------------
+VM_MAD = [
+    name       = "qemu",
+    executable = "one_vmm_exec",
+    arguments  = "-t 15 -r 0 kvm",
+    default    = "vmm_exec/vmm_exec_kvm.conf",
+    type       = "qemu" ]
+#-------------------------------------------------------------------------------
+
 
 #-------------------------------------------------------------------------------
 #  XEN Virtualization Driver Manager Configuration
@@ -401,6 +465,19 @@ VM_MAD = [
 #    type       = "vmware" ]
 #-------------------------------------------------------------------------------
 
+
+#-------------------------------------------------------------------------------
+#  vCenter Virtualization Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+#-------------------------------------------------------------------------------
+#VM_MAD = [
+#    name       = "vcenter",
+#    executable = "one_vmm_sh",
+#    arguments  = "-p -t 15 -r 0 vcenter -s sh",
+#    type       = "xml" ]
+#-------------------------------------------------------------------------------
+
 #-------------------------------------------------------------------------------
 #  EC2 Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
@@ -410,6 +487,29 @@ VM_MAD = [
 #    name       = "ec2",
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 ec2",
+#    type       = "xml" ]
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+#  SoftLayer Virtualization Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of actions performed at the same time
+#-------------------------------------------------------------------------------
+#VM_MAD = [
+#    name       = "sl",
+#    executable = "one_vmm_sh",
+#    arguments  = "-t 15 -r 0 sl",
+#    type       = "xml" ]
+#-------------------------------------------------------------------------------
+
+#  Azure Virtualization Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of actions performed at the same time
+#-------------------------------------------------------------------------------
+#VM_MAD = [
+#    name       = "az",
+#    executable = "one_vmm_sh",
+#    arguments  = "-t 15 -r 0 az",
 #    type       = "xml" ]
 #-------------------------------------------------------------------------------
 
@@ -433,88 +533,12 @@ VM_MAD = [
 #       -t: number of threads, i.e. number of transfers made at the same time
 #       -d: list of transfer drivers separated by commas, if not defined all the
 #           drivers available will be enabled
-#
-# The  configuration for each driver is defined in TM_MAD_CONF. These
-# values are used when creating a new datastore and should not be modified
-# since they define the datastore behaviour.
-#   name      : name of the transfer driver, listed in the -d option of the
-#               TM_MAD section
-#   ln_target : determines how the persistent images will be cloned when
-#               a new VM is instantiated.
-#       NONE: The image will be linked and no more storage capacity will be used
-#       SELF: The image will be cloned in the Images datastore
-#       SYSTEM: The image will be cloned in the System datastore
-#   clone_target : determines how the non persistent images will be
-#                  cloned when a new VM is instantiated.
-#       NONE: The image will be linked and no more storage capacity will be used
-#       SELF: The image will be cloned in the Images datastore
-#       SYSTEM: The image will be cloned in the System datastore
-#   shared : determines if the storage holding the system datastore is shared
-#            among the different hosts or not. Valid values: "yes" or "no"
 #*******************************************************************************
 
 TM_MAD = [
     executable = "one_tm",
-    arguments = "-t 15 -d dummy,lvm,shared,fs_lvm,qcow2,ssh,vmfs,ceph"
+    arguments = "-t 15 -d dummy,lvm,shared,fs_lvm,qcow2,ssh,vmfs,ceph,dev"
 ]
-
-TM_MAD_CONF = [
-    name        = "dummy",
-    ln_target   = "NONE",
-    clone_target= "SYSTEM",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "lvm",
-    ln_target   = "NONE",
-    clone_target= "SELF",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "shared",
-    ln_target   = "NONE",
-    clone_target= "SYSTEM",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "fs_lvm",
-    ln_target   = "SYSTEM",
-    clone_target= "SYSTEM",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "qcow2",
-    ln_target   = "NONE",
-    clone_target= "SYSTEM",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "ssh",
-    ln_target   = "SYSTEM",
-    clone_target= "SYSTEM",
-    shared      = "no"
-]
-
-TM_MAD_CONF = [
-    name        = "vmfs",
-    ln_target   = "NONE",
-    clone_target= "SYSTEM",
-    shared      = "yes"
-]
-
-TM_MAD_CONF = [
-    name        = "ceph",
-    ln_target   = "NONE",
-    clone_target= "SELF",
-    shared      = "yes"
-]
-
-
 
 #*******************************************************************************
 # Datastore Driver Configuration
@@ -531,7 +555,7 @@ TM_MAD_CONF = [
 
 DATASTORE_MAD = [
     executable = "one_datastore",
-    arguments  = "-t 15 -d dummy,fs,vmfs,lvm,ceph"
+    arguments  = "-t 15 -d dummy,fs,vmfs,lvm,ceph,dev"
 ]
 
 #*******************************************************************************
@@ -632,6 +656,9 @@ DATASTORE_MAD = [
 #   arguments : for the hook. You can use the following Host information:
 #               - $ID, the ID of the host
 #               - $TEMPLATE, the vnet template in xml and base64 encoded
+#
+# Please note: In a Federation, User and Group hooks can only be defined in
+# the master OpenNebula.
 #-------------------------------------------------------------------------------
 HM_MAD = [
     executable = "one_hm" ]
@@ -642,7 +669,8 @@ HM_MAD = [
 # This hook is used to perform recovery actions when a host fails.
 # Script to implement host failure tolerance
 #   It can be set to
-#           -r recreate VMs running in the host
+#           -m migrate VMs to another host. Only for images in shared storage
+#           -r recreate VMs running in the host. State will be lost.
 #           -d delete VMs running in the host
 #   Additional flags
 #           -f force resubmission of suspended VMs
@@ -654,7 +682,7 @@ HM_MAD = [
 #    name      = "error",
 #    on        = "ERROR",
 #    command   = "ft/host_error.rb",
-#    arguments = "$ID -r",
+#    arguments = "$ID -m -p 5",
 #    remote    = "no" ]
 
 <%- if @host_hook_scripts != nil -%>
@@ -759,6 +787,19 @@ SESSION_EXPIRATION_TIME = 900
 DEFAULT_UMASK = 177
 
 #*******************************************************************************
+# OneGate
+#   ONEGATE_ENDPOINT: The URL for the onegate server (the Gate to OpenNebula for
+#   VMs). The onegate server is started using a separate command. The endpoint
+#   MUST be consistent with the values in onegate-server.conf
+#*******************************************************************************
+
+<% if scope.lookupvar('one::params::oned_onedgate_ip') -%>
+ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::params::oned_onedgate_ip') %>:5030"
+<% else -%>
+#ONEGATE_ENDPOINT = "http://frontend:5030"
+<% end -%>
+
+#*******************************************************************************
 # Restricted Attributes Configuration
 #*******************************************************************************
 # The following attributes are restricted to users outside the oneadmin group
@@ -768,6 +809,15 @@ VM_RESTRICTED_ATTR = "CONTEXT/FILES"
 VM_RESTRICTED_ATTR = "NIC/MAC"
 VM_RESTRICTED_ATTR = "NIC/VLAN_ID"
 VM_RESTRICTED_ATTR = "NIC/BRIDGE"
+VM_RESTRICTED_ATTR = "NIC_DEFAULT/MAC"
+VM_RESTRICTED_ATTR = "NIC_DEFAULT/VLAN_ID"
+VM_RESTRICTED_ATTR = "NIC_DEFAULT/BRIDGE"
+VM_RESTRICTED_ATTR = "DISK/TOTAL_BYTES_SEC"
+VM_RESTRICTED_ATTR = "DISK/READ_BYTES_SEC"
+VM_RESTRICTED_ATTR = "DISK/WRITE_BYTES_SEC"
+VM_RESTRICTED_ATTR = "DISK/TOTAL_IOPS_SEC"
+VM_RESTRICTED_ATTR = "DISK/READ_IOPS_SEC"
+VM_RESTRICTED_ATTR = "DISK/WRITE_IOPS_SEC"
 
 #VM_RESTRICTED_ATTR = "RANK"
 #VM_RESTRICTED_ATTR = "SCHED_RANK"
@@ -777,9 +827,19 @@ VM_RESTRICTED_ATTR = "NIC/BRIDGE"
 IMAGE_RESTRICTED_ATTR = "SOURCE"
 
 #*******************************************************************************
-# OneGate
+# The following restricted attributes only apply to VNets that are a reservation.
+# Normal VNets do not have restricted attributes.
 #*******************************************************************************
-ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::params::oned_onedgate_ip') %>:5030"
+
+VNET_RESTRICTED_ATTR = "PHYDEV"
+VNET_RESTRICTED_ATTR = "VLAN_ID"
+VNET_RESTRICTED_ATTR = "VLAN"
+VNET_RESTRICTED_ATTR = "BRIDGE"
+
+VNET_RESTRICTED_ATTR = "AR/PHYDEV"
+VNET_RESTRICTED_ATTR = "AR/VLAN_ID"
+VNET_RESTRICTED_ATTR = "AR/VLAN"
+VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 
 #*******************************************************************************
 # Inherited Attributes Configuration
@@ -806,4 +866,67 @@ INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
 INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
 INHERIT_DATASTORE_ATTR  = "CEPH_USER"
 
+INHERIT_DATASTORE_ATTR  = "GLUSTER_HOST"
+INHERIT_DATASTORE_ATTR  = "GLUSTER_VOLUME"
+
 INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
+INHERIT_VNET_ATTR       = "BRIDGE_OVS"
+
+#*******************************************************************************
+# Transfer Manager Driver Behavior Configuration
+#*******************************************************************************
+# The  configuration for each driver is defined in TM_MAD_CONF. These
+# values are used when creating a new datastore and should not be modified
+# since they define the datastore behavior.
+#   name      : name of the transfer driver, listed in the -d option of the
+#               TM_MAD section
+#   ln_target : determines how the persistent images will be cloned when
+#               a new VM is instantiated.
+#       NONE: The image will be linked and no more storage capacity will be used
+#       SELF: The image will be cloned in the Images datastore
+#       SYSTEM: The image will be cloned in the System datastore
+#   clone_target : determines how the non persistent images will be
+#                  cloned when a new VM is instantiated.
+#       NONE: The image will be linked and no more storage capacity will be used
+#       SELF: The image will be cloned in the Images datastore
+#       SYSTEM: The image will be cloned in the System datastore
+#   shared : determines if the storage holding the system datastore is shared
+#            among the different hosts or not. Valid values: "yes" or "no"
+#*******************************************************************************
+
+TM_MAD_CONF = [
+    name = "dummy", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "lvm", ln_target = "NONE", clone_target = "SELF", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "shared", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "fs_lvm", ln_target = "SYSTEM", clone_target = "SYSTEM", shared="yes"
+]
+
+TM_MAD_CONF = [
+    name = "qcow2", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "ssh", ln_target = "SYSTEM", clone_target = "SYSTEM", shared = "no"
+]
+
+TM_MAD_CONF = [
+    name = "vmfs", ln_target = "NONE", clone_target= "SYSTEM", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "ceph", ln_target = "NONE", clone_target = "SELF", shared = "yes"
+]
+
+TM_MAD_CONF = [
+    name = "dev", ln_target = "NONE", clone_target = "NONE", shared = "yes"
+]
+
