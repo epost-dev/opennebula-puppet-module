@@ -1,3 +1,16 @@
+# OpenNebula Puppet type for onecluster
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
+
 Puppet::Type.newtype(:onecluster) do
   @doc = "Type for managing clusters in OpenNebula using the onecluster" +
          "wrapper command."

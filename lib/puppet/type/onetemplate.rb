@@ -1,3 +1,15 @@
+# OpenNebula Puppet type for onetemplate
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
 Puppet::Type.newtype(:onetemplate) do
   @doc = "Type for managing templates in OpenNebula using the onevm" +
          "wrapper command."

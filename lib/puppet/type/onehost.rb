@@ -1,3 +1,15 @@
+# OpenNebula Puppet type for onehost
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
 Puppet::Type.newtype(:onehost) do
   @doc = <<-EOS
 Type for managing hypervisor hosts in OpenNebula using the onehost wrapper
@@ -22,7 +34,7 @@ EOS
   newproperty(:vm_mad) do
     desc "Virtualization Driver"
     defaultto :dummy
-    newvalues(:kvm, :xen, :vmware, :ec2, :dummy)
+    newvalues(:kvm, :xen, :vmware, :ec2, :dummy, :qemu)
   end
 
   newproperty(:vn_mad) do
