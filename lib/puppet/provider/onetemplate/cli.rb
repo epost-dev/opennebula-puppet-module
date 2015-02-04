@@ -1,3 +1,17 @@
+# OpenNebula Puppet provider for onetemplate
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
+
+require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onetemplate).provide(:cli) do
@@ -75,7 +89,8 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
 
   # Return the full hash of all existing onevm resources
   def self.instances
-      Nokogiri::XML(onetemplate('list', '-x')).root.xpath('/VMTEMPLATE_POOL/VMTEMPLATE') do | template|
+      templates = Nokogiri::XML(onetemplate('list', '-x')).root.xpath('/VMTEMPLATE_POOL/VMTEMPLATE')
+      templates.collect do |template|
         new(
             :name     => template.xpath('./NAME').text,
             :ensure   => :present,

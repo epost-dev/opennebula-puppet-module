@@ -8,13 +8,10 @@
 #
 # Copyright
 # initial provider had no copyright
-# Deutsche Post E-POST Development GmbH - 2014
+# Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
-# require section:
-# we read onevnet structure by using xml
-# we write tempfiles as erb templates for creating resources and setting properties
-#
+require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onevnet).provide(:cli) do
@@ -104,7 +101,8 @@ Puppet::Type.type(:onevnet).provide(:cli) do
 
   # Return the full hash of all existing onevnet resources
   def self.instances
-      Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET').map do |vnet|
+      vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET').map
+      vnets.collect do |vnet|
           hash = {
               :name         => vnet.xpath('./NAME').text,
               :ensure       => :present,

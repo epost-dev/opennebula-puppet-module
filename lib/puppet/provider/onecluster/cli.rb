@@ -8,7 +8,7 @@
 #
 # Copyright
 # initial provider had no copyright
-# Deutsche Post E-POST Development GmbH - 2014
+# Deutsche Post E-POST Development GmbH - 2014,2015
 #
 
 require 'rexml/document'
@@ -73,7 +73,8 @@ Puppet::Type.type(:onecluster).provide(:cli) do
 
 
   def self.instances
-    REXML::Document.new(onecluster('list', '-x')).elements.collect("CLUSTER_POOL/CLUSTER") do |cluster|
+    clusters = REXML::Document.new(onecluster('list', '-x')).elements.collect("CLUSTER_POOL/CLUSTER")
+    clusters.collect do |cluster|
       datastores = cluster.elements.collect("DATASTORES/ID") do |id|
         REXML::Document.new(onedatastore('show', id.text, '-x')).elements["DATASTORE/NAME"].text
       end

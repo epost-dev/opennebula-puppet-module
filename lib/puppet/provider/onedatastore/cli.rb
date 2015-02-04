@@ -8,9 +8,10 @@
 #
 # Copyright
 # initial provider had no copyright
-# Deutsche Post E-POST Development GmbH - 2014
+# Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
+require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onedatastore).provide(:cli) do
@@ -55,7 +56,8 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def self.instances
-      Nokogiri::XML(onedatastore('list','-x')).root.xpath('/DATASTORE_POOL/DATASTORE').map do |datastore|
+      datastores = Nokogiri::XML(onedatastore('list','-x')).root.xpath('/DATASTORE_POOL/DATASTORE').map
+      datastores.collect do |datastore|
         new(
             :name      => datastore.xpath('./NAME').text,
             :ensure    => :present,
