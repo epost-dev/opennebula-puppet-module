@@ -29,6 +29,7 @@
 #   - vmware
 #   - ec2
 #   - dummy
+#   - qemu
 #
 # $ntype - default 802.1Q
 #  set network type for opennebula compute node
@@ -72,6 +73,9 @@
 # $puppetdb true|false - default false
 #   defines to use puppetDB to discover peer nodes
 #
+# $debug_level - default 0
+#   defines the debug level under which oned and sunstone are running
+#
 # === Usage
 #
 # install compute node
@@ -113,10 +117,11 @@ class one ( $oneid              = 'one-cloud',
             $backend            = 'sqlite',
             $ha_setup           = false,
             $puppetdb           = false,
+            $debug_level        = '0',
             ) {
   include one::params
   if ($oned) {
-    if ( member(['kvm','xen3','xen4','vmware','ec2'], $vtype) ) {
+    if ( member(['kvm','xen3','xen4','vmware','ec2', 'qemu'], $vtype) ) {
       if ( member(['802.1Q','ebtables','firewall','ovswitch'], $ntype) ) {
         include one::oned
       } else {

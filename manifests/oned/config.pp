@@ -34,6 +34,7 @@ class one::oned::config(
   $backup_db_host       = $one::params::backup_db_host,
   $backup_intervall     = $one::params::backup_intervall,
   $backup_keep          = $one::params::backup_keep
+  $debug_level          = $one::debug_level,
   ) {
 
   File {
