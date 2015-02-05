@@ -55,7 +55,9 @@ class one::params (
   $xmlrpc_maxconn_backlog    = hiera('one::oned::xmlrpc_maxconn_backlog', '15'),
   $xmlrpc_keepalive_timeout  = hiera('one::oned::xmlrpc_keepalive_timeout', '15'),
   $xmlrpc_keepalive_max_conn = hiera('one::oned::xmlrpc_keepalive_max_conn', '30'),
-  $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15')
+  $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15'),
+
+  $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1'),
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
@@ -159,19 +161,6 @@ class one::params (
             Please add required functionality to params.pp")
     }
   }
-
-  # mysql stuff (optional, need one::mysql set to true)
-
-  $ha_setup = hiera('one::ha_setup', true)
-  # ha stuff (optional, needs one::ha_setup set to true)
-  if ($ha_setup) {
-    $oned_enable = false
-    $oned_ensure = undef
-  } else {
-    $oned_enable = true
-    $oned_ensure = 'running'
-  }
-
 
   $kickstart_network         = hiera ('one::node::kickstart::network', undef)
   $kickstart_partition       = hiera ('one::node::kickstart::partition', undef)

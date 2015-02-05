@@ -17,10 +17,17 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::service {
+  if ($one::ha_setup) {
+    $oned_enable = false
+    $oned_ensure = undef
+  } else {
+    $oned_enable = true
+    $oned_ensure = 'running'
+  }
   service {'opennebula':
-    ensure    => $one::params::oned_ensure,
+    ensure    => $oned_ensure,
     hasstatus => true,
-    enable    => $one::params::oned_enable,
+    enable    => $oned_enable,
     require   => Class['one::oned::install'],
     subscribe => Class['one::oned::config'],
   }

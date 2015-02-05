@@ -1,4 +1,18 @@
-require 'rexml/document'
+# OpenNebula Puppet provider for onevm
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
+
+require 'rubygems'
+require 'nokogiri'
 require 'tempfile'
 require 'erb'
 
@@ -33,7 +47,8 @@ Puppet::Type.type(:onevm).provide(:cli) do
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    Nokogiri::XML(omevm('list','-x')).root.xpath('/VM_POOL/VM') do |vm|
+    vms = Nokogiri::XML(omevm('list','-x')).root.xpath('/VM_POOL/VM')
+    vms.collect do |vm|
         new(
             :name    => vm.xpath('./NAME').text,
             :ensure  => :present,

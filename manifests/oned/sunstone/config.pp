@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip = $::ipaddress
+  $listen_ip = $::one::params::sunstone_listen_ip,
 
 ){
   File {

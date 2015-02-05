@@ -1,3 +1,17 @@
+# OpenNebula Puppet provider for oneimage
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
+
+require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:oneimage).provide(:cli) do
@@ -67,7 +81,8 @@ Puppet::Type.type(:oneimage).provide(:cli) do
 
   # Return the full hash of all existing oneimage resources
   def self.instances
-    Nokogiri::XML(oneimage('list','-x')).root.xpath('/IMAGE_POOL/IMAGE').map do |image|
+    images = Nokogiri::XML(oneimage('list','-x')).root.xpath('/IMAGE_POOL/IMAGE').map
+    images.collect do |image|
         new(
             :name        => image.xpath('./NAME').text,
             :ensure      => :present,

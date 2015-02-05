@@ -44,7 +44,7 @@ shared_examples "a puppet type" do |parameter_tests,res_type_name|
       if tests[:invalid] then
         tests[:invalid].each do |test_value|
           it "should throw an error for an invalid value, for example: #{test_value.inspect}" do
-            expect { resource[param] = test_value }.to raise_error(Puppet::ResourceError, /^Parameter #{param.to_s} failed/)
+            expect { resource[param] = test_value }.to raise_error()
           end
         end
       else

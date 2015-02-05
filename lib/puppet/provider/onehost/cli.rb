@@ -1,3 +1,17 @@
+# OpenNebula Puppet provider for onehost
+#
+# License: APLv2
+#
+# Authors:
+# Based upon initial work from Ken Barber
+# Modified by Martin Alfke
+#
+# Copyright
+# initial provider had no copyright
+# Deutsche Post E-POST Development GmbH - 2014, 2015
+#
+
+require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onehost).provide(:cli) do
@@ -24,7 +38,8 @@ Puppet::Type.type(:onehost).provide(:cli) do
   end
 
   def self.instances
-     Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST') do | host|
+     hosts = Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST')
+     hosts.collect do |host|
        new(
            :name   => host.xpath('./NAME').text,
            :ensure => :present,
