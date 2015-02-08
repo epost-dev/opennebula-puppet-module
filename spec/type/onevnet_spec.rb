@@ -22,8 +22,6 @@ describe res_type do
 
   before :each do
     @vnet = res_type.new(:name => 'test')
-    @vnet4 = res_type.new(:name => 'test', :protocol => 'ipv4')
-    @vnet6 = res_type.new(:name => 'test', :protocol => 'ipv6')
   end
 
   it 'should have :name be its namevar' do
@@ -38,7 +36,7 @@ describe res_type do
       end
   end
 
-  properties = [:network_address, :network_mask, :siteprefix, :globalprefix, :dnsservers, :gateway, :type, :network_start, :network_end, :macstart, :network_size, :leases, :model, :bridge, :vlanid, :context, :phydev]
+  properties = [:network_address, :network_mask, :siteprefix, :globalprefix, :dnsservers, :gateway, :macstart, :network_size, :leases, :model, :bridge, :vlanid, :context, :phydev]
 
   properties.each do |property|
     it "should have a #{property} property" do
@@ -48,11 +46,6 @@ describe res_type do
     it "should have documentation for its #{property} property" do
       described_class.attrclass(property).doc.should be_instance_of(String)
     end
-  end
-
-  it 'should have property :protocol' do
-      @vnet[:protocol] = 'ipv4'
-      @vnet[:protocol].should == :ipv4
   end
 
   it 'should have property :network_address' do
@@ -83,21 +76,6 @@ describe res_type do
   it 'should have property :gateway' do
       @vnet[:gateway] = '10.0.2.1'
       @vnet[:gateway].should == '10.0.2.1'
-  end
-
-  it 'should have property :type' do
-      @vnet[:type] = 'fixed'
-      @vnet[:type].should == :fixed
-  end
-
-  it 'should have property :network_start' do
-      @vnet4[:network_start] = '10.0.2.22'
-      @vnet4[:network_start].should == '10.0.2.22'
-  end
-
-  it 'should have property :network_end' do
-      @vnet4[:network_end] = '10.0.2.44'
-      @vnet4[:network_end].should == '10.0.2.44'
   end
 
   it 'should have property :macstart' do
@@ -143,18 +121,6 @@ describe res_type do
     },
   }
   it_should_behave_like "a puppet type", parameter_tests, res_type_name
-
-  it 'should fail when passing wrong parameter to protocol' do
-      expect {
-          @vnet[:protocol] = 'foo'
-      }.to raise_error(Puppet::Error)
-  end
-
-  it 'should fail when passing wrong parameter to type' do
-      expect {
-          @vnet[:type] = 'foo'
-      }.to raise_error(Puppet::Error)
-  end
 
   it 'should fail when passing wrong paramter to macstart' do
       #expect {
