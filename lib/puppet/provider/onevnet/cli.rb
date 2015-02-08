@@ -11,7 +11,6 @@
 # Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
-require 'pry'
 require 'rubygems'
 require 'nokogiri'
 
@@ -90,7 +89,6 @@ Puppet::Type.type(:onevnet).provide(:cli) do
   # Return the full hash of all existing onevnet resources
   def self.instances
       vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET')
-      #pry.binding
       vnets.collect do |vnet|
           new(
               :name            => vnet.xpath('./NAME').text,
