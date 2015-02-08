@@ -22,13 +22,15 @@ describe res_type do
 
   before :each do
     @vnet = res_type.new(:name => 'test')
+    @vnet4 = res_type.new(:name => 'test')
+    @vnet6 = res_type.new(:name => 'test')
   end
 
   it 'should have :name be its namevar' do
     res_type.key_attributes.should == [:name]
   end
 
-  parameters = [:protocol]
+  parameters = []
 
   parameters.each do |params|
       it "should have a #{params} parameter" do
