@@ -11,6 +11,7 @@
 # Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
+require 'pry'
 require 'rubygems'
 require 'nokogiri'
 
@@ -29,44 +30,31 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     builder = Nokogiri::XML::Builder.new do |xml|
         xml.VNET do
             xml.NAME resource[:name]
-            xml.TYPE resource[:type]
             xml.BRIDGE resource[:bridge]
             xml.PHYDEV do
                 resource[:phydev]
             end if resource[:phydev]
-            if resource[:type] == :fixed
-                resource[:leases].each do |leases|
-                    xml.LEASES do
-                        leases.each  do |k,v|
-                            xml.send(k.upcase, v)
-                        end
-                    end
-                end if resource[:leases]
-            end
-            if resource[:type] == :ranged
-                xml.NETWORK_SIZE do
-                    resource[:network_size]
-                end if resource[:network_size]
-                xml.NETWORK_ADDRESS do
-                    resource[:network_address]
-                end if resource[:network_address]
-                xml.IP_START do
-                    resource[:network_start]
-                end if resource[:network_start]
-                xml.IP_END do
-                    resource[:network_end]
-                end if resource[:network_end]
-                xml.MAC_START do
-                    resource[:macstart]
-                end if resource[:macstart]
-                xml.SITE_PREFIX do
-                    resource[:siteprefix]
-                end if resource[:siteprefix]
-                xml.GLOBAL_PREFIX do
-                    resource[:globalprefix]
-                end if resource[:globalprefix]
-            end
-            # end if type ranged
+            xml.NETWORK_SIZE do
+                resource[:network_size]
+            end if resource[:network_size]
+            xml.NETWORK_ADDRESS do
+                resource[:network_address]
+            end if resource[:network_address]
+            xml.IP_START do
+                resource[:network_start]
+            end if resource[:network_start]
+            xml.IP_END do
+                resource[:network_end]
+            end if resource[:network_end]
+            xml.MAC_START do
+                resource[:macstart]
+            end if resource[:macstart]
+            xml.SITE_PREFIX do
+                resource[:siteprefix]
+            end if resource[:siteprefix]
+            xml.GLOBAL_PREFIX do
+                resource[:globalprefix]
+            end if resource[:globalprefix]
             xml.VLAN_ID do
                 resource[:vlanid]
             end if resource[:vlanid]
@@ -101,39 +89,22 @@ Puppet::Type.type(:onevnet).provide(:cli) do
 
   # Return the full hash of all existing onevnet resources
   def self.instances
-      vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET').map
+      vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET')
+      #pry.binding
       vnets.collect do |vnet|
-          hash = {
-              :name         => vnet.xpath('./NAME').text,
-              :ensure       => :present,
-              :bridge       => (vnet.xpath('./TEMPLATE/BRIDGE') || vnet.xpath('./BRIDGE')).text,
-              :context      => nil,
-              :dnsservers   => (vnet.xpath('./TEMPLATE/DNSSERVERS').text.to_a unless vnet.xpath('./TEMPLATE/DNSSERVERS').nil?),
-              :gateway      => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
-              :macstart     => (vnet.xpath('./TEMPLATE/MACSTART').text unless vnet.xpath('./TEMPLATE/MACSTART').nil?),
-              :model        => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
-              :network_size => (vnet.xpath('./TEMPLATE/NETWORK_SIZE').text unless vnet.xpath('./TEMPLATE/NETWORK_SIZE').nil?),
-              :phydev       => (vnet.xpath('./TEMPLATE/PHYDEV') || vnet.xpath('./PHYDEV')).text,
-              :type         => vnet.xpath('./TYPE').text == '0' ? 'ranged' : 'fixed',
-              :vlanid       => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
-          }.merge(
-              if vnet.xpath('./TYPE').text == '0'
-                  {
-                      :globalprefix    => (vnet.xpath('./TEMPLATE/GLOBAL_PREFIX') || vnet.xpath('./GLOBAL_PREFIX')).text,
-                      :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
-                      :network_end     => (vnet.xpath('./TEMPLATE_IP_END') || vnet.xpath('./RANGE/IP_END')).text,
-                      :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
-                      :network_start   => (vnet.xpath('./TEMPLATE/IP_START') || vnet.xpath('./RANGE/IP_START')).text,
-                      :protocol        => vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil? ? :ipv6 : :ipv4,
-                      :siteprefix      => (vnet.xpath('./TEMPLATE/SITE_PREFIX') || vnet.xpath('./SITE_PREFIX')).text,
-                  }
-              elsif vnet.xpath('./TYPE') == '1'
-                  {
-                      :leases          => vnet.xpath.collect('./LEASES/LEASE/IP') { |e| e.text },
-                  }
-              end
+          new(
+              :name            => vnet.xpath('./NAME').text,
+              :ensure          => :present,
+              :bridge          => (vnet.xpath('./TEMPLATE/BRIDGE') || vnet.xpath('./BRIDGE')).text,
+              :context         => nil,
+              :dnsservers      => (vnet.xpath('./TEMPLATE/DNSSERVERS').text.to_a unless vnet.xpath('./TEMPLATE/DNSSERVERS').nil?),
+              :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
+              :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
+              :phydev          => (vnet.xpath('./TEMPLATE/PHYDEV') || vnet.xpath('./PHYDEV')).text,
+              :vlanid          => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
+              :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
+              :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?)
           )
-          new(hash)
       end
   end
 
@@ -151,14 +122,6 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     file << @property_hash.map { |k, v|
       unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
         case k
-        #when :dnsservers
-        when :network_end
-          [ 'IP_END', v ]
-        when :network_start
-          [ 'IP_START', v ]
-        when :type
-          # Is it really updatable ?
-          v.to_s.upcase == 'FIXED' ? 1 : 0
         when :vlanid
           [ 'VLAN_ID', v ]
         else
