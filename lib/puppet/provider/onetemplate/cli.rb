@@ -94,7 +94,7 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
         new(
             :name     => template.xpath('./NAME').text,
             :ensure   => :present,
-            :context  => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.content.downcase, e.text.downcase] } ],
+            :context  => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.name.downcase, e.text.downcase] } ],
             :cpu      => (template.xpath('./TEMPLATE/CPU').text unless template.xpath('./TEMPLATE/CPU').nil?),
             :disks    => template.xpath('./TEMPLATE/DISK').map { |disk| Hash[disk.xpath('./*').map { |e| [e.name.downcase, e.text.downcase] } ] },
             :features => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text.downcase]] } ],
