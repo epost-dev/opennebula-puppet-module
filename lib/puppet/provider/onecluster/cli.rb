@@ -11,7 +11,6 @@
 # Deutsche Post E-POST Development GmbH - 2014,2015
 #
 
-require 'pry'
 require 'rubygems'
 require 'nokogiri'
 
@@ -75,7 +74,6 @@ Puppet::Type.type(:onecluster).provide(:cli) do
 
 
   def self.instances
-#pry.binding
     clusters = Nokogiri::XML(onecluster('list', '-x')).root.xpath('/CLUSTER_POOL/CLUSTER')
     clusters.collect do |cluster|
       datastores = cluster.xpath('DATASTORES/ID').collect do |datastore|
