@@ -83,7 +83,7 @@ Puppet::Type.type(:onecluster).provide(:cli) do
         Nokogiri::XML(onehost('show', host.text, '-x')).root.xpath('/HOST/NAME').text
       end
       vnets = cluster.xpath('VNETS/ID').collect do |vnet|
-        Nokogiri::XML(onevnet('show', vnet.text, '-x')).root.xpath('VNET/NAME').text
+        Nokogiri::XML(onevnet('show', vnet.text, '-x')).root.xpath('/VNET/NAME').text
       end
       new(
         :name       => cluster.xpath('./NAME').text,
