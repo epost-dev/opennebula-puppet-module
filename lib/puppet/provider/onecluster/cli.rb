@@ -11,7 +11,9 @@
 # Deutsche Post E-POST Development GmbH - 2014,2015
 #
 
-require 'rexml/document'
+require 'pry'
+require 'rubygems'
+require 'nokogiri'
 
 Puppet::Type.type(:onecluster).provide(:cli) do
   desc "onecluster provider"
@@ -73,19 +75,20 @@ Puppet::Type.type(:onecluster).provide(:cli) do
 
 
   def self.instances
-    clusters = REXML::Document.new(onecluster('list', '-x')).elements.collect("CLUSTER_POOL/CLUSTER")
+#pry.binding
+    clusters = Nokogiri::XML(onecluster('list', '-x')).root.xpath('/CLUSTER_POOL/CLUSTER')
     clusters.collect do |cluster|
-      datastores = cluster.elements.collect("DATASTORES/ID") do |id|
-        REXML::Document.new(onedatastore('show', id.text, '-x')).elements["DATASTORE/NAME"].text
+      datastores = cluster.xpath('DATASTORES/ID').collect do |datastore|
+        Nokogiri::XML(onedatastore('show', datastore.text, '-x')).root.xpath('/DATASTORE/NAME').text
       end
-      hosts = cluster.elements.collect("HOSTS/ID") do |id|
-        REXML::Document.new(onehost('show', id.text, '-x')).elements["HOST/NAME"].text
+      hosts = cluster.xpath('HOSTS/ID').collect do |host|
+        Nokogiri::XML(onehost('show', host.text, '-x')).root.xpath('/HOST/NAME').text
       end
-      vnets = cluster.elements.collect("VNETS/ID") do |id|
-        REXML::Document.new(onevnet('show', id.text, '-x')).elements["VNET/NAME"].text
+      vnets = cluster.xpath('VNETS/ID').collect do |vnet|
+        Nokogiri::XML(onevnet('show', vnet.text, '-x')).root.xpath('VNET/NAME').text
       end
       new(
-        :name       => cluster.elements["NAME"].text,
+        :name       => cluster.xpath('./NAME').text,
         :ensure     => :present,
         :datastores => datastores,
         :hosts      => hosts,
