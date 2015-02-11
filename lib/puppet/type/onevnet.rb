@@ -106,7 +106,7 @@ Puppet::Type.newtype(:onevnet) do
 #      end
   end
 
-  newproperty(:leases, :array_matching => :all) do
+  newproperty(:addressrange, :array_matching => :all) do
     desc "Leases to assign in fixed networking. Needs IP and MAC as hash"
   end
 

@@ -11,6 +11,8 @@
 # Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
+#require 'pry'
+
 require 'rubygems'
 require 'nokogiri'
 
@@ -89,19 +91,26 @@ Puppet::Type.type(:onevnet).provide(:cli) do
   # Return the full hash of all existing onevnet resources
   def self.instances
       vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET')
+#pry.binding
       vnets.collect do |vnet|
           new(
               :name            => vnet.xpath('./NAME').text,
               :ensure          => :present,
               :bridge          => (vnet.xpath('./TEMPLATE/BRIDGE') || vnet.xpath('./BRIDGE')).text,
               :context         => nil,
-              :dnsservers      => (vnet.xpath('./TEMPLATE/DNSSERVERS').text.to_a unless vnet.xpath('./TEMPLATE/DNSSERVERS').nil?),
+              :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.to_a unless vnet.xpath('./TEMPLATE/DNS').nil?),
               :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
+              :gateway6        => (vnet.xpath('./TEMPLATE/GATEWAY6').text unless vnet.xpath('./TEMPLATE/GATEWAY6').nil?),
               :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
               :phydev          => (vnet.xpath('./TEMPLATE/PHYDEV') || vnet.xpath('./PHYDEV')).text,
               :vlanid          => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
               :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
-              :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?)
+              :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
+              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/*').map { |e| [ e.name.downcase, e.text ] unless e.name.downcase == 'allocated' } ]
+#              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR').map { |ar| [ar.text.downcase, Hash[ar.map { |e| [ e.name.downcase, e.text ] unless e.name.downcase == 'allocated' } ] ] } ]
+#              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/AR_ID').collect do |ar|
+#					
+#                                  end
           )
       end
   end
