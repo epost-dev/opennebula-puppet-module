@@ -106,7 +106,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
               :vlanid          => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
               :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
               :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
-              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/*').map { |e| [ e.name.downcase, e.text ] unless e.name.downcase == 'allocated' } ]
+              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/*').map { |e| [ e.name.downcase, e.text ] unless ( e.name.downcase == 'allocated' or e.name.downcase == 'ar_id') } ]
 #              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR').map { |ar| [ar.text.downcase, Hash[ar.map { |e| [ e.name.downcase, e.text ] unless e.name.downcase == 'allocated' } ] ] } ]
 #              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/AR_ID').collect do |ar|
 #					
