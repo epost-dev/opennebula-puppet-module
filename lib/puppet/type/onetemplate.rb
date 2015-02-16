@@ -24,6 +24,13 @@ Puppet::Type.newtype(:onetemplate) do
     end
   end
 
+  newproperty(:description) do
+    desc "Description of template."
+    validate do |value|
+      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+    end
+  end
+
   newproperty(:memory) do
     desc "Memory allocation for template in megabytes."
   end

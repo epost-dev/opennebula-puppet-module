@@ -115,9 +115,6 @@ Puppet::Type.type(:oneimage).provide(:cli) do
   def datastore=(value)
       raise "Can not modify datastore on images"
   end
-  def description=(value)
-      raise "Can not modify description on images"
-  end
   def type=(value)
       raise "Can not modify type of images"
   end
