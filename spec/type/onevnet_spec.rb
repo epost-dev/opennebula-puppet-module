@@ -38,7 +38,7 @@ describe res_type do
       end
   end
 
-  properties = [:network_address, :network_mask, :siteprefix, :globalprefix, :dnsservers, :gateway, :macstart, :network_size, :leases, :model, :bridge, :vlanid, :context, :phydev]
+  properties = [:network_address, :network_mask, :siteprefix, :globalprefix, :dnsservers, :gateway, :macstart, :network_size, :model, :bridge, :vlanid, :context, :phydev]
 
   properties.each do |property|
     it "should have a #{property} property" do
@@ -88,11 +88,6 @@ describe res_type do
   it 'should have property :network_size' do
       @vnet6[:network_size] = '33'
       @vnet6[:network_size].should == '33'
-  end
-
-  it 'should have property :leases' do
-      @vnet[:leases] = [{ 'foo' => '1' , 'bar' => '2' }]
-      @vnet[:leases].should == [{ 'foo' => '1' , 'bar' => '2' }]
   end
 
   it 'should have property :model' do

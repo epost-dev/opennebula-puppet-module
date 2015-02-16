@@ -52,8 +52,8 @@ Puppet::Type.type(:onevm).provide(:cli) do
         new(
             :name        => vm.xpath('./NAME').text,
             :ensure      => :present,
-            :template    => vm.xpath('./TEMPLATE/TEMPLATE_ID').text
-            :description => vm.xpath('./TEMPLATE/DESCRIPTION').text,
+            :template    => vm.xpath('./TEMPLATE/TEMPLATE_ID').text,
+            :description => vm.xpath('./TEMPLATE/DESCRIPTION').text
         )
     end
   end

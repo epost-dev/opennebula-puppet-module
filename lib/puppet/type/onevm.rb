@@ -31,6 +31,7 @@ Puppet::Type.newtype(:onevm) do
     desc "Description to use for VM"
     validate do |value|
         fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+    end
   end
 
 end
