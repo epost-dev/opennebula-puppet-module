@@ -39,9 +39,11 @@ Example usage for opennebula puppet module
 ```
  class { one:
     oned               => true,
+    sunstone           => true,
     sunstone_passenger => true,
  }
 ```
+Attn: needs separate apache config for sunstone.
 
 2. running opennebula vm wirt side
 ```
@@ -59,19 +61,15 @@ onevnet { '<name>':
     bridge          => 'basebr0',
     #  name of the physical interface on which the bridge wiull run
     phydev          => 'br0',
-    type            => 'ranged' | 'fixed',
-    # for ranged networking:
-    network_address => '10.0.2.0',
-    network_mask    => '255.255.0.0',
-    # if you want to restric network usage by opennebula:
-    network_start   => '10.0.2.100',
-    network_end     => '10.0.2.240',
     dns_servers     => ['8.8.8.8', '4.4.4.4'],
     gateway         => '10.0.2.1',
-    # select your network type
-    model           => 'vlan' | 'ebtables' | 'ovswitch' | 'vmware' | 'dummy',
+    network_address => '10.0.2.0',
+    network_mask    => '255.255.255.0',
     # add vlanid 
     vlanid          => '1550',
+    # configure address range (only one range is possible at the moment)
+    addressrange    => { 'ip' => '10.0.2.10', 'size' => '10', 'type' => 'IP4 | ETHER | IP4_6 | IP6', 'mac' => '00:00:00:00:00:00', 'global_prefix' => '::1' }, 
+    
 }
 ```
 
@@ -79,10 +77,11 @@ Create a ONE Datastore
 ```
 onedatastore { '<name>':
     ensure   => present | absent,
-    type     => 'images' | 'system' | 'files',
-    dm       => 'filesystem' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
+    type     => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
+    dm       => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
     tm       => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
     disktype => 'file' | 'block' | 'rdb',
+    basepath => '/var/lib/one/datastore',
 }
 ```
 
@@ -91,7 +90,7 @@ Create a ONE Host
 onehost { '<name>':
     ensure  => present | absent,
     im_mad  => 'kvm' | 'xen' | 'vmware' | 'ec2' | 'ganglia' | 'dummy' | 'custom',
-    vm_mad  => 'kvm' | 'xen' | 'vmware' | 'ec2' | 'dummy' | 'custom',
+    vm_mad  => 'kvm' | 'xen' | 'vmware' | 'ec2' | 'dummy' | 'custom' | 'qemu',
     vn_mad  => 'dummy' | 'firewall' | 'vlan' | 'ebtables' | 'ovswitch' | 'vmware' | 'custom',
 }
 ```
@@ -112,8 +111,8 @@ oneimage { '<name>':
     ensure      => present | absent,
     datastore   => 'default',
     description => 'Image description',
-    type        => 'os' | 'cdrom' | 'datablock' | 'kernel' | 'ramdisk' | 'context',
-    persistent  => 'yes' | 'no',
+    disk_type   => 'os' | 'cdrom' | 'datablock' | 'kernel' | 'ramdisk' | 'context',
+    persistent  => 'true' | 'false',
     dev_prefix  => 'hd' | 'sd' | 'xvd' | 'vd',
     target      => 'hda' | 'hdb' | 'sda' | 'sdb',
     path        => '/tmp/image_file',
@@ -132,24 +131,13 @@ onetemplate { '<name>':
     memory                    => '1024',
     cpu                       => '0.2',
     vcpu                      => '4',
-    os_kernel                 => '/boot/vmkernel',
-    os_initrd                 => '/boot/vminitrd',
-    os_arch                   => 'x86_64',
-    os_root                   => 'hda1',
-    os_kernel_cmd             => 'quiet',
-    os_bootloader             => '/sbin/lilo',
-    os_boot                   => 'hd' | 'fd' | 'cdrom' | 'network',
-    acpi                      => true | false,
-    pae                       => true | false,
+    features                  => { 'acpi' => 'yes|no', 'pae' => 'true|false' },
+    os                        => { 'kernel' => '/boot/vmkernel', 'initrd' => '/boot/vminitrd', 'arch' => 'x86_64', 'root' => 'hda1', 'bootloader' => '/sbin/lilo', 'boot' => 'hd|fd|cdrom|network' }
     pci_bridge                => '4',
     disks                     => [ 'disk1', 'disk2', ...],
     nics                      => [ 'nic1', 'vnet2', .. ],
     nic_model                 => 'virtio',
-    graphics_type             => 'vnc' | 'sdl',
-    graphics_listen           => '0.0.0.0',
-    graphics_port             => '',
-    graphics_password         => 'myvncpass',
-    graphics_keymap           => 'de',
+    graphics                  => { 'type' => 'vnc|sdl', 'listen' => '0.0.0.0', 'password' => 'myvncpass', 'keymap' => 'de' },
     context                   => { 'VAR1'  => 'value1', 'var2' => 'value2', ...},
     context_ssh_pubkey        => '$USER[SSH_PUBLIC_KEY]',
     context_network           => 'yes' | 'no',

@@ -47,12 +47,13 @@ Puppet::Type.type(:onevm).provide(:cli) do
 
   # Return the full hash of all existing onevm resources
   def self.instances
-    vms = Nokogiri::XML(omevm('list','-x')).root.xpath('/VM_POOL/VM')
+    vms = Nokogiri::XML(onevm('list','-x')).root.xpath('/VM_POOL/VM')
     vms.collect do |vm|
         new(
-            :name    => vm.xpath('./NAME').text,
-            :ensure  => :present,
-            :tempate => vm.xpath('./TEMPLATE/TEMPLATE_ID')
+            :name        => vm.xpath('./NAME').text,
+            :ensure      => :present,
+            :template    => vm.xpath('./TEMPLATE/TEMPLATE_ID').text,
+            :description => vm.xpath('./TEMPLATE/DESCRIPTION').text
         )
     end
   end

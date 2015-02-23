@@ -58,6 +58,7 @@ class one::params (
   $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15'),
 
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1'),
+  $enable_support            = hiera('one::oned::enable_support', 'yes'),
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid

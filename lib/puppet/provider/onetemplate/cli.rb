@@ -32,6 +32,9 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
             xml.MEMORY resource[:memory]
             xml.CPU resource[:cpu]
             xml.VCPU resource[:vcpu]
+            xml.DESCRIPTION do
+                resource[:description]
+            end if resource[:description]
             xml.OS do
                 resource[:os].each do |k, v|
                     xml.send(k.upcase, v)
@@ -92,17 +95,18 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
       templates = Nokogiri::XML(onetemplate('list', '-x')).root.xpath('/VMTEMPLATE_POOL/VMTEMPLATE')
       templates.collect do |template|
         new(
-            :name     => template.xpath('./NAME').text,
-            :ensure   => :present,
-            :context  => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.downcase, e.text] } ],
-            :cpu      => (template.xpath('./TEMPLATE/CPU').text unless template.xapth('./TEMPLATE/CPU').nil?),
-            :disks    => template.xapth('./TEMPLATE/DISK').map { |disk| Hash[disk.xpath('./*').map { |e| [e.name.downcase, e.text] } ] },
-            :features => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text]] } ],
-            :graphics => Hash[template.xpath('./TEMPLATE/GRAPHICS/*').map { |e| [e.name.downcase, e.text] } ],
-            :memory => (template.xpath('./TEMPLATE/MEMORY').text unless template.xpath('./TEMPLATE/MEMORY').nil?),
-            :nics => template.xpath('./TEMPLATE/NIC').map { |nic| Hash[nic.xpath('*').map { |e| [e.name.downcase, e.text] } ] },
-            :os => Hash[template.xpath('./TEMPLATE/OS/*').map { |e| [e.name.downcase, e.text] } ],
-            :vcpu => (template.xpath('./TEMPLATE/VCPU').text unless template.xpath('./TEMPLATE/VCPU').nil?)
+            :name        => template.xpath('./NAME').text,
+            :ensure      => :present,
+            :description => template.xpath('./TEMPLATE/DESCRIPTION').text,
+            :context     => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+            :cpu         => (template.xpath('./TEMPLATE/CPU').text unless template.xpath('./TEMPLATE/CPU').nil?),
+            :disks       => template.xpath('./TEMPLATE/DISK').map { |disk| disk.xpath('./IMAGE').text },
+            :features    => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text.downcase]] } ],
+            :graphics    => Hash[template.xpath('./TEMPLATE/GRAPHICS/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+            :memory      => (template.xpath('./TEMPLATE/MEMORY').text unless template.xpath('./TEMPLATE/MEMORY').nil?),
+            :nics        => template.xpath('./TEMPLATE/NIC').map { |nic| nic.xpath('./NETWORK').text },
+            :os          => Hash[template.xpath('./TEMPLATE/OS/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+            :vcpu        => (template.xpath('./TEMPLATE/VCPU').text unless template.xpath('./TEMPLATE/VCPU').nil?)
         )
       end
   end

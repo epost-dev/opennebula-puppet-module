@@ -29,13 +29,14 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
         xml.DATASTORE do
             xml.NAME resource[:name]
             xml.TM_MAD resource[:tm]
-            xml.TYPE resource[:type].to_s_upcase
+            xml.TYPE resource[:type].to_s.upcase
             xml.SAFE_DIRS do
                 xml.send(resource[:safe_dirs].join(' '))
             end if resource[:safe_dirs]
-            xml.DS_MAD do
-                xml.send(resource[:dm])
-            end if resource[:dm]
+            xml.DS_MAD resource[:dm]
+            xml.BASE_PATH do
+                xml.send(resource[:basepath])
+            end if resource[:basepath]
         end
     end
     tempfile = builder.to_xml
@@ -65,6 +66,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             :dm        => (datastore.xpath('./TEMPLATE/DS_MAD').text unless datastore.xpath('./TEMPLATE/DS_MAD').nil?),
             :safe_dirs => (datastore.xpath('./TEMPLATE/SAFE_DIRS').text unless datastore.xpath('./TEMPLATE/SAFE_DIRS').nil?),
             :tm        => (datastore.xpath('./TEMPLATE/TM_MAD').text unless datastore.xpath('./TEMPLATE/TM_MAD').nil?),
+            :basepath  => (datastore.xpath('./TEMPLATE/BASE_PATH').text unless datastore.xpath('./TEMPLATE/BASE_PATH').nil?),
             :disktype  => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.xpath('./DISK_TYPE').text]
         )
       end

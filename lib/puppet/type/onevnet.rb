@@ -24,12 +24,6 @@ Puppet::Type.newtype(:onevnet) do
     end
   end
 
-  newparam(:protocol) do
-    desc "IP protocol version to use - IPv4 or IPv6"
-    defaultto :ipv4
-    newvalues(:ipv4, :ipv6)
-  end
-
   newproperty(:network_address) do
     desc "Base network address for IPv4 networks."
 #    validate do |value|
@@ -90,36 +84,6 @@ Puppet::Type.newtype(:onevnet) do
 #      end
   end
 
-  newproperty(:type) do
-    desc "Type of network: fixed or ranged"
-    defaultto :ranged
-    newvalues(:ranged, :fixed)
-  end
-
-  newproperty(:network_start) do
-    desc "IP to start leases from. For ranged IPv4 networking"
-#    validate do |value|
-#        if resource[:protocol] == :ipv4
-#            start =  IPAddress.first("#{resource[:network_address]}/#{resource[:network_netmask]}")
-#            defaultto :start
-#        else
-#            fail("You may not set IPv4 attribute when using IPv6")
-#        end
-#    end
-  end
-
-  newproperty(:network_end) do
-    desc "IP to end leases from. For ranged IPv4 networking"
-#    validate do |value|
-#      if resource[:protocol] == :ipv4
-#        last = IPAddress.last("#{resource[:network_address]}/#{resource[:network_netmaks]}")
-#        defaultto :last
-#      else
-#          fail ("You may not set IPv4 attribute when using IPv6")
-#      end
-#    end
-  end
-
   newproperty(:macstart) do
     desc "IPv6 MAC start address for ranged IPv6 networks"
 #      validate do |value|
@@ -142,7 +106,7 @@ Puppet::Type.newtype(:onevnet) do
 #      end
   end
 
-  newproperty(:leases, :array_matching => :all) do
+  newproperty(:addressrange, :array_matching => :all) do
     desc "Leases to assign in fixed networking. Needs IP and MAC as hash"
   end
 

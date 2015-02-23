@@ -17,8 +17,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip = $::one::params::sunstone_listen_ip,
-
+  $listen_ip      = $::one::params::sunstone_listen_ip,
+  $enable_support = $::one::params::enable_support,
 ){
   File {
     ensure  => 'present',
