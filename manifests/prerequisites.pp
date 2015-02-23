@@ -21,7 +21,7 @@
 class one::prerequisites {
     case $::osfamily {
         'RedHat': {
-            if ( $one::params::one_repo_enable == 'true' ) {
+            if ( $one::params::one_repo_enable == true ) {
                 yumrepo { 'opennebula':
                     baseurl  => 'http://downloads.opennebula.org/repo/4.10/CentOS/6/x86_64/',
                     descr    => 'OpenNebula',
@@ -31,7 +31,7 @@ class one::prerequisites {
             }
         }
         'Debian' : {
-            if ($one::params::one_repo_enable == 'true') {
+            if ($one::params::one_repo_enable == true) {
                 include ::apt
                 case $::operatingsystem {
                   'Debian': {
@@ -70,11 +70,11 @@ class one::prerequisites {
         gid    => $one::params::onegid,
     }
     user { 'oneadmin':
-        ensure      => present,
-        uid         => $one::params::oneuid,
-        gid         => $one::params::onegid,
-        home        => '/var/lib/one',
-        managehome  => true,
-        shell       => '/bin/bash'
+        ensure     => present,
+        uid        => $one::params::oneuid,
+        gid        => $one::params::onegid,
+        home       => '/var/lib/one',
+        managehome => true,
+        shell      => '/bin/bash'
     }
 }

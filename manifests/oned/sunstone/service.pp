@@ -23,8 +23,8 @@ class one::oned::sunstone::service {
       $srv_enable = true
   }
   service { 'opennebula-sunstone':
-    ensure => $srv_ensure,
-    enable => $srv_enable,
-    require=> Service['opennebula'],
+    ensure  => $srv_ensure,
+    enable  => $srv_enable,
+    require => Service['opennebula'],
   }
 }
