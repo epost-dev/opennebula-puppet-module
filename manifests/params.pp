@@ -135,7 +135,7 @@ class one::params (
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
-      $rubygems       = []
+      $rubygems       = ['builder']
     }
     'Debian': {
       $node_packages   = ['opennebula-node',
