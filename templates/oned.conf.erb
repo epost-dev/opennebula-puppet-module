@@ -58,8 +58,8 @@ LOG = [
 
 #MANAGER_TIMER = 30
 
-MONITORING_INTERVAL = 60
-MONITORING_THREADS  = 50
+MONITORING_INTERVAL = <%= scope.lookupvar('one::params::monitoring_interval') %>
+MONITORING_THREADS  = <%= scope.lookupvar('one::params::monitoring_threads') %>
 
 #HOST_PER_INTERVAL               = 15
 #HOST_MONITORING_EXPIRATION_TIME = 43200
