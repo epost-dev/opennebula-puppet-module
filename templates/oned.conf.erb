@@ -253,7 +253,7 @@ DEFAULT_CDROM_DEVICE_PREFIX = "hd"
 IM_MAD = [
     name       = "collectd",
     executable = "collectd",
-    arguments  = "-p 4124 -f 5 -t 50 -i 20" ]
+    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::params::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
