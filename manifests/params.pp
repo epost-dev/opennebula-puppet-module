@@ -69,6 +69,7 @@ class one::params (
 
   $monitoring_interval = hiera('one::oned::monitoring_interval', '60')
   $monitoring_threads  = hiera('one::oned::monitoring_threads', '50')
+  $information_collector_interval = hiera('one::oned::information_collector_interval', '20')
 
   # the priv key is mandatory on the head.
   validate_string($ssh_pub_key)
