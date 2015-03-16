@@ -63,13 +63,14 @@ class one::params (
   # generic params for nodes and oned
   $oneid = $one::oneid
 
-
   $oneuid = '9869'
   $onegid = '9869'
 
   $monitoring_interval = hiera('one::oned::monitoring_interval', '60')
   $monitoring_threads  = hiera('one::oned::monitoring_threads', '50')
   $information_collector_interval = hiera('one::oned::information_collector_interval', '20')
+
+  $http_proxy = hiera('one::oned::http_proxy', '')
 
   # the priv key is mandatory on the head.
   validate_string($ssh_pub_key)
