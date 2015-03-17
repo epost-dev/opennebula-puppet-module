@@ -27,7 +27,7 @@ describe 'one::install' do
         :dbus_pkg => 'dbus',
     } }
     no_proxy = %Q{---\nhttp_proxy: \n}
-    it { should contain_file('/root/.gemrc').with_content(no_proxy) }
+    it { should contain_file('/etc/gemrc').with_content(no_proxy) }
   end
   context 'with gemrc and proxy set' do
     let(:params) { {
@@ -35,6 +35,6 @@ describe 'one::install' do
         :dbus_pkg => 'dbus',
     } }
     proxy = %Q{---\nhttp_proxy: http://some.crap.com:8080\n}
-    it { should contain_file('/root/.gemrc').with_content(proxy) }
+    it { should contain_file('/etc/gemrc').with_content(proxy) }
   end
 end

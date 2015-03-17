@@ -7,12 +7,12 @@ class one::install (
   $dbus_pkg   = $one::params::dbus_pkg,
 ){
 
-  file { '/root/.gemrc':
+  file { '/etc/gemrc':
     ensure  => 'file',
     content => "---\nhttp_proxy: ${http_proxy}\n",
   }
 
-  File['/root/.gemrc'] -> Package <| provider == "gem" |>
+  File['/etc/gemrc'] -> Package <| provider == "gem" |>
 
   package { $dbus_pkg:
     ensure  => present,
