@@ -11,13 +11,13 @@ describe 'one::install' do
         :dbus_pkg => 'dbus',
     } }
     it { should contain_class('one::install') }
-    it { should contain_file('/var/lib/one')
-                    .with_ensure('directory')
-                    .with_owner('oneadmin')
+    it { should contain_file('/var/lib/one') \
+                    .with_ensure('directory') \
+                    .with_owner('oneadmin') \
                     .with_group('oneadmin')
     }
-    it { should contain_package('dbus')
-                    .with_ensure('present')
+    it { should contain_package('dbus') \
+                    .with_ensure('present') \
                     .with_require('Class[One::Prerequisites]')
     }
   end
