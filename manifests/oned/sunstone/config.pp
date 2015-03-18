@@ -17,11 +17,12 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip      = $::one::params::sunstone_listen_ip,
-  $enable_support = $::one::params::enable_support,
+  $listen_ip          = $one::params::sunstone_listen_ip,
+  $enable_support     = $one::params::enable_support,
+  $enable_marketplace = $one::params::enable_marketplace,
 ){
   File {
-    ensure  => 'present',
+    ensure  => 'file',
     owner   => 'root',
     group   => 'oneadmin',
   }
@@ -40,7 +41,7 @@ class one::oned::sunstone::config (
   }
   file { '/etc/one/sunstone-views.yaml':
     mode    => '0640',
-    source  => 'puppet:///modules/one/sunstone-views.yaml',
+    content => template('one/sunstone-views.yaml.erb'),
     require => File['/etc/one/sunstone-server.conf'],
   }
 }
