@@ -1,23 +1,26 @@
-opennebula-puppet-module
-========================
+# opennebula-puppet-module
 
 The one (short for OpenNebula) module allows to install and manage your OpenNebula cloud.
 
 [![Build Status](https://travis-ci.org/epost-dev/opennebula-puppet-module.png)](https://travis-ci.org/epost-dev/opennebula-puppet-module)
 
-Requirements
-------------
+## Requirements
 
-### Wheezy
-Tested with puppet 3.4.3 from wheezy backports.
+### Debian Wheezy
+
+Tested with puppet 3.7.4 from wheezy backports.
 To use the open nebula repositories for wheezy, set one::enable_opennebula_repo to true and install packages for puppet and the puppetlabs-apt module:
 
     apt-get install -t wheezy-backports puppet
     apt-get install -t wheezy-backports puppet-module-puppetlabs-apt
 
+### Centos
 
-Running tests
--------------
+Tested on Centos 6 with Puppet 3.7.4 from Puppetlabs Repositories.
+You need to add the EPEL Repos.
+
+## Running tests
+
 To run the rspec-puppet tests for this module install the needed gems with [bundler](http://bundler.io):
 
      bundle install --path=vendor
@@ -26,12 +29,23 @@ And run the tests and puppet-lint:
 
      bundle exec rake
 
-To run acceptance tests:
+To run acceptance tests on the default centos 6 vm:
 
-     bundle exec rspec spec/acceptance
+     bundle exec rake beaker
 
-Using the Module
-----------------
+for testing on debian wheezy simply run:
+
+     RS_SET=debian-7-x64 bundle exec rake beaker
+
+## Vagrant
+
+To deploy a Opennebula instance locally run:
+
+     vagrant up <boxname>
+
+where "boxname" can be debian or centos
+
+## Using the Module
 
 Example usage for opennebula puppet module
 
@@ -45,13 +59,12 @@ Example usage for opennebula puppet module
 ```
 Attn: needs separate apache config for sunstone.
 
-2. running opennebula vm wirt side
+2. running opennebula node
 ```
 class { one: }
 ```
 
-### Usage of opennebula puppet resource types
-
+## Usage of opennebula puppet resource types
 
 Create a ONE Vnet
 ```
@@ -158,13 +171,11 @@ onevm { '<name>':
 }
 ```
 
-Support
--------
+##Support
 
 For questions or bugs [create an issue on Github](https://github.com/epost-dev/opennebula-puppet-module/issues/new).
 
-License
--------
+##License
 
 Copyright © 2013 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
