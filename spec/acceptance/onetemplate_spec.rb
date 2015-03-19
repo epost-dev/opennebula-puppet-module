@@ -16,6 +16,7 @@ describe 'onetemplate type' do
 
   describe 'when creating a template with deprecated properties' do
     it 'should idempotently run' do
+      skip
       pp = <<-EOS
         onetemplate { 'test-vm':
           # Capacity
@@ -65,6 +66,7 @@ describe 'onetemplate type' do
 
   describe 'when creating a template' do
     it 'should idempotently run' do
+      skip
       pp = <<-EOS
         onetemplate { 'test-vm':
           # Capacity

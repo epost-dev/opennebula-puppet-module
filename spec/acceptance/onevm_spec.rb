@@ -2,6 +2,7 @@ require 'spec_helper_acceptance'
 
 describe 'onevm type' do
   before :all do
+    skip
     pp = <<-EOS
     class { 'one':
       oned => true,
@@ -53,6 +54,7 @@ describe 'onevm type' do
 
   describe 'when creating vm' do
     it 'should idempotently run' do
+      skip
       pending 'Need fix'
       pp = <<-EOS
         onevm { 'new_vm':
@@ -67,6 +69,7 @@ describe 'onevm type' do
 
   describe 'when destroying a vm' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
       onevm { 'new_vm':
         ensure => absent,
