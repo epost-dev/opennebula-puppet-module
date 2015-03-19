@@ -14,8 +14,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::sunstone::service {
-  if $one::sunstone_passenger {
+class one::oned::sunstone::service (
+  $sunstone_passenger = $one::sunstone_passenger
+) {
+  if $sunstone_passenger {
       $srv_ensure = stopped
       $srv_enable = false
   } else {

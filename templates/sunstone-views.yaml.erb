@@ -17,7 +17,9 @@ available_tabs:
     - datastores-tab
     - vnets-tab
     - zones-tab
+<% if @enable_marketplace == 'yes' -%>
     - marketplace-tab
+<% end -%>
     - oneflow-dashboard
     - oneflow-services
     - oneflow-templates

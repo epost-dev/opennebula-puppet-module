@@ -16,18 +16,24 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::sunstone {
+class one::oned::sunstone (
+  $ldap = $one::oned::ldap
+) {
   include one::prerequisites
   include one::params
   include one::oned::sunstone::install
   include one::oned::sunstone::config
   include one::oned::sunstone::service
-  Class['one::prerequisites'] -> Class['one::params'] ->
+
+  Class['one::prerequisites'] ->
+  Class['one::params'] ->
   Class['one::oned::sunstone::install'] ->
-    Class['one::oned::sunstone::config'] ~>
-    Class['one::oned::sunstone::service']
-  if $one::oned::ldap {
+  Class['one::oned::sunstone::config'] ~>
+  Class['one::oned::sunstone::service']
+
+  if $ldap {
     include one::oned::sunstone::ldap
-    Class['one::oned::sunstone::config'] -> Class['one::oned::sunstone::ldap']
+    Class['one::oned::sunstone::config'] ->
+    Class['one::oned::sunstone::ldap']
   }
 }

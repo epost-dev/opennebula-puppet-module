@@ -16,8 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::sunstone::install {
-  package { $one::params::oned_sunstone_packages:
+class one::oned::sunstone::install (
+  $oned_sunstone_packages = $one::params::oned_sunstone_packages
+){
+  package { $oned_sunstone_packages:
     ensure => present,
   }
 }
