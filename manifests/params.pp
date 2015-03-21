@@ -122,10 +122,16 @@ class one::params (
   # params for nodes
   case $::osfamily {
     'RedHat': {
-      $node_packages = ['opennebula-node-kvm',
-                        'sudo',
-                        'python-virtinst'
-                        ]
+      if $::lsbmajdistrelease == '7' {
+        $node_packages = ['opennebula-node-kvm',
+                          'sudo'
+                          ]
+      } else {
+        $node_packages = ['opennebula-node-kvm',
+                          'sudo',
+                          'python-virtinst'
+                          ]
+      }
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
       $dbus_pkg        = 'dbus'
