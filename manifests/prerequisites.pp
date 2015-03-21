@@ -23,7 +23,7 @@ class one::prerequisites {
         'RedHat': {
             if ( $one::params::one_repo_enable == 'true' ) {
                 yumrepo { 'opennebula':
-                    baseurl  => 'http://downloads.opennebula.org/repo/4.10/CentOS/6/x86_64/',
+                    baseurl  => "http://downloads.opennebula.org/repo/4.12/CentOS/${::lsbmajdistrelease}/x86_64/",
                     descr    => 'OpenNebula',
                     enabled  => 1,
                     gpgcheck => 0,
@@ -35,11 +35,11 @@ class one::prerequisites {
                 include ::apt
                 case $::operatingsystem {
                   'Debian': {
-                    $apt_location="4.10/Debian/${::lsbmajdistrelease}"
+                    $apt_location="4.12/Debian/${::lsbmajdistrelease}"
                     $apt_pin='-10'
                   }
                   'Ubuntu': {
-                    $apt_location="4.10/Ubuntu/${::lsbdistrelease}"
+                    $apt_location="4.12/Ubuntu/${::lsbdistrelease}"
                     $apt_pin='500'
                   }
                   default: { fail("Unrecognized operating system ${::operatingsystem}") }
