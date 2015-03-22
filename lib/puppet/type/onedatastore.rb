@@ -56,6 +56,14 @@ Puppet::Type.newtype(:onedatastore) do
     desc "Choose a base path"
   end
 
+  newproperty(:bridgelist) do
+    desc "List of frontend hosts, space separated, for Ceph"
+  end
+
+  newproperty(:cephhost) do
+    desc "List of Ceph monitors, space separated"
+  end
+
   newproperty(:safe_dirs, :array_matching => :all) do
     desc "Array of safe directories"
   end
