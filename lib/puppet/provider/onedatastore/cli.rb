@@ -34,6 +34,8 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
                 xml.send(resource[:safe_dirs].join(' '))
             end if resource[:safe_dirs]
             xml.DS_MAD resource[:dm]
+            xml.BRIDGE_LIST resource[:bridgelist]
+            xml.CEPH_HOST resource[:cephhost]
             xml.BASE_PATH do
                 xml.send(resource[:basepath])
             end if resource[:basepath]
