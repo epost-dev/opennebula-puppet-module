@@ -64,6 +64,10 @@ Puppet::Type.newtype(:onedatastore) do
     desc "List of Ceph monitors, space separated"
   end
 
+  newproperty(:stagingdir) do
+    desc "Temporary scratch space. Must be big enough to store raw image size plus sparse version"
+  end
+
   newproperty(:safe_dirs, :array_matching => :all) do
     desc "Array of safe directories"
   end
