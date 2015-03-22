@@ -69,9 +69,11 @@ class one::compute_node::config (
     source => 'puppet:///modules/one/sudoers_imaginator',
   }
 
-  file { '/sbin/brctl':
-    ensure => link,
-    target => '/usr/sbin/brctl',
+  if $::osfamily == 'Debian' {  
+    file { '/sbin/brctl':
+      ensure => link,
+      target => '/usr/sbin/brctl',
+    }
   }
 
   file { 'polkit-opennebula':
