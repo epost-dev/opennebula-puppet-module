@@ -36,6 +36,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             xml.DS_MAD resource[:dm]
             xml.BRIDGE_LIST resource[:bridgelist]
             xml.CEPH_HOST resource[:cephhost]
+            xml.STAGING_DIR resource[:stagingdir]
             xml.BASE_PATH do
                 resource[:basepath]
             end if resource[:basepath]
@@ -62,14 +63,17 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
       datastores = Nokogiri::XML(onedatastore('list','-x')).root.xpath('/DATASTORE_POOL/DATASTORE').map
       datastores.collect do |datastore|
         new(
-            :name      => datastore.xpath('./NAME').text,
-            :ensure    => :present,
-            :type      => datastore.xpath('./TEMPLATE/TYPE').text,
-            :dm        => (datastore.xpath('./TEMPLATE/DS_MAD').text unless datastore.xpath('./TEMPLATE/DS_MAD').nil?),
-            :safe_dirs => (datastore.xpath('./TEMPLATE/SAFE_DIRS').text unless datastore.xpath('./TEMPLATE/SAFE_DIRS').nil?),
-            :tm        => (datastore.xpath('./TEMPLATE/TM_MAD').text unless datastore.xpath('./TEMPLATE/TM_MAD').nil?),
-            :basepath  => (datastore.xpath('./TEMPLATE/BASE_PATH').text unless datastore.xpath('./TEMPLATE/BASE_PATH').nil?),
-            :disktype  => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.xpath('./DISK_TYPE').text]
+            :name       => datastore.xpath('./NAME').text,
+            :ensure     => :present,
+            :type       => datastore.xpath('./TEMPLATE/TYPE').text,
+            :dm         => (datastore.xpath('./TEMPLATE/DS_MAD').text unless datastore.xpath('./TEMPLATE/DS_MAD').nil?),
+            :safe_dirs  => (datastore.xpath('./TEMPLATE/SAFE_DIRS').text unless datastore.xpath('./TEMPLATE/SAFE_DIRS').nil?),
+            :tm         => (datastore.xpath('./TEMPLATE/TM_MAD').text unless datastore.xpath('./TEMPLATE/TM_MAD').nil?),
+            :basepath   => (datastore.xpath('./TEMPLATE/BASE_PATH').text unless datastore.xpath('./TEMPLATE/BASE_PATH').nil?),
+            :bridgelist => (datastore.xpath('./TEMPLATE/BRIDGE_LIST').text unless datastore.xpath('./TEMPLATE/BRIDGE_LIST').nil?),
+            :cephhost   => (datastore.xpath('./TEMPLATE/CEPH_HOST').text unless datastore.xpath('./TEMPLATE/CEPH_HOST').nil?),
+            :stagingdir => (datastore.xpath('./TEMPLATE/STAGING_DIR').text unless datastore.xpath('./TEMPLATE/STAGING_DIR').nil?),
+            :disktype   => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.xpath('./DISK_TYPE').text]
         )
       end
   end
