@@ -12,7 +12,7 @@ class one::install (
     content => "---\nhttp_proxy: ${http_proxy}\n",
   }
 
-  File['/etc/gemrc'] -> Package <| provider == "gem" |>
+  File['/etc/gemrc'] -> Package <| provider == 'gem' |>
 
   package { $dbus_pkg:
     ensure  => present,
@@ -20,8 +20,8 @@ class one::install (
   }
 
   file { '/var/lib/one':
-    ensure  => 'directory',
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
+    ensure => 'directory',
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
   }
 }
