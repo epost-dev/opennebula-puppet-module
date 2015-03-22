@@ -73,7 +73,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             :bridgelist => (datastore.xpath('./TEMPLATE/BRIDGE_LIST').text unless datastore.xpath('./TEMPLATE/BRIDGE_LIST').nil?),
             :cephhost   => (datastore.xpath('./TEMPLATE/CEPH_HOST').text unless datastore.xpath('./TEMPLATE/CEPH_HOST').nil?),
             :stagingdir => (datastore.xpath('./TEMPLATE/STAGING_DIR').text unless datastore.xpath('./TEMPLATE/STAGING_DIR').nil?),
-            :disktype   => {0 => 'file', 1 => 'block', 2 => 'rdb'}[datastore.xpath('./DISK_TYPE').text]
+            :disktype   => {'0' => 'file', '1' => 'block', '3' => 'rbd'}[datastore.xpath('./DISK_TYPE').text]
         )
       end
   end
@@ -101,6 +101,6 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def disktype=(value)
-      raise "Can not mdoify disktype. You need to delete and recreate the datastore"
+      raise "Can not modify disktype. You need to delete and recreate the datastore"
   end
 end
