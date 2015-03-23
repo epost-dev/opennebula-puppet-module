@@ -76,6 +76,13 @@ class one::compute_node::config (
     }
   }
 
+  if $::osfamily == 'RedHat' and $::lsbmajdistrelease < 7  {
+    file { '/sbin/brctl':
+      ensure => link,
+      target => '/usr/sbin/brctl',
+    }
+  }
+
   file { 'polkit-opennebula':
     path   => $::osfamily ? {
       'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
