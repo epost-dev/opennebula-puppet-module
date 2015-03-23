@@ -32,6 +32,7 @@ describe 'one' do
       it { should contain_file('/usr/share/one').with_ensure('directory') }
       it { should contain_file("#{onehome}/.ssh").with_ensure('directory') }
       it { should contain_file("#{onehome}/.ssh/config").with_ensure('present') }
+      it { should contain_file('/sbin/brctl').with_ensure('link') }
       it { should contain_file('/etc/libvirt/qemu.conf').with_ensure('present') }
       it { should contain_file('/etc/sudoers.d/20_imaginator').with_ensure('present') }
       it { should contain_file('/etc/udev/rules.d/80-kvm.rules').with_ensure('present') }
