@@ -29,6 +29,10 @@ And run the tests and puppet-lint:
 
      bundle exec rake
 
+###Acceptance Tests
+
+Please note: Acceptance tests require vagrant & virtualbox to be installed.
+
 To run acceptance tests on the default centos 6 vm:
 
      bundle exec rake beaker
