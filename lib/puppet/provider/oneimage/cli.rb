@@ -35,7 +35,7 @@ Puppet::Type.type(:oneimage).provide(:cli) do
                 resource[:description]
             end if resource[:description]
             xml.TYPE do
-                resource[:type].to_s_upcase
+                resource[:type].to_s.upcase
             end if resource[:type]
             xml.PERSISTENT do
                 resource[:persistent]
