@@ -2,7 +2,6 @@ require 'spec_helper_acceptance'
 
 describe 'onecluster type' do
   before :all do
-    skip
     pp = <<-EOS
     class { 'one':
       oned => true,
@@ -31,7 +30,6 @@ describe 'onecluster type' do
 
   describe 'when creating a cluster' do
     it 'should idempotently run' do
-      skip
       pp = <<-EOS
       onecluster { 'production': }
       EOS
@@ -43,7 +41,6 @@ describe 'onecluster type' do
 
   describe 'when adding a host to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         hosts => 'host02',
@@ -57,7 +54,6 @@ describe 'onecluster type' do
 
   describe 'when adding a datastore to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => 'system',
@@ -85,7 +81,6 @@ describe 'onecluster type' do
 
   describe 'when adding an array of hosts to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         hosts => ['host01', 'host02'],
@@ -99,7 +94,6 @@ describe 'onecluster type' do
 
   describe 'when adding an array of datastores to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => ['system','default','files'],
@@ -127,7 +121,6 @@ describe 'onecluster type' do
 
   describe 'when removing a host from a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         hosts => 'host02',
@@ -141,7 +134,6 @@ describe 'onecluster type' do
 
   describe 'when removing a datastore from a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => 'default',
