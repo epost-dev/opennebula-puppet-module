@@ -76,7 +76,7 @@ class one::compute_node::config (
     }
   }
 
-  if $::osfamily == 'RedHat' and $::lsbmajdistrelease < 7  {
+  if $::osfamily == 'RedHat' and versioncmp($::lsbmajdistrelease, '7') < 0  {
     file { '/sbin/brctl':
       ensure => link,
       target => '/usr/sbin/brctl',
