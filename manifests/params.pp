@@ -60,6 +60,7 @@ class one::params (
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1'),
   $enable_support            = hiera('one::oned::enable_support', 'yes'),
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes'),
+  $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp'),
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
