@@ -35,6 +35,7 @@ class one::oned::config(
   $backup_intervall     = $one::params::backup_intervall,
   $backup_keep          = $one::params::backup_keep,
   $debug_level          = $one::debug_level,
+  $backend              = $one::backend,
   ) {
 
   File {
@@ -43,9 +44,10 @@ class one::oned::config(
   }
 
   file { '/etc/one/oned.conf':
-    content => template('one/oned.conf.erb'),
+    ensure  => 'file',
     owner   => 'root',
     mode    => '0640',
+    content => template('one/oned.conf.erb'),
   }
 
   file { '/usr/share/one':
@@ -63,14 +65,14 @@ class one::oned::config(
     source  => $hook_scripts_path,
   }
 
-  if ($one::backend == 'mysql') {
+  if ($backend == 'mysql') {
     file { $backup_dir:
       ensure => 'directory',
       mode   => '0700'
     }
 
     file { $backup_script_path:
-      ensure  => present,
+      ensure  => 'file',
       mode    => '0700',
       content => template('one/one_db_backup.sh.erb'),
     }
