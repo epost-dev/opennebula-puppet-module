@@ -114,19 +114,6 @@ class one::compute_node::config (
     mode   => '0771',
   }
 
-  file { '/var/lib/one/bin':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-    mode   => '0755',
-  }
-
-  file { '/var/lib/one/etc':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-  }
-
   file { ['/var/lib/one/etc/kickstart.d',
           '/var/lib/one/etc/preseed.d']:
     ensure  => directory,

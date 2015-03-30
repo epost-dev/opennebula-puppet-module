@@ -39,4 +39,17 @@ class one::config (
   file { '/var/lib/one/.ssh/config':
     source => 'puppet:///modules/one/ssh_one_config',
   }
+
+  file { '/var/lib/one/bin':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
+  }
+
+  file { '/var/lib/one/etc':
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+  }
 }
