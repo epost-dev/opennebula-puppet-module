@@ -38,6 +38,7 @@ RSpec.configure do |c|
 
       if fact('osfamily') == 'RedHat'
         on host, "yum -y install rubygem-nokogiri"
+        on host, "yum clean all"
         on host, "rm -rf /etc/yum.repos.d/puppetlabs.repo"
       end
 

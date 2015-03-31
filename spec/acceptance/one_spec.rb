@@ -14,7 +14,7 @@ describe 'one class' do
   describe 'as ONE HEAD' do
     it 'set up ONE HEAD' do
       pp = <<-EOS
-        class { one: oned => true }
+        class { one: oned => true, node => false,}
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -60,9 +60,8 @@ describe 'one class' do
       it { should be_running }
     end
 
-    it "should listen on port 9869" do
-      result = shell( 'netstat -tulpn | grep 9869 | wc -l' )
-      expect(result.stdout).to match(/1/)
+    describe port(9869) do
+      it { is_expected.to be_listening }
     end
   end
 
