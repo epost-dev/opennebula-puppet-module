@@ -120,6 +120,15 @@ class one ( $oneid              = 'one-cloud',
             $debug_level        = '0',
             ) {
   include one::params
+  include one::install
+  include one::config
+  include one::service
+
+  Class['one::params'] ->
+  Class['one::install']->
+  Class['one::config']->
+  Class['one::service']
+
   if ($oned) {
     if ( member(['kvm','xen3','xen4','vmware','ec2', 'qemu'], $vtype) ) {
       if ( member(['802.1Q','ebtables','firewall','ovswitch'], $ntype) ) {
@@ -143,7 +152,4 @@ class one ( $oneid              = 'one-cloud',
   if($onegate) {
     class {'one::oned::onegate': }
   }
-  include one::install
-  include one::config
-  include one::service
 }

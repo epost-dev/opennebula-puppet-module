@@ -37,6 +37,7 @@ class one::oned (
   include one::params
   include one::install
   include one::service
+  include one::config
   include one::oned::install
   include one::oned::config
   include one::oned::service
@@ -44,6 +45,7 @@ class one::oned (
   Class['one::prerequisites'] ->
   Class['one::params'] ->
   Class['one::install'] ->
+  Class['one::config'] ->
   Class['one::oned::install'] ->
   Class['one::oned::config'] ~>
   Class['one::oned::service'] ~>

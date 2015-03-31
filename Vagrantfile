@@ -26,13 +26,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "centos" do |centos|
     centos.vm.box = "centos65_64"
     centos.vm.box_url = 'http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-puppet.box'
-    centos.vm.provision "shell", inline: '/usr/bin/yum -y install https://yum.puppetlabs.com/el/6.5/products/x86_64/puppetlabs-release-6-10.noarch.rpm'
     centos.vm.provision "shell", inline: '/usr/bin/yum -y install puppet epel-release'
     centos.vm.provision "shell", inline: 'puppet module install puppetlabs-stdlib'
     centos.vm.provision "puppet" do |puppet|
       puppet.manifests_path = "manifests"
       puppet.manifest_file  = "init.pp"
-      puppet.options = ['--verbose', "-e 'class { one: oned => true, sunstone => true, }'"]
+      puppet.options = [
+          '--verbose',
+          "-e 'class { one: oned => true, node => false, sunstone => true, }'"
+      ]
     end
   end
 end
