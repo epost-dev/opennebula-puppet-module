@@ -16,6 +16,7 @@ describe 'oneimage type' do
 
   describe 'when creating an OS image' do
     it 'should idempotently run' do
+      skip
       pp = <<-EOS
         exec { '/usr/bin/qemu-img create /home/one_user/images/ubuntu_desktop.img 1G':
           creates => '/home/one_user/images/ubuntu_desktop.img',
@@ -35,6 +36,7 @@ describe 'oneimage type' do
 
   describe 'when creating a CDROM image' do
     it 'should idempotently run' do
+      skip
       pp = <<-EOS
         exec { '/usr/bin/mkisofs -o /home/one_user/images/matlab.iso /tmp':
           creates => '/home/one_user/images/matlab.iso',
@@ -55,6 +57,7 @@ describe 'oneimage type' do
 
   describe 'when creating a DATABLOCK image' do
     it 'should idempotently run' do
+      skip
       pending 'This example from the doc does not actually work!'
       pp = <<-EOS
         oneimage { 'Experiment results':

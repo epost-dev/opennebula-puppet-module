@@ -27,6 +27,7 @@ describe 'onedatastore type' do
 
   describe 'when creating a Files datastore' do
     it 'should idempotently run' do
+      skip
       pp = <<-EOS
       onedatastore { 'kernels':
         dm        => 'fs',
