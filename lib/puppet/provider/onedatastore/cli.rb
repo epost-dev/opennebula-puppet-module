@@ -35,7 +35,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             end if resource[:safe_dirs]
             xml.DS_MAD resource[:dm]
             xml.BASE_PATH do
-                xml.send(resource[:basepath])
+                resource[:basepath]
             end if resource[:basepath]
         end
     end
@@ -95,6 +95,10 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def disktype=(value)
-      raise "Can not mdoify disktype. You need to delete and recreate the datastore"
+      raise "Can not modify disktype. You need to delete and recreate the datastore"
+  end
+
+  def basepath=(value)
+      raise "Can not modify basepath. You need to delete and recreate the datastore"
   end
 end
