@@ -69,13 +69,22 @@ class one::compute_node::config (
     source => 'puppet:///modules/one/sudoers_imaginator',
   }
 
-  file { '/sbin/brctl':
-    ensure => link,
-    target => '/usr/sbin/brctl',
+  if $::osfamily == 'Debian' {
+    file { '/sbin/brctl':
+      ensure => link,
+      target => '/usr/sbin/brctl',
+    }
+  }
+
+  if $::osfamily == 'RedHat' and versioncmp($::lsbmajdistrelease, '7') < 0  {
+    file { '/sbin/brctl':
+      ensure => link,
+      target => '/usr/sbin/brctl',
+    }
   }
 
   file { 'polkit-opennebula':
-    path => $::osfamily ? {
+    path   => $::osfamily ? {
       'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
       'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
     },

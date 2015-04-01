@@ -60,6 +60,7 @@ class one::params (
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1'),
   $enable_support            = hiera('one::oned::enable_support', 'yes'),
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes'),
+  $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp'),
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
@@ -122,10 +123,16 @@ class one::params (
   # params for nodes
   case $::osfamily {
     'RedHat': {
-      $node_packages = ['opennebula-node-kvm',
-                        'sudo',
-                        'python-virtinst'
-                        ]
+      if $::lsbmajdistrelease == '7' {
+        $node_packages = ['opennebula-node-kvm',
+                          'sudo'
+                          ]
+      } else {
+        $node_packages = ['opennebula-node-kvm',
+                          'sudo',
+                          'python-virtinst'
+                          ]
+      }
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
       $dbus_pkg        = 'dbus'
@@ -141,7 +148,7 @@ class one::params (
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
-      $rubygems       = ['builder']
+      $rubygems       = ['builder', 'sinatra']
     }
     'Debian': {
       $node_packages   = ['opennebula-node',
