@@ -3,8 +3,8 @@
 # packages needed by both (compute node and head)
 #
 class one::install (
-  $http_proxy = $one::params::http_proxy,
-  $dbus_pkg   = $one::params::dbus_pkg,
+  $http_proxy = $one::http_proxy,
+  $dbus_pkg   = $one::dbus_pkg,
 ){
 
   file { '/etc/gemrc':

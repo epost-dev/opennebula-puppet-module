@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::onegate::install {
-  package { $one::params::oned_onegate_packages:
+  package { $one::oned_onegate_packages:
     ensure => present,
   }
 }

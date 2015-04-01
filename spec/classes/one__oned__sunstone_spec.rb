@@ -8,6 +8,7 @@ hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 describe 'one::oned::sunstone' do
   let (:facts) { {:osfamily => 'RedHat'} }
   let (:hiera_config) { hiera_config }
+  let (:pre_condition) { 'include one' }
   context 'general' do
     let (:params) { {:ldap => false} }
     it { should contain_class('one::prerequisites') }

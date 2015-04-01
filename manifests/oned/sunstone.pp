@@ -20,13 +20,11 @@ class one::oned::sunstone (
   $ldap = $one::oned::ldap
 ) {
   include one::prerequisites
-  include one::params
   include one::oned::sunstone::install
   include one::oned::sunstone::config
   include one::oned::sunstone::service
 
   Class['one::prerequisites'] ->
-  Class['one::params'] ->
   Class['one::oned::sunstone::install'] ->
   Class['one::oned::sunstone::config'] ~>
   Class['one::oned::sunstone::service']
