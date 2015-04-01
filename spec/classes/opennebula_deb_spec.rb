@@ -19,7 +19,6 @@ describe 'one' do
       sshprivkey = hiera.lookup('one::head::ssh_priv_key', nil, nil)
       it { should contain_class('one') }
       it { should contain_class('one::prerequisites') }
-      it { should contain_class('one::params') }
       it { should contain_class('one::install') }
       it { should contain_class('one::config') }
       it { should contain_class('one::service') }

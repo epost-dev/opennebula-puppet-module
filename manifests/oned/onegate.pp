@@ -18,11 +18,10 @@
 #
 class one::oned::onegate  {
   include one::prerequisites
-  include one::params
   include one::oned::onegate::install
   include one::oned::onegate::config
   include one::oned::onegate::service
-  Class['one::prerequisites'] -> Class['one::params'] ->
+  Class['one::prerequisites'] ->
   Class['one::oned::onegate::install'] ->
   Class['one::oned::onegate::config'] ~> Class['one::oned::onegate::service']
 }

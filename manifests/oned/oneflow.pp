@@ -18,11 +18,10 @@
 #
 class one::oned::oneflow  {
   include one::prerequisites
-  include one::params
   include one::oned::oneflow::install
   include one::oned::oneflow::config
   include one::oned::oneflow::service
-  Class['one::prerequisites'] -> Class['one::params'] ->
+  Class['one::prerequisites'] ->
   Class['one::oned::oneflow::install'] ->
   Class['one::oned::oneflow::config'] ~> Class['one::oned::oneflow::service']
 }

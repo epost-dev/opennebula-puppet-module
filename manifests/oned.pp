@@ -34,7 +34,6 @@ class one::oned (
     $ldap       = $one::ldap
 ) {
   include one::prerequisites
-  include one::params
   include one::install
   include one::service
   include one::config
@@ -43,7 +42,6 @@ class one::oned (
   include one::oned::service
 
   Class['one::prerequisites'] ->
-  Class['one::params'] ->
   Class['one::install'] ->
   Class['one::config'] ->
   Class['one::oned::install'] ->
@@ -62,7 +60,7 @@ class one::oned (
 
   if ($one::puppetdb == true) {
     # Realize all the known nodes
-    One::Oned::Peer <<| tag == $one::params::oneid |>> {
+    One::Oned::Peer <<| tag == $one::oneid |>> {
       require => Class[one::oned::service],
     }
   }
