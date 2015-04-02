@@ -6,14 +6,18 @@ group :development, :test do
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint',             :require => false
   gem 'simplecov',               :require => false
-  gem 'minitest',                '<5.0'
-  gem 'nokogiri',                '<= 1.5.10'
+  if RUBY_VERSION =~ /1.8/
+      gem 'nokogiri',  '<= 1.5.10'
+    else
+      gem 'nokogiri',             :require => false
+    end
 end
 
 group :integration do
   gem 'serverspec',              :require => false
   gem 'beaker',                  :require => false
   gem 'beaker-rspec',            :require => false
+  gem 'vagrant-wrapper',         :require => false
   gem 'pry',                     :require => false
 end
 

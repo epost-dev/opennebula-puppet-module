@@ -24,9 +24,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/etc/puppet/modules/one/"
 
   config.vm.define "centos" do |centos|
-    centos.vm.box = "centos65_64"
-    centos.vm.box_url = 'http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-puppet.box'
-    centos.vm.provision "shell", inline: '/usr/bin/yum -y install puppet epel-release'
+    centos.vm.box = "puppetlabs/centos-6.6-64-puppet"
+    centos.vm.provision "shell", inline: '/usr/bin/yum -y install epel-release'
     centos.vm.provision "shell", inline: 'puppet module install puppetlabs-stdlib'
     centos.vm.provision "puppet" do |puppet|
       puppet.manifests_path = "manifests"
@@ -37,4 +36,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ]
     end
   end
+
+  config.vm.define "debian" do |debian|
+      debian.vm.box = "puppetlabs/debian-7.8-64-puppet"
+      debian.vm.provision "shell", inline: 'puppet module install puppetlabs-stdlib'
+      debian.vm.provision "shell", inline: 'puppet module install puppetlabs-apt'
+      debian.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "manifests"
+        puppet.manifest_file  = "init.pp"
+        puppet.options = ['--verbose', "-e 'class { one: oned => true, sunstone => true, }'"]
+      end
+    end
 end

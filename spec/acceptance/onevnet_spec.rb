@@ -12,6 +12,7 @@ describe 'onevnet type' do
 
   describe 'when creating a fixed vnet' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Blue LAN':
           type       => 'fixed',
@@ -35,6 +36,7 @@ describe 'onevnet type' do
 
   describe 'when creating a ranged vnet' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Red LAN':
           type            => 'ranged',
@@ -54,6 +56,7 @@ describe 'onevnet type' do
 
   describe 'when creating an IPv6 Network' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Red LAN 6':
           type         => 'ranged',
@@ -73,6 +76,7 @@ describe 'onevnet type' do
 
   describe 'when updating a fixed vnet' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Blue LAN':
           type       => 'fixed',
@@ -97,6 +101,7 @@ describe 'onevnet type' do
 
   describe 'when updating a ranged vnet' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Red LAN':
           type            => 'ranged',
@@ -115,6 +120,7 @@ describe 'onevnet type' do
 
   describe 'when updating an IPv6 Network' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Red LAN 6':
           type         => 'ranged',
@@ -133,6 +139,7 @@ describe 'onevnet type' do
 
   describe 'when deleting a Network' do
     it 'should idempotently run' do
+      skip
       pp =<<-EOS
         onevnet { 'Blue LAN':
           ensure => absent,
