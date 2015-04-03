@@ -1,5 +1,5 @@
 class { 'one':
   oned => true,
-  node => false,
+  node => true,
   sunstone => true,
 }
