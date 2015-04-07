@@ -55,17 +55,17 @@ To deploy a Opennebula instance locally in a docker container run these commando
 
 Build base image with puppet in it (Depending on centos:latest):
 
-    docker build -f docker/build-puppet-base-image -t="epost-dev/puppet" .
+    docker build --rm -f docker/Dockerfile-Centos6 -t epost-dev/puppet .
 
 Build a image with the one puppet module in it:
 
-    docker build -f docker/Dockerfile -t=epost-dev/one .
+    docker build --rm -f docker/Dockerfile -t epost-dev/one .
 
 Run puppet in the container, choose one:
 
-    docker run epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head.pp
-    docker run epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-node.pp
-    docker run epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head-node.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-node.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head-node.pp
 
 The files can be found in the spec directory of this project. One will build a one head,
 one will build a node and one a head which also can be a node.
