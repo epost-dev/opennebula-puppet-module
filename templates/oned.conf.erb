@@ -88,7 +88,7 @@ DB = [ backend = "mysql",
 
 VNC_BASE_PORT = 5900
 
-#VM_SUBMIT_ON_HOLD = "NO"
+VM_SUBMIT_ON_HOLD = "<%= scope.lookupvar('one::params::oned_vm_submit_on_hold') %>"
 
 #*******************************************************************************
 # Federation configuration attributes

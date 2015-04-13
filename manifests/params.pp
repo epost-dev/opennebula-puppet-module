@@ -61,6 +61,8 @@ class one::params (
   $enable_support            = hiera('one::oned::enable_support', 'yes'),
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes'),
   $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp'),
+
+  $oned_vm_submit_on_hold    = hiera('one::oned::vm_submit_on_hold', 'NO'),
 ) {
   # generic params for nodes and oned
   $oneid = $one::oneid
