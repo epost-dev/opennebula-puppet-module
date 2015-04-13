@@ -17,18 +17,18 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::install {
-  package { $one::params::rubygems :
+  package { $one::rubygems :
     ensure   => latest,
     provider => gem,
     require  => Class['one::prerequisites'],
   }
-  package { $one::params::oned_packages :
+  package { $one::oned_packages :
     ensure  => latest,
     require => Class['one::prerequisites'],
   }
 
-  if ($one::params::hook_scripts_pkgs) {
-    package { $one::params::hook_scripts_pkgs :
+  if ($one::hook_scripts_pkgs) {
+    package { $one::hook_scripts_pkgs :
       ensure  => latest,
       require => Class['one::prerequisites'],
     }

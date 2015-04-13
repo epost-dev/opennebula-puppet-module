@@ -18,48 +18,48 @@ server 1:
     # Ldap user able to query, if not set connects as anonymous. For
     # Active Directory append the domain name. Example:
     # Administrator@my.domain.com
-    :user: '<%= scope.lookupvar('one::params::oned_ldap_user') %>'
-    :password: '<%= scope.lookupvar('one::params::oned_ldap_pass') %>'
+    :user: '<%= scope.lookupvar('one::oned_ldap_user') %>'
+    :password: '<%= scope.lookupvar('one::oned_ldap_pass') %>'
 
     # Ldap authentication method
     :auth_method: :simple
 
     # Ldap server
-    :host: <%= scope.lookupvar('one::params::oned_ldap_host') %>
-    :port: <%= scope.lookupvar('one::params::oned_ldap_port') %>
+    :host: <%= scope.lookupvar('one::oned_ldap_host') %>
+    :port: <%= scope.lookupvar('one::oned_ldap_port') %>
 
-<% if scope.lookupvar('one::params::oned_ldap_port') == "636" %>
+<% if scope.lookupvar('one::oned_ldap_port') == "636" %>
     # Uncomment this line for tsl conections
     :encryption: :simple_tls
 <% end %>
 
     # base hierarchy where to search for users and groups
-    :base: '<%= scope.lookupvar('one::params::oned_ldap_base') %>'
+    :base: '<%= scope.lookupvar('one::oned_ldap_base') %>'
 
     # group the users need to belong to. If not set any user will do
     #:group: 'cn=cloud,ou=groups,dc=domain'
-<% if scope.lookupvar('one::params::oned_ldap_group') != 'undef' -%>
-    :group: '<%= scope.lookupvar('one::params::oned_ldap_group') %>'
+<% if scope.lookupvar('one::oned_ldap_group') != 'undef' -%>
+    :group: '<%= scope.lookupvar('one::oned_ldap_group') %>'
 <% end -%>
 
     # field that holds the user name, if not set 'cn' will be used
     # :user_field: 'cn'
-<% if scope.lookupvar('one::params::oned_ldap_user_field') != 'undef' -%>
-    :user_field: '<%= scope.lookupvar('one::params::oned_ldap_user_field') %>'
+<% if scope.lookupvar('one::oned_ldap_user_field') != 'undef' -%>
+    :user_field: '<%= scope.lookupvar('one::oned_ldap_user_field') %>'
 <% end -%>
 
     # for Active Directory use this user_field instead
     #:user_field: 'sAMAccountName'
 
     # field name for group membership, by default it is 'member'
-<% if scope.lookupvar('one::params::oned_ldap_group_field') != 'undef' -%>
-    :group_field: '<%= scope.lookupvar('one::params::oned_ldap_group_field') %>'
+<% if scope.lookupvar('one::oned_ldap_group_field') != 'undef' -%>
+    :group_field: '<%= scope.lookupvar('one::oned_ldap_group_field') %>'
 <% end -%>
 
     # user field that that is in in the group group_field, if not set 'dn' will be used
     #:user_group_field: 'dn'
-<% if scope.lookupvar('one::params::oned_ldap_user_group_field') != 'undef' -%>
-    :user_group_field: '<%= scope.lookupvar('one::params::oned_ldap_user_group_field') %>'
+<% if scope.lookupvar('one::oned_ldap_user_group_field') != 'undef' -%>
+    :user_group_field: '<%= scope.lookupvar('one::oned_ldap_user_group_field') %>'
 <% end -%>
 
 

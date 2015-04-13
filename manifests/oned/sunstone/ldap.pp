@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::ldap (
-  $oned_sunstone_ldap_pkg = $one::params::oned_sunstone_ldap_pkg
+  $oned_sunstone_ldap_pkg = $one::oned_sunstone_ldap_pkg
 ) {
   package { $oned_sunstone_ldap_pkg:
     ensure => present,

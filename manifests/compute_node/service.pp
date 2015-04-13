@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::service {
-  service { $one::params::libvirtd_srv:
+  service { $one::libvirtd_srv:
     ensure    => 'running',
     hasstatus => true,
     enable    => true,
