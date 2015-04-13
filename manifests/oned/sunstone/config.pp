@@ -17,10 +17,10 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip          = $one::params::sunstone_listen_ip,
-  $enable_support     = $one::params::enable_support,
-  $enable_marketplace = $one::params::enable_marketplace,
-  $tmpdir             = $one::params::sunstone_tmpdir,
+  $listen_ip          = $one::sunstone_listen_ip,
+  $enable_support     = $one::enable_support,
+  $enable_marketplace = $one::enable_marketplace,
+  $tmpdir             = $one::sunstone_tmpdir,
 ){
   File {
     ensure  => 'file',

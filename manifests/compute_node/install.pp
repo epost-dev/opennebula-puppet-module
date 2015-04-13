@@ -18,7 +18,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::install {
-  package { $one::params::node_packages:
+  package { $one::node_packages:
       ensure => present,
   }
 }

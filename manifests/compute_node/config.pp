@@ -20,15 +20,15 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $networkconfig     = $one::params::kickstart_network,
-  $partitions        = $one::params::kickstart_partition,
-  $rootpw            = $one::params::kickstart_rootpw,
-  $data              = $one::params::kickstart_data,
-  $kickstart_tmpl    = $one::params::kickstart_tmpl,
-  $preseed_data      = $one::params::preseed_data,
-  $ohd_deb_repo      = $one::params::preseed_ohd_deb_repo,
-  $debian_mirror_url = $one::params::preseed_debian_mirror_url,
-  $preseed_tmpl      = $one::params::preseed_tmpl,
+  $networkconfig     = $one::kickstart_network,
+  $partitions        = $one::kickstart_partition,
+  $rootpw            = $one::kickstart_rootpw,
+  $data              = $one::kickstart_data,
+  $kickstart_tmpl    = $one::kickstart_tmpl,
+  $preseed_data      = $one::preseed_data,
+  $ohd_deb_repo      = $one::preseed_ohd_deb_repo,
+  $debian_mirror_url = $one::preseed_debian_mirror_url,
+  $preseed_tmpl      = $one::preseed_tmpl,
 ){
 
   File {
@@ -41,13 +41,13 @@ class one::compute_node::config (
   file { '/etc/libvirt/libvirtd.conf':
     owner  => 'root',
     source => 'puppet:///modules/one/libvirtd.conf',
-    notify => Service[$one::params::libvirtd_srv],
+    notify => Service[$one::libvirtd_srv],
   }
 
-  file { $one::params::libvirtd_cfg:
+  file { $one::libvirtd_cfg:
     owner  => 'root',
-    source => $one::params::libvirtd_source,
-    notify => Service[$one::params::libvirtd_srv],
+    source => $one::libvirtd_source,
+    notify => Service[$one::libvirtd_srv],
   }
 
   file { '/etc/udev/rules.d/80-kvm.rules':

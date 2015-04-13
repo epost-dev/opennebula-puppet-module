@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::oneflow::install {
-  package { $one::params::oned_oneflow_packages:
+  package { $one::oned_oneflow_packages:
     ensure => present,
   }
 }

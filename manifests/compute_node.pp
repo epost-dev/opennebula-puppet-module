@@ -27,7 +27,6 @@
 #
 class one::compute_node {
   include one::prerequisites
-  include one::params
   include one::install
   include one::config
   include one::service
@@ -36,7 +35,6 @@ class one::compute_node {
   include one::compute_node::install
 
   Class['one::prerequisites'] ->
-  Class['one::params'] ->
   Class['one::install'] ->
   Class['one::config'] ->
   Class['one::compute_node::install'] ->
@@ -47,7 +45,7 @@ class one::compute_node {
   if ($one::puppetdb == true) {
     # Register the node in the puppetdb
     @@one::oned::peer { $::fqdn :
-      tag   => $one::params::oneid,
+      tag   => $one::oneid,
       vtype => $one::vtype,
       ntype => $one::ntype,
     }

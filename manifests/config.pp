@@ -1,8 +1,8 @@
 # Class one::config
 #
 class one::config (
-  $ssh_pub_key  = $one::params::ssh_pub_key,
-  $ssh_priv_key = $one::params::ssh_priv_key_param,
+  $ssh_pub_key  = $one::ssh_pub_key,
+  $ssh_priv_key = $one::ssh_priv_key_param,
 ){
 
   File {

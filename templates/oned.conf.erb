@@ -58,8 +58,8 @@ LOG = [
 
 #MANAGER_TIMER = 30
 
-MONITORING_INTERVAL = <%= scope.lookupvar('one::params::monitoring_interval') %>
-MONITORING_THREADS  = <%= scope.lookupvar('one::params::monitoring_threads') %>
+MONITORING_INTERVAL = <%= scope.lookupvar('one::monitoring_interval') %>
+MONITORING_THREADS  = <%= scope.lookupvar('one::monitoring_threads') %>
 
 #HOST_PER_INTERVAL               = 15
 #HOST_MONITORING_EXPIRATION_TIME = 43200
@@ -79,11 +79,11 @@ DB = [ backend = "sqlite" ]
 <% if @backend == 'mysql' -%>
 # Sample configuration for MySQL
 DB = [ backend = "mysql",
-    server  = "<%= scope.lookupvar('one::params::oned_db_host') %>",
+    server  = "<%= scope.lookupvar('one::oned_db_host') %>",
     port    = 3306,
-    user    = "<%= scope.lookupvar('one::params::oned_db_user') %>",
-    passwd  = "<%= scope.lookupvar('one::params::oned_db_password') %>",
-    db_name = "<%= scope.lookupvar('one::params::oned_db') %>" ]
+    user    = "<%= scope.lookupvar('one::oned_db_user') %>",
+    passwd  = "<%= scope.lookupvar('one::oned_db_password') %>",
+    db_name = "<%= scope.lookupvar('one::oned_db') %>" ]
 <% end -%>
 
 VNC_BASE_PORT = 5900
@@ -152,11 +152,11 @@ FEDERATION = [
 #     %% -- %
 #*******************************************************************************
 
-MAX_CONN           = <%= scope.lookupvar('one::params::xmlrpc_maxconn') %>
-MAX_CONN_BACKLOG   = <%= scope.lookupvar('one::params::xmlrpc_maxconn_backlog') %>
-KEEPALIVE_TIMEOUT  = <%= scope.lookupvar('one::params::xmlrpc_keepalive_timeout') %>
-KEEPALIVE_MAX_CONN = <%= scope.lookupvar('one::params::xmlrpc_keepalive_max_conn') %>
-TIMEOUT            = <%= scope.lookupvar('one::params::xmlrpc_timeout') %>
+MAX_CONN           = <%= scope.lookupvar('one::xmlrpc_maxconn') %>
+MAX_CONN_BACKLOG   = <%= scope.lookupvar('one::xmlrpc_maxconn_backlog') %>
+KEEPALIVE_TIMEOUT  = <%= scope.lookupvar('one::xmlrpc_keepalive_timeout') %>
+KEEPALIVE_MAX_CONN = <%= scope.lookupvar('one::xmlrpc_keepalive_max_conn') %>
+TIMEOUT            = <%= scope.lookupvar('one::xmlrpc_timeout') %>
 #RPC_LOG            = NO
 #MESSAGE_SIZE       = 1073741824
 #LOG_CALL_FORMAT    = "Req:%i UID:%u %m invoked %l"
@@ -253,7 +253,7 @@ DEFAULT_CDROM_DEVICE_PREFIX = "hd"
 IM_MAD = [
     name       = "collectd",
     executable = "collectd",
-    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::params::information_collector_interval') %>" ]
+    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -793,8 +793,8 @@ DEFAULT_UMASK = 177
 #   MUST be consistent with the values in onegate-server.conf
 #*******************************************************************************
 
-<% if scope.lookupvar('one::params::oned_onedgate_ip') -%>
-ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::params::oned_onedgate_ip') %>:5030"
+<% if scope.lookupvar('one::oned_onedgate_ip') -%>
+ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::oned_onedgate_ip') %>:5030"
 <% else -%>
 #ONEGATE_ENDPOINT = "http://frontend:5030"
 <% end -%>

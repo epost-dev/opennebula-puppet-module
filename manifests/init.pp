@@ -14,6 +14,8 @@
 #
 # === Parameters
 #
+# ==== OpenNebula general parameters
+#
 # $oneid <string> - default to one-cloud
 #   set the id of the cloud
 #
@@ -76,6 +78,204 @@
 # $debug_level - default 0
 #   defines the debug level under which oned and sunstone are running
 #
+# ==== OpenNebula configuration parameters
+#
+# ===== OpenNebula Database configuration
+#
+# $oned_db - default oned
+#   name of the oned database
+#
+# $oned_db_user - default oned
+#   name of the database user
+#
+# $oned_db_password - default oned
+#   password of the database user
+#
+# $oned_db_host - default localhost
+#   oned database host
+# 
+# ===== OpenNebula LDAP configuration
+# optional needs $ldap set to true
+#
+# $oned_ldap_host - default ldap
+#   hostname of the ldap server
+#
+# $oned_ldap_port - default 636
+#   port of the ldap service
+#
+# $oned_ldap_base - default dc=example,dc=com
+#   ldap base
+#
+# $oned_ldap_user - default cn=ldap_query,ou=user,dc=example,dc=com
+#   ldap user for queries - can be empty if anonymous query is possible
+#   
+# $oned_ldap_pass - default default_password
+#   ldap user password for queries - can be empty if anonymous query is possible
+#
+# $oned_ldap_group - default undef
+#   restrict access to certain groups - cen be undef to allow all user access
+#
+# $oned_ldap_user_field - default undef
+#   defaults to uid, can be set to the field, that holds the username in ldap
+#
+# $oned_ldap_group_field - default undef
+#   default to member, can be set to the filed that holds the groupname
+#
+# $oned_ldap_user_group_field - default undef
+#   default to dn, can be set to the user field that is in the group group_field
+#
+# ===== OpenNebula User configuration
+#
+# $oneuid - default 9869
+#   set the oneadmin user id
+#
+# $onegid - default 9869
+#   set the oneadmin group id
+#
+# $ssh_priv_key_param - default undef
+#   add the private key to oneadmin user
+#
+# $ssh_pub_key - default undef
+#   add public key to oneadmin user
+#
+# ===== OpenNebula XMLRPC configuration
+#
+# $xmlrpc_max_conn - default 15
+#   set maximum number of connections
+#
+# $xmlrpc_maxconn_backlog - default 15
+#   set maximum number of queued connections
+#
+# $xmlrpc_keepalive_timeout - default 15
+#   set xmlrpc keepalive timeout in seconds
+#
+# $xmlrpc_keepalive_max_conn - default 30
+#   set xmlrpc active connection timeout in seconds
+#
+# $xmlrpc_timeout - default 15
+#   set xmlrpc timout in seconds
+#
+# ===== OpenNebula Sunstone configuration
+#
+# $sunstone_listen_ip - default 127.0.0.1
+#   set the ip where sunstone interface should listen
+#
+# $enable_support - default yes
+#   enable support button in sunstone
+#
+# $enable_marketplace - default yes
+#   enable marketplace button in sunstone
+#
+# $sunstone_tmpdir - default /var/tmp
+#   define a different tmp dir for sunstone
+#
+# ===== OpenNebula host monitoring configuration
+# $monitoring_interval - default 60
+#   when shoudl monitoring start again in seconds
+#
+# $monitoring_threads - default 50
+#   how many monitoring threads should be started
+#
+# $information_collector_interval - default 20
+#   how often should monitoring data get collected
+#
+# ===== OpenNebula Hook Script configuration
+#
+# hook scripts can either be placed in puppet or in a package
+#
+# $hook_scripts - default undef
+#   should hook script be installed
+#   either undef or a hash. two keys are supported:
+#       - VM - VM hook scripts
+#       - HOST - HOST hook scripts
+#   hiera data example:
+#        # Configures the hook scripts for VM and HOST in oned.conf
+#        one::head::hook_scripts:
+#          VM:
+#            dnsupdate:
+#              state:      'CREATE'
+#              command:    '/usr/share/one/hooks/dnsupdate.sh'
+#              arguments:  '$TEMPLATE'
+#              remote:      'no'
+#            dnsupdate_custom:
+#              state:        'CUSTOM'
+#              custom_state: 'PENDING'
+#              lcm_state:    'LCM_INIT'
+#              command:    '/usr/share/one/hooks/dnsupdate.sh'
+#              arguments:  '$TEMPLATE'
+#              remote:      'no'
+#          HOST:
+#            error:
+#              state:      'ERROR'
+#              command:    'ft/host_error.rb'
+#              arguments:  '$ID -r'
+#              remote:      'no'
+#
+# $hook_scripts_path - default puppet:///modules/one/hookscripts
+#   path where puppet will look for hook scripts
+#
+# $hook_scripts_pkgs - default undef
+#   package which will have the hook scripts
+#   hiera data example:
+#        #Install additional packages which contains the hook scripts
+#        one::head::hook_script_pkgs:
+#            - 'hook_vms'
+#            - 'hook_hosts'
+#
+# ===== OpenNebula OneGate configuration
+#
+# $oned_onegate_ip - default $::ipaddress
+#   which ip should the onegate daemon listen on
+#
+# ==== Imaginator configuration
+#
+# $kickstart_network - default undef
+# $kickstart_partition - default undef
+# $kickstart_rootpw - default undef
+# $kickstart_data - default undef
+# $kickstart_tmpl - default one/kickstart.ks.erb
+# $preseed_data - default {}
+# $preseed_debian_mirror_url - default http://ftp.debian.org/debian
+# $preseed_ohd_deb_repo - default undef
+# $preseed_tmpl - default  one/preseed.cfg.erb
+#
+# ==== Database Backup configuration
+#
+# $backup_script_path - default /var/lib/one/bin/one_db_backup.sh
+# $backup_dir - default /srv/backup
+# $backup_opts - default -C -q -e
+# $backup_db - default oned
+# $backup_db_user - default onebackup
+# $backup_db_password - default onebackup
+# $backup_db_host - default localhost
+# $backup_intervall - default */10
+# $backup_keep - default -mtime +15
+#
+# ==== OS specific configuration
+#
+# set in manifests/params for each os.
+#
+# $node_packages
+# $oned_packages 
+# $dbus_srv 
+# $dbus_pkg 
+# $oned_sunstone_packages 
+# $oned_sunstone_ldap_pkg 
+# $oned_oneflow_packages 
+# $oned_onegate_packages 
+# $libvirtd_srv 
+# $libvirtd_cfg 
+# $libvirtd_source 
+# $rubygems 
+#
+# ==== Environment specific configuration
+#
+# $http_proxy - default ''
+#   set to proxy if you can not install gems directly
+#
+# $one_repo_enable - default true
+#   should the official opennebula repositories be enabled?
+#
 # === Usage
 #
 # install compute node
@@ -104,7 +304,8 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one ( $oneid              = 'one-cloud',
+class one (
+            $oneid              = 'one-cloud',
             $node               = true,
             $vtype              = 'kvm',
             $ntype              = '802.1Q',
@@ -118,13 +319,76 @@ class one ( $oneid              = 'one-cloud',
             $ha_setup           = false,
             $puppetdb           = false,
             $debug_level        = '0',
-            ) {
-  include one::params
+            $oned_db                        = $one::params::oned_db,
+            $oned_db_user                   = $one::params::oned_db_user,
+            $oned_db_password               = $one::params::oned_db_password,
+            $oned_db_host                   = $one::params::oned_db_host,
+            $oned_ldap_host                 = $one::params::oned_ldap_host,
+            $oned_ldap_port                 = $one::params::oned_ldap_port,
+            $oned_ldap_base                 = $one::params::oned_ldap_base,
+            $oned_ldap_user                 = $one::params::oned_ldap_user,
+            $oned_ldap_pass                 = $one::params::oned_ldap_pass,
+            $oned_ldap_group                = $one::params::oned_ldap_group,
+            $oned_ldap_user_field           = $one::params::oned_ldap_user_field,
+            $oned_ldap_group_field          = $one::params::oned_ldap_group_field,
+            $oned_ldap_user_group_field     = $one::params::oned_ldap_user_group_field,
+            $one_repo_enable                = $one::params::one_repo_enable,
+            $ssh_priv_key_param             = $one::params::ssh_priv_key_param,
+            $ssh_pub_key                    = $one::params::ssh_pub_key,
+            $xmlrpc_maxconn                 = $one::params::xmlrpc_maxconn,
+            $xmlrpc_maxconn_backlog         = $one::params::xmlrpc_maxconn_backlog,
+            $xmlrpc_keepalive_timeout       = $one::params::xmlrpc_keepalive_timeout,
+            $xmlrpc_keepalive_max_conn      = $one::params::xmlrpc_keepalive_max_conn,
+            $xmlrpc_timeout                 = $one::params::xmlrpc_timeout,
+            $sunstone_listen_ip             = $one::params::sunstone_listen_ip,
+            $enable_support                 = $one::params::enable_support,
+            $enable_marketplace             = $one::params::enable_marketplace,
+            $sunstone_tmpdir                = $one::params::sunstone_tmpdir,
+            $oneuid                         = $one::params::oneuid,
+            $onegid                         = $one::params::onegid,
+            $monitoring_interval            = $one::params::monitoring_interval,
+            $monitoring_threads             = $one::params::monitoring_threads,
+            $information_collector_interval = $one::params::information_collector_interval,
+            $http_proxy                     = $one::params::http_proxy,
+            $hook_scripts_path              = $one::params::hook_scripts_path,
+            $hook_scripts_pkgs              = $one::params::hook_scripts_pkgs,
+            $hook_scripts                   = $one::params::hook_scripts,
+            $oned_onegate_ip                = $one::params::oned_onegate_ip,
+            $kickstart_network              = $one::params::kickstart_network,
+            $kickstart_partition            = $one::params::kickstart_partition,
+            $kickstart_rootpw               = $one::params::kickstart_rootpw,
+            $kickstart_data                 = $one::params::kickstart_data,
+            $kickstart_tmpl                 = $one::params::kickstart_tmpl,
+            $preseed_data                   = $one::params::preseed_data,
+            $preseed_debian_mirror_url      = $one::params::preseed_debian_mirror_url,
+            $preseed_ohd_deb_repo           = $one::params::preseed_ohd_deb_repo,
+            $preseed_tmpl                   = $one::params::preseed_tmpl,
+            $backup_script_path             = $one::params::backup_script_path,
+            $backup_dir                     = $one::params::backup_dir,
+            $backup_opts                    = $one::params::backup_opts,
+            $backup_db                      = $one::params::backup_db,
+            $backup_db_user                 = $one::params::backup_db_user,
+            $backup_db_password             = $one::params::backup_db_password,
+            $backup_db_host                 = $one::params::backup_db_host,
+            $backup_intervall               = $one::params::backup_intervall,
+            $backup_keep                    = $one::params::backup_keep,
+            $node_packages                  = $one::params::node_packages,
+            $oned_packages                  = $one::params::oned_packages,
+            $dbus_srv                       = $one::params::dbus_srv,
+            $dbus_pkg                       = $one::params::dbus_pkg,
+            $oned_sunstone_packages         = $one::params::oned_sunstone_packages,
+            $oned_sunstone_ldap_pkg         = $one::params::oned_sunstone_ldap_pkg,
+            $oned_oneflow_packages          = $one::params::oned_oneflow_packages,
+            $oned_onegate_packages          = $one::params::oned_onegate_packages,
+            $libvirtd_srv                   = $one::params::libvirtd_srv,
+            $libvirtd_cfg                   = $one::params::libvirtd_cfg,
+            $libvirtd_source                = $one::params::libvirtd_source,
+            $rubygems                       = $one::params::rubygems,
+            ) inherits one::params {
   include one::install
   include one::config
   include one::service
 
-  Class['one::params'] ->
   Class['one::install']->
   Class['one::config']->
   Class['one::service']
