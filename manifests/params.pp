@@ -45,7 +45,8 @@ class one::params (
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
-
+  # should VM_SUBMIT_ON_HOLD be enabled in oned.conf?
+  $oned_vm_submit_on_hold    = hiera('one::oned::vm_submit_on_hold', 'NO')
 
   # SSH Key
   $ssh_priv_key_param        = hiera('one::head::ssh_priv_key',undef)
