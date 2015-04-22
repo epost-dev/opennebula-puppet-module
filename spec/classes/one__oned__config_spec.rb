@@ -10,8 +10,6 @@ describe 'one::oned::config' do
   let (:hiera_config) { hiera_config }
   let (:pre_condition) { 'include one' }
   context 'general' do
-  end
-  context 'general' do
     it { should contain_class('one::oned::config') }
     it { should contain_file('/etc/one/oned.conf') \
                     .with_ensure('file' )\
