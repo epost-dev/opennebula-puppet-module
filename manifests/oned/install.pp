@@ -16,19 +16,35 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::install {
-  package { $one::rubygems :
-    ensure   => latest,
-    provider => gem,
-    require  => Class['one::prerequisites'],
+class one::oned::install(
+  $use_gems           = $one::use_gems,
+  $rubygems           = $one::rubygems,
+  $rubygems_rpm       = $one::rubygems_rpm,
+  $oned_packages      = $one::oned_packages,
+  $hook_scripts_pkgs  = $one::hook_scripts_pkgs
+) {
+
+  validate_bool($use_gems)
+
+  if $use_gems {
+    package { $rubygems :
+      ensure   => latest,
+      provider => gem,
+      require  => Class['one::prerequisites'],
+    }
+  } else {
+    package { $rubygems_rpm :
+      ensure   => latest,
+      require  => Class['one::prerequisites'],
+    }
   }
-  package { $one::oned_packages :
+  package { $oned_packages :
     ensure  => latest,
     require => Class['one::prerequisites'],
   }
 
-  if ($one::hook_scripts_pkgs) {
-    package { $one::hook_scripts_pkgs :
+  if ($hook_scripts_pkgs) {
+    package { $hook_scripts_pkgs :
       ensure  => latest,
       require => Class['one::prerequisites'],
     }

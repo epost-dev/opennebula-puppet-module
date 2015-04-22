@@ -178,9 +178,12 @@ class one::params (
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
-      $rubygems       = ['builder', 'sinatra']
+      $use_gems           = str2bool(hiera('one::oned::install::use_gems', 'true'))
+      $rubygems           = ['builder', 'sinatra']
+      $rubygems_rpm       = ['rubygem-builder', 'rubygem-sinatra']
     }
     'Debian': {
+      $use_gems        = true
       $node_packages   = ['opennebula-node',
                           'sudo',
                           'virtinst'
