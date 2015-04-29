@@ -153,7 +153,7 @@ class one::params (
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
-      if $::lsbmajdistrelease == '7' {
+      if $::operatingsystemmajrelease== '7' {
         $node_packages = ['opennebula-node-kvm',
                           'sudo'
                           ]
