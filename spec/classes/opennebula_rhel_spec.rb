@@ -14,7 +14,7 @@ describe 'one' do
   end
   let(:hiera_config) { hiera_config }
   context 'with hiera config on RedHat 6' do
-    let (:facts) { {:osfamily => 'RedHat', :lsbmajdistrelease => '6', } }
+    let (:facts) { {:osfamily => 'RedHat', :operatingsystemmajrelease => '6', } }
     let(:params) { {:oned => true} }
     hiera = Hiera.new(:config => hiera_config)
     configdir = '/etc/one'
@@ -258,7 +258,7 @@ describe 'one' do
   end
 
   context 'with hiera config on RedHat 7' do
-    let (:facts) { {:osfamily => 'RedHat', :lsbmajdistrelease => '7', } }
+    let (:facts) { {:osfamily => 'RedHat', :operatingsystemmajrelease => '7', } }
     let(:params) { {:oned => true} }
     hiera = Hiera.new(:config => hiera_config)
     configdir = '/etc/one'
