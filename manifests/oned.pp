@@ -31,7 +31,9 @@
 #
 class one::oned (
     $backend    = $one::backend,
-    $ldap       = $one::ldap
+    $ldap       = $one::ldap,
+    $puppetdb   = $one::puppetdb,
+    $oneid      = $one::oneid,
 ) {
   include one::prerequisites
   include one::install
@@ -58,9 +60,9 @@ class one::oned (
             (true or false). ${ldap} is not supported.")
   }
 
-  if ($one::puppetdb == true) {
+  if ($puppetdb == true) {
     # Realize all the known nodes
-    One::Oned::Peer <<| tag == $one::oneid |>> {
+    One::Oned::Peer <<| tag == $oneid |>> {
       require => Class[one::oned::service],
     }
   }

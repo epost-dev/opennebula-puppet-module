@@ -20,21 +20,20 @@ class one::oned::sunstone::ldap (
   $oned_sunstone_ldap_pkg = $one::oned_sunstone_ldap_pkg
 ) {
   package { $oned_sunstone_ldap_pkg:
-    ensure => present,
-  }
+    ensure => 'latest',
+  } ->
+  file { '/var/lib/one/remotes/auth/default':
+    ensure  => 'link',
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
+    target  => '/var/lib/one/remotes/auth/ldap',
+  } ->
   file { '/etc/one/auth/ldap_auth.conf':
-    ensure  => 'present',
+    ensure  => 'file',
     owner   => 'root',
     group   => 'oneadmin',
     mode    => '0640',
     content => template('one/ldap_auth.conf.erb'),
     notify  => Service['opennebula'],
-  }
-  file { '/var/lib/one/remotes/auth/default':
-    ensure  => link,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    target  => '/var/lib/one/remotes/auth/ldap',
-    require => File['/etc/one/auth/ldap_auth.conf'],
   }
 }

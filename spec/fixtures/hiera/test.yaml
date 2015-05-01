@@ -79,7 +79,7 @@ one::node::kickstart::data:
       puppet:
         url: 'http://yum-repo.example.com/puppet/'
       one:
-        url: 'http://yum-repo.example.com/ohd/'
+        url: 'http://yum-repo.example.com/one/'
     pkgs:
       - 'new'
       - 'noise'

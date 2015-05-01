@@ -16,8 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::compute_node::service {
-  service { $one::libvirtd_srv:
+class one::compute_node::service(
+  $libvirtd_srv = $one::libvirtd_srv
+) {
+  service { $libvirtd_srv:
     ensure    => 'running',
     hasstatus => true,
     enable    => true,

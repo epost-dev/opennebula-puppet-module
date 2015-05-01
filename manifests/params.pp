@@ -19,11 +19,8 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::params (
-) {
-
+class one::params {
   # OpenNebula parameters
-
   $oned_db          = hiera('one::oned::db', 'oned')
   $oned_db_user     = hiera('one::oned::db_user', 'oned')
   $oned_db_password = hiera('one::oned::db_password', 'oned')
@@ -45,6 +42,8 @@ class one::params (
   $oned_ldap_user_group_field = hiera('one::oned::ldap_user_group_field','undef')
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
+  # Which version
+  $one_version = hiera('one::one_version', '4.10' )
   # should VM_SUBMIT_ON_HOLD be enabled in oned.conf?
   $oned_vm_submit_on_hold    = hiera('one::oned::vm_submit_on_hold', 'NO')
 
@@ -221,5 +220,4 @@ class one::params (
             Please add required functionality to params.pp")
     }
   }
-
 }

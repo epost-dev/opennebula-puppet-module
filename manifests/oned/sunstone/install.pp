@@ -20,6 +20,6 @@ class one::oned::sunstone::install (
   $oned_sunstone_packages = $one::oned_sunstone_packages
 ){
   package { $oned_sunstone_packages:
-    ensure => present,
+    ensure => 'latest',
   }
 }

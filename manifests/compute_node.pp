@@ -25,7 +25,12 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::compute_node {
+class one::compute_node(
+  $puppetdb = $one::puppetdb,
+  $oneid    = $one::oneid,
+  $vtype    = $one::vtype,
+  $ntype    = $one::ntype,
+) {
   include one::prerequisites
   include one::install
   include one::config
@@ -42,12 +47,12 @@ class one::compute_node {
   Class['one::compute_node::service'] ~>
   Class['one::service']
 
-  if ($one::puppetdb == true) {
+  if ($puppetdb == true) {
     # Register the node in the puppetdb
     @@one::oned::peer { $::fqdn :
-      tag   => $one::oneid,
-      vtype => $one::vtype,
-      ntype => $one::ntype,
+      tag   => $oneid,
+      vtype => $vtype,
+      ntype => $ntype,
     }
   }
 }

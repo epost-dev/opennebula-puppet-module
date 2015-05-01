@@ -11,6 +11,6 @@ describe 'one::oned::sunstone::install' do
   let (:params) {{ :oned_sunstone_packages => 'bogus-package'}}
   context 'general' do
     it { should contain_class('one::oned::sunstone::install')}
-    it { should contain_package('bogus-package').with_ensure('present')}
+    it { should contain_package('bogus-package').with_ensure('latest')}
   end
 end

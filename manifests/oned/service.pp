@@ -16,8 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::service {
-  if ($one::ha_setup) {
+class one::oned::service (
+  $ha_setup = $one::ha_setup,
+){
+  if ($ha_setup) {
     $oned_enable = false
     $oned_ensure = undef
   } else {

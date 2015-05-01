@@ -86,12 +86,7 @@ class one::oned::config(
     owner   => 'root',
     mode    => '0640',
     content => template('one/sched.conf.erb'),
-  }
-
-  file { '/usr/share/one':
-    ensure => 'directory',
-    mode   => '0755',
-  }
+  } ->
 
   file { '/usr/share/one/hooks':
     ensure  => 'directory',
@@ -101,19 +96,24 @@ class one::oned::config(
     purge   => true,
     force   => true,
     source  => $hook_scripts_path,
+  } ->
+
+  file { '/usr/share/one':
+    ensure => 'directory',
+    mode   => '0755',
   }
 
   if ($backend == 'mysql') {
-    file { $backup_dir:
-      ensure => 'directory',
-      mode   => '0700'
-    }
-
     file { $backup_script_path:
       ensure  => 'file',
       mode    => '0700',
       content => template('one/one_db_backup.sh.erb'),
-    }
+    } ->
+
+    file { $backup_dir:
+      ensure => 'directory',
+      mode   => '0700'
+    } ->
 
     cron { 'one_db_backup':
       command => $backup_script_path,

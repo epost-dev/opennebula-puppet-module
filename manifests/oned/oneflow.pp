@@ -23,5 +23,6 @@ class one::oned::oneflow  {
   include one::oned::oneflow::service
   Class['one::prerequisites'] ->
   Class['one::oned::oneflow::install'] ->
-  Class['one::oned::oneflow::config'] ~> Class['one::oned::oneflow::service']
+  Class['one::oned::oneflow::config'] ~>
+  Class['one::oned::oneflow::service']
 }

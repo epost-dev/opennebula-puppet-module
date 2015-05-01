@@ -16,8 +16,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::oneflow::install {
-  package { $one::oned_oneflow_packages:
-    ensure => present,
+class one::oned::oneflow::install(
+  $oned_oneflow_packages = $one::oned_oneflow_packages,
+) {
+  package { $oned_oneflow_packages:
+    ensure => 'latest',
   }
 }
