@@ -26,6 +26,7 @@ Puppet::Type.newtype(:onevnet_addressrange) do
 
   newparam(:onevnet) do
     desc "Name of the onevnet network where the addressrange will be added/managed"
+    fail("The given onevent is not declared") unless catalog.resources.find { |r| r.is_a?(Puppet::Type.type(:onevnet)) and r.should(:name) == resource(:onevnet) }
   end
 
   newproperty(:protocol) do

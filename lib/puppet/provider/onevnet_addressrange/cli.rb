@@ -27,13 +27,13 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Create a network with onevnet
   def create
-    onevnet('addar', resource[:onevnet])
+    onevnet('addar', resource[:name])
     @property_hash[:ensure] = :present
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    onevnet('rmar', resource[:onevnet])
+    onevnet('rmar', resource[:name])
     @property_hash.clear
   end
 
@@ -44,13 +44,18 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
   def self.instances
-      vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET')
+      vnet_ar = Nokogiri::XML(onevnet('show', resource[:onevnet], '-x')).root.xpath('/VNET/AR_POOL')
 #pry.binding
-      vnets.collect do |vnet|
+      vnet_ar.collect do |ar|
           new(
-              :name            => vnet.xpath('./NAME').text,
-              :ensure          => :present,
-              :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
+              :name          => ar.xpath('./AR/PUPPET_AR_NAME').text,
+              :ensure        => :present,
+              :type          => ar.xpath('./AR/TYPE').text,
+              :ip_size       => ar.xpath('./AR/SIZE').text,
+              :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
+              :globalprefix  => (ar.xpath('./AR/GLOBAL_PRFIX').text unless ar.xpath('./AR/GLOBAL_PREFIX').nil?),
+              :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
+              :ulaprefix     => (ar.xpath('./AR/ULA_PREFIX').text unless ar.xpath('./AR/ULA_PREFIX').nil?)
           )
       end
   end
