@@ -20,14 +20,14 @@ class one::compute_node::service(
   $libvirtd_srv = $one::libvirtd_srv
 ) {
   service { $libvirtd_srv:
-    ensure    => 'running',
+    ensure    => running,
     hasstatus => true,
     enable    => true,
   }
   case $::osfamily {
       'RedHat': {
           service { 'ksmtuned':
-            ensure    => 'stopped',
+            ensure    => stopped,
             enable    => false,
             hasstatus => true,
           }

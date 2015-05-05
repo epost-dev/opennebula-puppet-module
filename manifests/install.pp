@@ -9,11 +9,11 @@ class one::install (
   File['/etc/gemrc'] -> Package <| provider == 'gem' |>
 
   file { '/etc/gemrc':
-    ensure  => 'file',
+    ensure  => file,
     content => "---\nhttp_proxy: ${http_proxy}\n",
   } ->
 
   package { $dbus_pkg:
-    ensure  => 'latest',
+    ensure  => latest,
   }
 }

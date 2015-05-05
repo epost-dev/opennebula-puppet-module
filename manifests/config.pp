@@ -13,51 +13,47 @@ class one::config (
     group   => 'oneadmin',
   }
 
+  file { '/var/lib/one':
+    ensure => directory,
+  } ->
+
+  file { '/var/lib/one/.ssh':
+    ensure  => directory,
+    mode    => '0700',
+    recurse => true,
+  } ->
+
   file { '/var/lib/one/.ssh/id_dsa':
-    ensure  => 'file',
+    ensure  => file,
     content => $ssh_priv_key,
     mode    => '0600',
-    require => File['/var/lib/one/.ssh'],
   } ->
 
   file { '/var/lib/one/.ssh/id_dsa.pub':
-    ensure  => 'file',
+    ensure  => file,
     content => $ssh_pub_key,
     mode    => '0644',
-    require => File['/var/lib/one/.ssh'],
   } ->
 
   file { '/var/lib/one/.ssh/authorized_keys':
-    ensure  => 'file',
+    ensure  => file,
     mode    => '0644',
     content => $ssh_pub_key,
   } ->
 
   file { '/var/lib/one/.ssh/config':
-    ensure  => 'file',
+    ensure  => file,
     mode    => '0644',
     source => 'puppet:///modules/one/ssh_one_config',
   } ->
 
-  file { '/var/lib/one/.ssh':
-    ensure  => 'directory',
-    mode    => '0700',
-    recurse => true,
-  } ->
-
   file { '/var/lib/one/bin':
-    ensure => 'directory',
+    ensure => directory,
     mode   => '0755',
   } ->
 
   file { '/var/lib/one/etc':
-    ensure => 'directory',
+    ensure => directory,
     mode   => '0755',
-  } ->
-
-  file { '/var/lib/one':
-    ensure => 'directory',
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
   }
 }

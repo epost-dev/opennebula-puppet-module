@@ -21,6 +21,6 @@ class one::compute_node::install(
   $node_packages = $one::node_packages
 ) {
   package { $node_packages:
-      ensure => 'latest',
+      ensure => latest,
   }
 }

@@ -18,7 +18,7 @@
 #
 class one::oned::onegate::service {
   service {'onegate-server':
-    ensure     => 'running',
+    ensure     => running,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,

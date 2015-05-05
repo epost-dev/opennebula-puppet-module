@@ -20,6 +20,6 @@ class one::oned::oneflow::install(
   $oned_oneflow_packages = $one::oned_oneflow_packages,
 ) {
   package { $oned_oneflow_packages:
-    ensure => 'latest',
+    ensure => latest,
   }
 }

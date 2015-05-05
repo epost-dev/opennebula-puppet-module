@@ -67,11 +67,11 @@ class one::prerequisites(
     }
   }
   group { 'oneadmin':
-    ensure => 'present',
+    ensure => present,
     gid    => $one::onegid,
   } ->
   user { 'oneadmin':
-    ensure     => 'present',
+    ensure     => present,
     uid        => $one::oneuid,
     gid        => $one::onegid,
     home       => '/var/lib/one',

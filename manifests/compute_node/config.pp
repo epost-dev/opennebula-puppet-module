@@ -38,29 +38,29 @@ class one::compute_node::config (
   validate_hash   ($preseed_data)
 
   file { '/etc/libvirt/libvirtd.conf':
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/libvirtd.conf',
     notify => Service[$libvirtd_srv],
   } ->
 
   file { $libvirtd_cfg:
-    ensure => 'file',
+    ensure => file,
     source => $libvirtd_source,
     notify => Service[$libvirtd_srv],
   } ->
 
   file { '/etc/udev/rules.d/80-kvm.rules':
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/udev-kvm-rules',
   } ->
 
   file { '/etc/sudoers.d/10_oneadmin':
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/oneadmin_sudoers',
   } ->
 
   file { '/etc/sudoers.d/20_imaginator':
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/sudoers_imaginator',
   } ->
 
@@ -69,29 +69,31 @@ class one::compute_node::config (
       'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
       'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
     },
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
   } ->
 
   file { '/etc/libvirt/qemu.conf':
-    ensure => 'file',
+    ensure => file,
     source => 'puppet:///modules/one/qemu.conf'
   } ->
 
   file { '/var/lib/one/.virtinst':
-    ensure => 'directory',
+    ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
+    require => File['/var/lib/one'],
   } ->
 
   file { '/var/lib/one/.libvirt':
-    ensure => 'directory',
+    ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
+    require => File['/var/lib/one'],
   } ->
 
   file { '/var/lib/libvirt/boot':
-    ensure => 'directory',
+    ensure => directory,
     owner  => 'oneadmin',
     group  => 'oneadmin',
     mode   => '0771',
@@ -99,7 +101,7 @@ class one::compute_node::config (
 
   file { ['/var/lib/one/etc/kickstart.d',
     '/var/lib/one/etc/preseed.d']:
-    ensure  => 'directory',
+    ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     purge   => true,
@@ -109,16 +111,17 @@ class one::compute_node::config (
   } ->
 
   file { '/var/lib/one/bin/imaginator':
-    ensure => 'file',
+    ensure => file,
     owner  => 'oneadmin',
     group  => 'oneadmin',
     mode   => '0700',
-    source => 'puppet:///modules/one/imaginator'
+    source => 'puppet:///modules/one/imaginator',
+    require => File['/var/lib/one/bin'],
   }
 
   if ($::osfamily == 'Debian') or ($::osfamily == 'RedHat' and versioncmp($::operatingsystemmajrelease, '7') < 0) {
     file { '/sbin/brctl':
-      ensure => 'link',
+      ensure => link,
       target => '/usr/sbin/brctl',
     }
   }

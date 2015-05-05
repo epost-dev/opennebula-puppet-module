@@ -31,21 +31,21 @@ class one::oned::install(
 
   if $use_gems {
     package { $rubygems :
-      ensure   => 'latest',
+      ensure   => latest,
       provider => 'gem',
     }
   } else {
     package { $rubygems_rpm :
-      ensure  => 'latest',
+      ensure  => latest,
     }
   }
   package { $oned_packages :
-    ensure  => 'latest',
+    ensure  => latest,
   }
 
   if ($hook_scripts_pkgs) {
     package { $hook_scripts_pkgs :
-      ensure  => 'latest',
+      ensure  => latest,
     }
   }
 }

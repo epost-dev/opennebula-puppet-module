@@ -6,7 +6,7 @@ class one::service(
   $dbus_srv = $one::dbus_srv,
 ) {
   service { $dbus_srv:
-    ensure    => 'running',
+    ensure    => running,
     enable    => true,
     hasstatus => true,
   }

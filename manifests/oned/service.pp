@@ -24,7 +24,7 @@ class one::oned::service (
     $oned_ensure = undef
   } else {
     $oned_enable = true
-    $oned_ensure = 'running'
+    $oned_ensure = running
   }
   service {'opennebula':
     ensure    => $oned_ensure,

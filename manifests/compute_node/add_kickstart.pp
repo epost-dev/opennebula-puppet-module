@@ -9,7 +9,7 @@ define one::compute_node::add_kickstart(
 ) {
   validate_string ($kickstart_tmpl)
   file { "/var/lib/one/etc/kickstart.d/${name}.ks":
-    ensure  => 'file',
+    ensure  => file,
     owner   => 'oneadmin',
     group   => 'oneadmin',
     content => template($kickstart_tmpl),
