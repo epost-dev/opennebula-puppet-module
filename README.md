@@ -80,8 +80,6 @@ onevnet { '<name>':
     phydev          => 'br0',
     dns_servers     => ['8.8.8.8', '4.4.4.4'],
     gateway         => '10.0.2.1',
-    network_address => '10.0.2.0',
-    network_mask    => '255.255.255.0',
     # add vlanid 
     vlanid          => '1550',
 }
@@ -91,7 +89,8 @@ Create onevnet addressrange
 ```
 onevnet_addressrange { '<name>':
     ensure        => present | absent,
-    onevnet       => '<name>',
+    onevnet_name  => '<name>',
+    ar_id         => '<INT>',             # read only value
     protocol      => ip4 | ip6 | ip4_6 | ether,
     size          => '10',
     mac           => '02:00:0a:00:00:96', # optional

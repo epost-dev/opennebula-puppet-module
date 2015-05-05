@@ -24,7 +24,7 @@ Puppet::Type.newtype(:onevnet_addressrange) do
     end
   end
 
-  newparam(:onevnet) do
+  newparam(:onevnet_name) do
     desc "Name of the onevnet network where the addressrange will be added/managed"
   end
 
