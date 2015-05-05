@@ -48,17 +48,16 @@ class one::prerequisites(
           default: { fail("Unrecognized operating system ${::operatingsystem}") }
         }
 
+        apt::key { 'one_repo_key':
+          id        => '85E16EBF',
+          source    => 'http://downloads.opennebula.org/repo/Debian/repo.key',
+        } ->
+        
         apt::source { 'one-official':
           location          => "http://downloads.opennebula.org/repo/${apt_location}",
           release           => 'stable',
           repos             => 'opennebula',
           pin               => $apt_pin,
-          require           => Apt::Key['one_repo_key'],
-        } ->
-
-        apt::key { 'one_repo_key':
-          id        => '85E16EBF',
-          source    => 'http://downloads.opennebula.org/repo/Debian/repo.key',
         }
       }
     }
