@@ -17,11 +17,11 @@ describe 'one::compute_node::config', :type => :class do
       it { should contain_file('/etc/udev/rules.d/80-kvm.rules') }
       it { should contain_file('/etc/sudoers.d/10_oneadmin') }
       it { should contain_file('/etc/sudoers.d/20_imaginator') }
-      if :osfamily == 'Debian'
+      if f[:osfamily] == 'Debian'
         it { should contain_file('polkit-opennebula') \
             .with_path('/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla')
         }
-      elsif :osfamily == 'RedHat'
+      elsif f[:osfamily] == 'RedHat'
         it { should contain_file('polkit-opennebula') \
             .with_path('/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla')
         }
