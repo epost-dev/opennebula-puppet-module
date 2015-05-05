@@ -44,7 +44,7 @@ class one::config (
   file { '/var/lib/one/.ssh/config':
     ensure  => file,
     mode    => '0644',
-    source => 'puppet:///modules/one/ssh_one_config',
+    source  => 'puppet:///modules/one/ssh_one_config',
   } ->
 
   file { '/var/lib/one/bin':
