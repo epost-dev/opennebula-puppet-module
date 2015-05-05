@@ -35,37 +35,26 @@ Puppet::Type.type(:onevnet).provide(:cli) do
             xml.PHYDEV do
                 resource[:phydev]
             end if resource[:phydev]
-            xml.NETWORK_SIZE do
-                resource[:network_size]
-            end if resource[:network_size]
-            xml.NETWORK_ADDRESS do
-                resource[:network_address]
-            end if resource[:network_address]
-            xml.IP_START do
-                resource[:network_start]
-            end if resource[:network_start]
-            xml.IP_END do
-                resource[:network_end]
-            end if resource[:network_end]
-            xml.MAC_START do
-                resource[:macstart]
-            end if resource[:macstart]
-            xml.SITE_PREFIX do
-                resource[:siteprefix]
-            end if resource[:siteprefix]
-            xml.GLOBAL_PREFIX do
-                resource[:globalprefix]
-            end if resource[:globalprefix]
             xml.VLAN_ID do
                 resource[:vlanid]
             end if resource[:vlanid]
+            xml.TEMPLATE do
+                xml.DNS do
+                    resource[:dnsservers]
+                end
+            end if resource[:dnsservers]
+            xml.TEMPLATE do
+                xml.GATEWAY do
+                    resource[:gateway]
+                end
+            end if resource[:gateway]
             xml.CONTEXT do
                 resource[:context].each do |k,v|
                     xml.send(k.upcase, v)
                 end if resource[:context]
             end
         end
-        # enf xml vnet do
+        # end xml vnet do
     end
     # end builder
     tempfile = builder.to_xml
@@ -96,17 +85,13 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           new(
               :name            => vnet.xpath('./NAME').text,
               :ensure          => :present,
-              :bridge          => (vnet.xpath('./TEMPLATE/BRIDGE') || vnet.xpath('./BRIDGE')).text,
+              :bridge          => vnet.xpath('./BRIDGE').text,
               :context         => nil,
               :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.to_a unless vnet.xpath('./TEMPLATE/DNS').nil?),
               :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
-              :gateway6        => (vnet.xpath('./TEMPLATE/GATEWAY6').text unless vnet.xpath('./TEMPLATE/GATEWAY6').nil?),
               :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
-              :phydev          => (vnet.xpath('./TEMPLATE/PHYDEV') || vnet.xpath('./PHYDEV')).text,
-              :vlanid          => (vnet.xpath('./TEMPLATE/VLAN_ID') || vnet.xpath('./VLAN_ID')).text,
-              :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
-              :network_mask    => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
-              :addressrange    => Hash[vnet.xpath('./AR_POOL/AR/AR_ID').collect { |ar| [ar.text, Hash[ar.xpath('../*').collect { |singlear| [singlear.name.downcase, singlear.text] } ] ] } ]
+              :phydev          => vnet.xpath('./PHYDEV').text,
+              :vlanid          => vnet.xpath('./VLAN_ID').text
           )
       end
   end
@@ -127,6 +112,9 @@ Puppet::Type.type(:onevnet).provide(:cli) do
         case k
         when :vlanid
           [ 'VLAN_ID', v ]
+        when :addressrange
+          k.each_pair do |key, value|
+          end
         else
           [ k.to_s.upcase, v ]
         end
