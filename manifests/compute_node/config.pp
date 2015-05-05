@@ -65,11 +65,11 @@ class one::compute_node::config (
   } ->
 
   file { 'polkit-opennebula':
+    ensure => file,
     path   => $::osfamily ? {
       'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
       'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
     },
-    ensure => file,
     source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
   } ->
 
@@ -79,16 +79,16 @@ class one::compute_node::config (
   } ->
 
   file { '/var/lib/one/.virtinst':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
+    ensure  => directory,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
     require => File['/var/lib/one'],
   } ->
 
   file { '/var/lib/one/.libvirt':
-    ensure => directory,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
+    ensure  => directory,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
     require => File['/var/lib/one'],
   } ->
 
@@ -111,11 +111,11 @@ class one::compute_node::config (
   } ->
 
   file { '/var/lib/one/bin/imaginator':
-    ensure => file,
-    owner  => 'oneadmin',
-    group  => 'oneadmin',
-    mode   => '0700',
-    source => 'puppet:///modules/one/imaginator',
+    ensure  => file,
+    owner   => 'oneadmin',
+    group   => 'oneadmin',
+    mode    => '0700',
+    source  => 'puppet:///modules/one/imaginator',
     require => File['/var/lib/one/bin'],
   }
 
