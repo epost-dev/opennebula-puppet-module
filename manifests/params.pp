@@ -165,7 +165,7 @@ class one::params {
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
-      if $::operatingsystemmajrelease== '7' {
+      if $::operatingsystemmajrelease == '7' {
         $node_packages = ['opennebula-node-kvm',
                           'sudo'
                           ]
@@ -200,7 +200,7 @@ class one::params {
                           'sudo',
                           'virtinst'
                           ]
-      $rubygems       = ['parse-cron']
+      $rubygems       = ['parse-cron', 'builder', 'sinatra']
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
