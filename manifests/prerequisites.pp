@@ -49,15 +49,17 @@ class one::prerequisites(
         }
 
         apt::key { 'one_repo_key':
-          id        => '85E16EBF',
-          source    => 'http://downloads.opennebula.org/repo/Debian/repo.key',
+          key        => '85E16EBF',
+          key_source => 'http://downloads.opennebula.org/repo/Debian/repo.key',
         } ->
-        
+
         apt::source { 'one-official':
           location          => "http://downloads.opennebula.org/repo/${apt_location}",
           release           => 'stable',
           repos             => 'opennebula',
+          required_packages => 'debian-keyring debian-archive-keyring',
           pin               => $apt_pin,
+          include_src       => false,
         }
       }
     }
