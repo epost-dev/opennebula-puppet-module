@@ -26,7 +26,10 @@ Puppet::Type.newtype(:onevnet_addressrange) do
 
   newparam(:onevnet) do
     desc "Name of the onevnet network where the addressrange will be added/managed"
-    fail("The given onevent is not declared") unless catalog.resources.find { |r| r.is_a?(Puppet::Type.type(:onevnet)) and r.should(:name) == resource(:onevnet) }
+  end
+
+  newparam(:ar_id) do
+    desc "Readonly attribute - onevnet addressrange internal number"
   end
 
   newproperty(:protocol) do
@@ -36,26 +39,26 @@ Puppet::Type.newtype(:onevnet_addressrange) do
 
   newproperty(:ip_start) do
     desc "Base ip address for IPv4 networks."
-    validate do |value|
-        unless resource[:ensure] == :present and resource[:protocol] == :ip4
-            fail("Network address is required when using IPv4 protocol")
-        end
-        if value == :undef and resource[:ensure] == :present and resource[:protocol] == :ip4
-            fail("network_address is required when using ipv4")
-        end
-    end
+    #validate do |value|
+    #    unless resource[:ensure] == :present and resource[:protocol] == :ip4
+    #        fail("Network address is required when using IPv4 protocol")
+    #    end
+    #    if value == :undef and resource[:ensure] == :present and resource[:protocol] == :ip4
+    #        fail("network_address is required when using ipv4")
+    #    end
+    #end
   end
 
   newproperty(:ip_size) do
     desc "Number of addresses"
-    validate do |value|
-        unless resource[:ensure] == :present and ( resource[:protocol] == :ip4 or resource[:protocol] == :ip4_6 )
-            fail("ip_size is required when using IPv4 protocol")
-        end
-        if value == :undef and resource[:ensure] == :present and ( resource[:protocol] == :ip4 or resource[:protocol] == :ip4_6 )
-            fail("network_mask is required when using ipv4")
-        end
-    end
+    #validate do |value|
+    #    unless resource[:ensure] == :present and ( resource[:protocol] == :ip4 or resource[:protocol] == :ip4_6 )
+    #        fail("ip_size is required when using IPv4 protocol")
+    #    end
+    #    if value == :undef and resource[:ensure] == :present and ( resource[:protocol] == :ip4 or resource[:protocol] == :ip4_6 )
+    #        fail("network_mask is required when using ipv4")
+    #    end
+    #end
   end
 
   newproperty(:mac) do
@@ -64,11 +67,11 @@ Puppet::Type.newtype(:onevnet_addressrange) do
 
   newproperty(:globalprefix) do
     desc "Global prefix for IPv6 network"
-    validate do |value|
-        unless resource[:ensure] == :present and ( resource[:protocol] == :ip6 or resource[:protocol] == :ip4_6 )
-            fail("Global prefix is required when using IPv6 protocol")
-        end
-    end
+    #validate do |value|
+    #    unless resource[:ensure] == :present and ( resource[:protocol] == :ip6 or resource[:protocol] == :ip4_6 )
+    #        fail("Global prefix is required when using IPv6 protocol")
+    #    end
+    #end
   end
 
   newproperty(:ulaprefix) do

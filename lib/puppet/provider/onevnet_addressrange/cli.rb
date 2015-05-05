@@ -27,13 +27,13 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Create a network with onevnet
   def create
-    onevnet('addar', resource[:name])
+    onevnet('addar', resource[:onevnet])
     @property_hash[:ensure] = :present
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    onevnet('rmar', resource[:name])
+    onevnet('rmar', resource[:onevnet], resource[:ar_id])
     @property_hash.clear
   end
 
@@ -52,6 +52,7 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
               :ensure        => :present,
               :type          => ar.xpath('./AR/TYPE').text,
               :ip_size       => ar.xpath('./AR/SIZE').text,
+              :ar_id         => ar.xpath('./AR/AR_ID').text,
               :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
               :globalprefix  => (ar.xpath('./AR/GLOBAL_PRFIX').text unless ar.xpath('./AR/GLOBAL_PREFIX').nil?),
               :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
