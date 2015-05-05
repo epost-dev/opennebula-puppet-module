@@ -84,9 +84,22 @@ onevnet { '<name>':
     network_mask    => '255.255.255.0',
     # add vlanid 
     vlanid          => '1550',
-    # configure address range (only one range is possible at the moment)
-    addressrange    => { 'ip' => '10.0.2.10', 'size' => '10', 'type' => 'IP4 | ETHER | IP4_6 | IP6', 'mac' => '00:00:00:00:00:00', 'global_prefix' => '::1' }, 
-    
+}
+```
+
+Create onevnet addressrange
+```
+onevnet_addressrange { '<name>':
+    ensure        => present | absent,
+    onevnet       => '<name>',
+    protocol      => ip4 | ip6 | ip4_6 | ether,
+    size          => '10',
+    mac           => '02:00:0a:00:00:96', # optional
+    # attributes for ip4 and ip4_6:
+    ip            => '10.0.2.20'
+    # attributes for ip6:
+    global_prefix => '2001:a::',          # optional
+    ula_prefix    => 'fd01:a:b::',        # optional
 }
 ```
 
