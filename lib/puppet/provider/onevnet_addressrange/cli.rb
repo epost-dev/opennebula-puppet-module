@@ -44,13 +44,14 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
   def self.instances
-      vnet_ar = Nokogiri::XML(onevnet('show', resource[:onevnet], '-x')).root.xpath('/VNET/AR_POOL')
+      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL')
 #pry.binding
       vnet_ar.collect do |ar|
           new(
               :name          => ar.xpath('./AR/PUPPET_AR_NAME').text,
               :ensure        => :present,
-              :type          => ar.xpath('./AR/TYPE').text,
+              :onevnet_name  => :onevnet_name,
+              :protocol      => ar.xpath('./AR/TYPE').text,
               :ip_size       => ar.xpath('./AR/SIZE').text,
               :ar_id         => ar.xpath('./AR/AR_ID').text,
               :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
