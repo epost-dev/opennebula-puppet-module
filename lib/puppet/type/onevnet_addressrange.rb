@@ -19,9 +19,9 @@ Puppet::Type.newtype(:onevnet_addressrange) do
 
   newparam(:name, :namevar => true) do
     desc "Name (ID) of addressrange."
-    validate do |value|
-      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
-    end
+    #validate do |value|
+    #  fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+    #end
   end
 
   newparam(:onevnet_name) do
