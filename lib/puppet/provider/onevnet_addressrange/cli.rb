@@ -39,16 +39,20 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Check if a network exists by scanning the addressranges of the given onevnet
   def exists?
-    vnet_ar = Nokogigi::XML(onevnet('show', resource[:onevnet_name], '-x')).root.xpath('/VNET/AR_POOL')
-    vnet_ar.xpath('./AR/PUPPET_NAME').each { |ar_name|
-      if ar_name.text == resource[:name]
-        return true
+    vnet_ar = Nokogiri::XML(onevnet('show', resource[:onevnet_name], '-x')).root.xpath('/VNET/AR_POOL')
+    vnet_ar.xpath('AR/PUPPET_NAME').collect { |ar_name|
+      self.debug("Found Puppet Name: #{ar_name.text}")
+      ar_name.text.each do |singlearid|
+        if singlearid == resource[:name]
+          return true
+        end
+      end
     }
   end
 
   # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
-  def self.instances
-      raise ArgumentError, 'Can not collect all onevnet_addressranges.'
+#  def self.instances
+#      raise ArgumentError, 'Can not collect all onevnet_addressranges.'
 #      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL')
 ##pry.binding
 #      vnet_ar.collect do |ar|
@@ -64,8 +68,8 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 #              :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
 #              :ulaprefix     => (ar.xpath('./AR/ULA_PREFIX').text unless ar.xpath('./AR/ULA_PREFIX').nil?)
 #          )
-#      end
-  end
+##      end
+#  end
 
   def self.prefetch(resources)
     vnets = instances
