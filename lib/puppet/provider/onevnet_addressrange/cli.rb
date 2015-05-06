@@ -39,27 +39,32 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Check if a network exists by scanning the addressranges of the given onevnet
   def exists?
-    @property_hash[:ensure] == :present
+    vnet_ar = Nokogigi::XML(onevnet('show', resource[:onevnet_name], '-x')).root.xpath('/VNET/AR_POOL')
+    vnet_ar.xpath('./AR/PUPPET_NAME').each { |ar_name|
+      if ar_name.text == resource[:name]
+        return true
+    }
   end
 
   # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
   def self.instances
-      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL')
-#pry.binding
-      vnet_ar.collect do |ar|
-          new(
-              :name          => ar.xpath('./AR/PUPPET_AR_NAME').text,
-              :ensure        => :present,
-              :onevnet_name  => :onevnet_name,
-              :protocol      => ar.xpath('./AR/TYPE').text,
-              :ip_size       => ar.xpath('./AR/SIZE').text,
-              :ar_id         => ar.xpath('./AR/AR_ID').text,
-              :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
-              :globalprefix  => (ar.xpath('./AR/GLOBAL_PRFIX').text unless ar.xpath('./AR/GLOBAL_PREFIX').nil?),
-              :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
-              :ulaprefix     => (ar.xpath('./AR/ULA_PREFIX').text unless ar.xpath('./AR/ULA_PREFIX').nil?)
-          )
-      end
+      raise ArgumentError, 'Can not collect all onevnet_addressranges.'
+#      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL')
+##pry.binding
+#      vnet_ar.collect do |ar|
+#          new(
+#              :name          => ar.xpath('./AR/PUPPET_AR_NAME').text,
+#              :ensure        => :present,
+#              :onevnet_name  => :onevnet_name,
+#              :protocol      => ar.xpath('./AR/TYPE').text,
+#              :ip_size       => ar.xpath('./AR/SIZE').text,
+#              :ar_id         => ar.xpath('./AR/AR_ID').text,
+#              :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
+#              :globalprefix  => (ar.xpath('./AR/GLOBAL_PRFIX').text unless ar.xpath('./AR/GLOBAL_PREFIX').nil?),
+#              :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
+#              :ulaprefix     => (ar.xpath('./AR/ULA_PREFIX').text unless ar.xpath('./AR/ULA_PREFIX').nil?)
+#          )
+#      end
   end
 
   def self.prefetch(resources)
