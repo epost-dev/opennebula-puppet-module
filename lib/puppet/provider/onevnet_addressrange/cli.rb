@@ -39,15 +39,17 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Check if a network exists by scanning the addressranges of the given onevnet
   def exists?
+    retval = false
     vnet_ar = Nokogiri::XML(onevnet('show', resource[:onevnet_name], '-x')).root.xpath('/VNET/AR_POOL')
     vnet_ar.xpath('AR/PUPPET_NAME').collect { |ar_name|
       self.debug("Found Puppet Name: #{ar_name.text}")
       ar_name.text.each do |singlearid|
         if singlearid == resource[:name]
-          return true
+          retval = true
         end
       end
     }
+    return retval
   end
 
   # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
