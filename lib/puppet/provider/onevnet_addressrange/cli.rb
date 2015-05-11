@@ -17,7 +17,7 @@ require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
-  desc "onevnet provider"
+  desc "onevnet provider for addressranges"
 
   has_command(:onevnet, "onevnet") do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
@@ -27,13 +27,32 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
 
   # Create a network with onevnet
   def create
-    onevnet('addar', resource[:onevnet])
+    file = Tempfile.new("onevnet_addressrange-#{resource[:name]}")
+    File.chmod(0644, file.path)
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.TEMPLATE do
+        xml.AR do
+            xml.TYPE resource[:protocol].to_s.upcase
+            xml.SIZE resource[:ip_size].to_s
+            xml.IP resource[:ip_start].to_s
+            xml.MAC resource[:mac].to_s
+            xml.GLOBAL_PREFIX resource[:globalprefix].to_s
+            xml.ULA_PREFIX resource[:ulaprefix].to_s
+            xml.PUPPET_NAME resource[:name].to_s
+         end
+      end
+    end
+    tempfile = builder.to_xml
+    file.write(tempfile)
+    file.close
+    self.debug "Creating image using tempfile: #{tempfile}"
+    onevnet('addar', resource[:onevnet_name], file.path)
     @property_hash[:ensure] = :present
   end
 
   # Destroy a network using onevnet delete
   def destroy
-    onevnet('rmar', resource[:onevnet], resource[:ar_id])
+    onevnet('rmar', resource[:onevnet_name], resource[:ar_id])
     @property_hash.clear
   end
 
@@ -51,7 +70,7 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
               :name          => ar.text,
               :ensure        => :present,
               :onevnet_name  => ar.xpath('../../../NAME').text,
-              :protocol      => ar.xpath('../TYPE').text,
+              :protocol      => ar.xpath('../TYPE').text.downcase,
               :ip_size       => ar.xpath('../SIZE').text,
               :ar_id         => ar.xpath('../AR_ID').text,
               :ip_start      => (ar.xpath('../IP').text unless ar.xpath('../IP').nil?),
@@ -72,20 +91,29 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
   end
 
   def flush
-    file = Tempfile.new('onevnet')
+    file = Tempfile.new('onevnet_addressrange')
+    file << 'AR = ['
     file << @property_hash.map { |k, v|
-      unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
+      unless resource[k].nil? or resource[k].to_s.empty?
         case k
-        when :vlanid
-          [ 'VLAN_ID', v ]
-        else
-          [ k.to_s.upcase, v ]
+          when :ip_size
+            [ 'SIZE', v ]
+          when :globalprefix
+            [ 'GLOBAL_PREFIX', v ]
+          when :ulaprefix
+            [ 'ULA_PREFIX', v ]
+          when :name
+            [ 'PUPPET_NAME', v ]
+          end
         end
       end
-    }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    }.map{|a| "#{a[0]} = #{a[1]}," unless a.nil? }.join("\n")
+    file << "AR_ID = #{ar_id}" unless ar_id.nil?
+    file << ']'
     file.close
     self.debug(IO.read file.path)
-    onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
+    self.debug(@property_hash)
+    onevnet('updatear', resource[:onevnet_name], ar_id, file.path ) unless @property_hash.empty? or ar_id.nil?
     file.delete
   end
 

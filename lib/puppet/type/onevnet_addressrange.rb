@@ -24,11 +24,11 @@ Puppet::Type.newtype(:onevnet_addressrange) do
     #end
   end
 
-  newparam(:onevnet_name) do
+  newproperty(:onevnet_name) do
     desc "Name of the onevnet network where the addressrange will be added/managed"
   end
 
-  newparam(:ar_id) do
+  newproperty(:ar_id) do
     desc "Readonly attribute - onevnet addressrange internal number"
   end
 
