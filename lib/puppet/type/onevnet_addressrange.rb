@@ -78,4 +78,9 @@ Puppet::Type.newtype(:onevnet_addressrange) do
     desc "ULA prefix for IPv6 network"
   end
 
+  # Autorequire the onevnet declaration
+  autorequire(:onevnet) do
+    self[:onevnet_name]
+  end
+
 end

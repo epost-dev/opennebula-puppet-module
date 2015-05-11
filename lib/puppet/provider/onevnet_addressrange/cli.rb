@@ -37,41 +37,30 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
     @property_hash.clear
   end
 
-  # Check if a network exists by scanning the addressranges of the given onevnet
+  # Check if a network_addressrange exists
   def exists?
-    retval = false
-    vnet_ar = Nokogiri::XML(onevnet('show', resource[:onevnet_name], '-x')).root.xpath('/VNET/AR_POOL')
-    vnet_ar.xpath('AR/PUPPET_NAME').collect { |ar_name|
-      self.debug("Found Puppet Name: #{ar_name.text}")
-      ar_name.text.each do |singlearid|
-        if singlearid == resource[:name]
-          retval = true
-        end
-      end
-    }
-    return retval
+    @property_hash[:ensure] == :present
   end
 
-  # Return the full hash of all existing onevnet_addressrange resources for a given onevnet
-#  def self.instances
-#      raise ArgumentError, 'Can not collect all onevnet_addressranges.'
-#      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL')
-##pry.binding
-#      vnet_ar.collect do |ar|
-#          new(
-#              :name          => ar.xpath('./AR/PUPPET_AR_NAME').text,
-#              :ensure        => :present,
-#              :onevnet_name  => :onevnet_name,
-#              :protocol      => ar.xpath('./AR/TYPE').text,
-#              :ip_size       => ar.xpath('./AR/SIZE').text,
-#              :ar_id         => ar.xpath('./AR/AR_ID').text,
-#              :ip_start      => (ar.xpath('./AR/IP').text unless ar.xpath('./AR/IP').nil?),
-#              :globalprefix  => (ar.xpath('./AR/GLOBAL_PRFIX').text unless ar.xpath('./AR/GLOBAL_PREFIX').nil?),
-#              :mac           => (ar.xpath('./AR/MAC').text unless ar.xpath('./AR/MAC').nil?),
-#              :ulaprefix     => (ar.xpath('./AR/ULA_PREFIX').text unless ar.xpath('./AR/ULA_PREFIX').nil?)
-#          )
-##      end
-#  end
+  # Return the full hash of all existing onevnet_addressrange resources for all onevnets
+  def self.instances
+      vnet_ar = Nokogiri::XML(onevnet('show', :onevnet_name, '-x')).root.xpath('/VNET/AR_POOL/AR/PUPPET_NAME')
+#pry.binding
+      vnet_ar.collect do |ar|
+          new(
+              :name          => ar.text,
+              :ensure        => :present,
+              :onevnet_name  => ar.xpath('../../../NAME').text,
+              :protocol      => ar.xpath('../TYPE').text,
+              :ip_size       => ar.xpath('../SIZE').text,
+              :ar_id         => ar.xpath('../AR_ID').text,
+              :ip_start      => (ar.xpath('../IP').text unless ar.xpath('../IP').nil?),
+              :globalprefix  => (ar.xpath('../GLOBAL_PRFIX').text unless ar.xpath('../GLOBAL_PREFIX').nil?),
+              :mac           => (ar.xpath('../MAC').text unless ar.xpath('../MAC').nil?),
+              :ulaprefix     => (ar.xpath('../ULA_PREFIX').text unless ar.xpath('../ULA_PREFIX').nil?)
+          )
+      end
+  end
 
   def self.prefetch(resources)
     vnets = instances
