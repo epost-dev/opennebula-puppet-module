@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-res_type_name = :onevnet
+res_type_name = :onevnet_addressrange
 res_type = Puppet::Type.type(res_type_name)
 
 describe res_type do
@@ -38,7 +38,7 @@ describe res_type do
       end
   end
 
-  properties = [:dnsservers, :gateway, :model, :bridge, :vlanid, :context, :phydev]
+  properties = [:onevnet_name, :ar_id, :protocol, :ip_start, :ip_size, :mac, :globalprefix, :ulaprefix]
 
   properties.each do |property|
     it "should have a #{property} property" do
@@ -50,34 +50,34 @@ describe res_type do
     end
   end
 
-  it 'should have property :dnsservers' do
-      @vnet[:dnsservers] = ['8.8.8.8','4.4.4.4']
-      @vnet[:dnsservers].should == ['8.8.8.8','4.4.4.4']
+  it 'should have property :onevnet_name' do
+      @vnet4[:onevnet_name] = 'testnet'
+      @vnet4[:onevnet_name].should == 'testnet'
   end
 
-  it 'should have property :gateway' do
-      @vnet[:gateway] = '10.0.2.1'
-      @vnet[:gateway].should == '10.0.2.1'
+  it 'should have property :protocol' do
+      @vnet4[:protocol] = 'ip4'
+      @vnet4[:protocol].should == :ip4
   end
 
-  it 'should have property :model' do
-      @vnet[:model] = 'vlan'
-      @vnet[:model].should == :vlan
+  it 'should have property :ip_start' do
+      @vnet6[:ip_start] = '10.0.2.3'
+      @vnet6[:ip_start].should == '10.0.2.3'
   end
 
-  it 'should have property :bridge' do
-      @vnet[:bridge] = 'br0'
-      @vnet[:bridge].should == 'br0'
+  it 'should have property :globalprefix' do
+      @vnet6[:globalprefix] = '64'
+      @vnet6[:globalprefix].should == '64'
   end
 
-  it 'should have property :context' do
-      @vnet[:context] = 'foo'
-      @vnet[:context].should == 'foo'
+  it 'should have property :mac' do
+      @vnet6[:mac] = 'aa:bb:cc:dd:ee:ff'
+      @vnet6[:mac].should == 'aa:bb:cc:dd:ee:ff'
   end
 
-  it 'should have property :phydev' do
-      @vnet[:phydev] = 'eth0'
-      @vnet[:phydev].should == 'eth0'
+  it 'should have property :ip_size' do
+      @vnet6[:ip_size] = '33'
+      @vnet6[:ip_size].should == '33'
   end
 
   parameter_tests = {
@@ -89,15 +89,23 @@ describe res_type do
   }
   it_should_behave_like "a puppet type", parameter_tests, res_type_name
 
-  it 'should fail when passing wrong argument to model' do
-      expect {
-          @vnet[:model] = 'foo'
-      }.to raise_error(Puppet::Error)
+  it 'should fail when passing wrong paramter to mac' do
+      #expect {
+      #    @vnet[:mac] = 'foo'
+      #}.to raise_error(Puppet::Error)
+      skip("needs parameter validation")
   end
 
-  it 'should fail when passing ipv4 and not providing DNS server' do
+  it 'should fail when passing ipv4 and not providing ip' do
       #expect {
-      #    @vnet4[:dnsservers] = :undef
+      #    @vnet4[:ip] = :undef
+      #}.to raise_error(Puppet::Error)
+      skip("needs parameter validation")
+  end
+
+  it 'should fail when passing ipv4 and not providing size' do
+      #expect {
+      #    @vnet4[:ip_size] = :undef
       #}.to raise_error(Puppet::Error)
       skip("needs parameter validation")
   end
