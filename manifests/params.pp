@@ -120,6 +120,19 @@ class one::params (
   $backup_intervall          = hiera ('one::oned::backup::intervall', '*/10')
   $backup_keep               = hiera ('one::oned::backup::keep', '-mtime +15')
 
+  # OpenNebula Scheduler parameters
+  $sched_interval            = hiera ('one::oned::sched::sched_interval', 30)
+  $sched_max_vm              = hiera ('one::oned::sched::max_vm', 5000)
+  $sched_max_dispatch        = hiera ('one::oned::sched::max_dispatch', 30)
+  $sched_max_host            = hiera ('one::oned::sched::max_host', 1)
+  $sched_live_rescheds       = hiera ('one::oned::sched::live_rescheds', 0)
+  $sched_default_policy      = hiera ('one::oned::sched::default_policy', 1)
+  $sched_default_rank        = hiera ('one::oned::sched::default_rank', '- (RUNNING_VMS * 50  + FREE_CPU)')
+  $sched_default_ds_policy   = hiera ('one::oned::sched::default_ds_policy', 1)
+  $sched_default_ds_rank     = hiera ('one::oned::sched::default_ds_rank', '')
+  $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
+  $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
+  
   # Data Validation
 
   # the priv key is mandatory on the head.

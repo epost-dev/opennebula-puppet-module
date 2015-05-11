@@ -16,6 +16,11 @@ describe 'one::oned::config' do
                     .with_owner('root') \
                     .with_mode('0640')
     }
+    it { should contain_file('/etc/one/sched.conf') \
+                    .with_ensure('file' )\
+                    .with_owner('root') \
+                    .with_mode('0640')
+    }
     it { should contain_file('/usr/share/one/hooks') \
                     .with_ensure('directory') \
                     .with_mode('0750')
