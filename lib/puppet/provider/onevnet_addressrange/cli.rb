@@ -104,7 +104,6 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
             [ 'ULA_PREFIX', v ]
           when :name
             [ 'PUPPET_NAME', v ]
-          end
         end
       end
     }.map{|a| "#{a[0]} = #{a[1]}," unless a.nil? }.join("\n")
