@@ -1,0 +1,84 @@
+#*******************************************************************************
+#                       OpenNebula Configuration file
+#*******************************************************************************
+
+#*******************************************************************************
+# Daemon configuration attributes
+#-------------------------------------------------------------------------------
+#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
+#
+#  ONED_PORT: Port to connect to the OpenNebula daemon (oned)
+#
+#  SCHED_INTERVAL: Seconds between two scheduling actions
+#
+#  MAX_VM: Maximum number of Virtual Machines scheduled in each scheduling
+#          action. Use 0 to schedule all pending VMs each time.
+#
+#  MAX_DISPATCH: Maximum number of Virtual Machines actually dispatched to a
+#                host in each scheduling action
+#
+#  MAX_HOST: Maximum number of Virtual Machines dispatched to a given host in
+#            each scheduling action
+#
+#  LIVE_RESCHEDS: Perform live (1) or cold migrations (0) when rescheduling a VM
+#
+#  DEFAULT_SCHED: Definition of the default scheduling algorithm
+#    - policy:
+#      0 = Packing. Heuristic that minimizes the number of hosts in use by
+#          packing the VMs in the hosts to reduce VM fragmentation
+#      1 = Striping. Heuristic that tries to maximize resources available for
+#          the VMs by spreading the VMs in the hosts
+#      2 = Load-aware. Heuristic that tries to maximize resources available for
+#          the VMs by using those nodes with less load
+#      3 = Custom.
+#    - rank: Custom arithmetic exprission to rank suitable hosts based in their
+#            attributes
+#      4 = Fixed. Hosts will be ranked according to the PRIORITY attribute found
+#          in the Host or Cluster template.
+#
+#  DEFAULT_DS_SCHED: Definition of the default storage scheduling algorithm
+#    - policy:
+#      0 = Packing. Tries to optimize storage usage by selecting the DS with
+#          less free space
+#      1 = Striping. Tries to optimize I/O by distributing the VMs across
+#          datastores.
+#      2 = Custom.
+#    - rank: Custom arithmetic exprission to rank suitable datastores based on
+#          their attributes
+#      3 = Fixed. Datastores will be ranked according to the PRIORITY attribute
+#          found in the Datastore template.
+#
+#
+#  LOG: Configuration for the logging system
+#    - system: defines the logging system:
+#          file      to log in the sched.log file
+#          syslog    to use the syslog facilities
+#    - debug_level: 0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
+#*******************************************************************************
+
+MESSAGE_SIZE = 1073741824
+
+ONED_PORT = 2633
+
+SCHED_INTERVAL = <%= scope.lookupvar('one::sched_interval') %>
+
+MAX_VM       = <%= scope.lookupvar('one::sched_max_vm') %>
+MAX_DISPATCH = <%= scope.lookupvar('one::sched_max_dispatch') %>
+MAX_HOST     = <%= scope.lookupvar('one::sched_max_host') %>
+
+LIVE_RESCHEDS  = <%= scope.lookupvar('one::sched_live_rescheds') %>
+
+DEFAULT_SCHED = [
+    policy = <%= scope.lookupvar('one::sched_default_policy') %>,
+    rank   = "<%= scope.lookupvar('one::sched_default_rank') %>"
+]
+
+DEFAULT_DS_SCHED = [
+    policy = <%= scope.lookupvar('one::sched_default_ds_policy') %>,
+    rank   = "<%= scope.lookupvar('one::sched_default_ds_rank') %>"
+]
+
+LOG = [
+  system      = "<%= scope.lookupvar('one::sched_log_system') %>",
+  debug_level = <%= scope.lookupvar('one::sched_log_debug_level') %>
+]
