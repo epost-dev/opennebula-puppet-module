@@ -33,7 +33,7 @@ Puppet::Type.newtype(:onevnet_addressrange) do
   end
 
   newproperty(:protocol) do
-    desc "Type of the addressrange. Valid values: IP4, IP6, IP4_6"
+    desc "Type of the addressrange. Valid values: IP4, IP6, IP4_6, ETHER"
     newvalues(:ip4, :ip6, :ip4_6, :ether)
   end
 
