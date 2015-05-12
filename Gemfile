@@ -4,7 +4,7 @@ group :development, :test do
   gem 'rake',                    :require => false
   gem 'rspec-puppet',            :require => false
   gem 'puppetlabs_spec_helper',  :require => false
-  gem 'puppet-lint',             :require => false
+  gem 'puppet-lint', :git => 'https://github.com/rodjek/puppet-lint.git', :require => false
   gem 'simplecov',               :require => false
   if RUBY_VERSION =~ /1.8/
       gem 'nokogiri',  '<= 1.5.10'

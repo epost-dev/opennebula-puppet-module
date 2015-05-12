@@ -1,6 +1,4 @@
 require 'rake'
-require 'rake/tasklib'
-require 'rspec/core/rake_task'
 require 'rubygems'
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint'
@@ -10,7 +8,7 @@ RSpec::Core::RakeTask.new(:do_test) do |t|
   t.rspec_opts = ['--color', '-f d']
   file_list = FileList['spec/**/*_spec.rb']
   %w(support fixtures acceptance).each do |exclude|
-      file_list = file_list.exclude("spec/#{exclude}/**/*_spec.rb")
+    file_list = file_list.exclude("spec/#{exclude}/**/*_spec.rb")
   end
   t.pattern = file_list
 end
@@ -21,23 +19,19 @@ RSpec::Core::RakeTask.new(:doc) do |t|
   t.pattern = 'spec/*/*_spec.rb'
 end
 
+PuppetLint::RakeTask.new(:lint) do |config|
+  # Pattern of files to check, defaults to `**/*.pp`
+  config.pattern = 'manifests/**/*.pp'
 
-desc 'Run puppet-lint on the one manifests'
-task :onelint do
-  PuppetLint.configuration.send('disable_80chars')
-  PuppetLint.configuration.ignore_paths = ['vendor/**/*.pp']
-  PuppetLint.configuration.with_filename = true
+  # Pattern of files to ignore
+  #config.ignore_paths = ['vendor/**/*.pp']
 
-  linter = PuppetLint.new
-  matched_files = FileList['spec/fixtures/modules/one/manifests/**/*.pp']
+  # List of checks to disable
+  config.disable_checks = ['80chars']
 
-  matched_files.to_a.each do |puppet_file|
-    linter.file = puppet_file
-    linter.run
-  end
-
-  fail if linter.errors? || (linter.warnings? && PuppetLint.configuration.fail_on_warnings)
+  # Should the task fail if there were any warnings, defaults to false
+  #config.fail_on_warnings = true
 end
 
-task :default => [:spec_prep, :do_test, :onelint, :spec_clean]
+task :default => [:spec_prep, :lint, :do_test, :spec_clean]
 task :test => [:default]
