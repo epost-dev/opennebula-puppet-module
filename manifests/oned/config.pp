@@ -67,8 +67,8 @@ class one::oned::config(
     fail("sched_log_system must be one of 'file' or 'syslog'. Actual value: ${sched_log_system}")
   }
   validate_integer($sched_log_debug_level, 3, 0)
-  
-  
+
+
   File {
     owner  => 'oneadmin',
     group  => 'oneadmin',

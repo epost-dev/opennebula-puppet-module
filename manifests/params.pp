@@ -132,7 +132,7 @@ class one::params (
   $sched_default_ds_rank     = hiera ('one::oned::sched::default_ds_rank', '')
   $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
   $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
-  
+
   # Data Validation
 
   # the priv key is mandatory on the head.
