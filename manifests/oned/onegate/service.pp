@@ -20,8 +20,6 @@ class one::oned::onegate::service {
   service {'onegate-server':
     ensure     => running,
     enable     => true,
-    hasstatus  => true,
-    hasrestart => true,
     require    => Service['opennebula'],
   }
 }

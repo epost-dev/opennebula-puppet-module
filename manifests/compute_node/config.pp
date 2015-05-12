@@ -82,14 +82,14 @@ class one::compute_node::config (
     ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
-    require => File['/var/lib/one'],
+    mode    => '0755',
   } ->
 
   file { '/var/lib/one/.libvirt':
     ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
-    require => File['/var/lib/one'],
+    mode    => '0755',
   } ->
 
   file { '/var/lib/libvirt/boot':
@@ -107,7 +107,7 @@ class one::compute_node::config (
     purge   => true,
     recurse => true,
     force   => true,
-    require => File['/var/lib/one/etc'],
+    mode    => '0755',
   } ->
 
   file { '/var/lib/one/bin/imaginator':
@@ -116,7 +116,6 @@ class one::compute_node::config (
     group   => 'oneadmin',
     mode    => '0700',
     source  => 'puppet:///modules/one/imaginator',
-    require => File['/var/lib/one/bin'],
   }
 
   if ($::osfamily == 'Debian') or ($::osfamily == 'RedHat' and versioncmp($::operatingsystemmajrelease, '7') < 0) {

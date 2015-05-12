@@ -27,9 +27,9 @@ class one::oned::sunstone::config (
   }
   file { '/usr/lib/one/sunstone':
     ensure  => directory,
-    # not sure if this is necessary
     owner   => 'oneadmin',
     group   => 'oneadmin',
+    mode    => '0755',
     recurse => true,
   } ->
   file { '/etc/one/sunstone-server.conf':

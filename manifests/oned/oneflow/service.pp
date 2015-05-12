@@ -20,8 +20,6 @@ class one::oned::oneflow::service {
   service {'oneflow-server':
     ensure     => running,
     enable     => true,
-    hasstatus  => true,
-    hasrestart => false,
     require    => Service['opennebula'],
   }
 }
