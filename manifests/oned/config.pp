@@ -54,19 +54,11 @@ class one::oned::config(
     fail("oned_vm_submit_on_hold must be one of 'YES' or 'NO'. Actual value: ${oned_vm_submit_on_hold}")
   }
 
-  validate_integer($sched_interval, undef, 1)
-  validate_integer($sched_max_vm, undef, 0)
-  validate_integer($sched_max_dispatch, undef, 1)
-  validate_integer($sched_max_host, undef, 1)
-  validate_integer($sched_live_rescheds, 1, 0)
-  validate_integer($sched_default_policy, 4, 0)
   validate_string($sched_default_rank)
-  validate_integer($sched_default_ds_policy, 3, 0)
   validate_string($sched_default_ds_rank)
   if ! member(['file', 'syslog'], $sched_log_system) {
     fail("sched_log_system must be one of 'file' or 'syslog'. Actual value: ${sched_log_system}")
   }
-  validate_integer($sched_log_debug_level, 3, 0)
 
 
   File {
