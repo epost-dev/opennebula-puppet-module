@@ -9,8 +9,8 @@ class one::config (
   validate_string($ssh_priv_key)
 
   File {
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
+    owner => 'oneadmin',
+    group => 'oneadmin',
   }
 
   file { '/var/lib/one':
@@ -42,9 +42,9 @@ class one::config (
   } ->
 
   file { '/var/lib/one/.ssh/config':
-    ensure  => file,
-    mode    => '0644',
-    source  => 'puppet:///modules/one/ssh_one_config',
+    ensure => file,
+    mode   => '0644',
+    source => 'puppet:///modules/one/ssh_one_config',
   } ->
 
   file { '/var/lib/one/bin':

@@ -38,9 +38,9 @@ class one::oned::sunstone::config (
     notify  => Service['opennebula-sunstone'],
   } ->
   file { '/etc/one/sunstone-views/admin.yaml':
-    ensure  => file,
-    mode    => '0640',
-    source  => 'puppet:///modules/one/sunstone-views_admin.yaml',
+    ensure => file,
+    mode   => '0640',
+    source => 'puppet:///modules/one/sunstone-views_admin.yaml',
   } ->
   file { '/etc/one/sunstone-views.yaml':
     ensure  => file,

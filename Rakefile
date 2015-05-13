@@ -31,6 +31,9 @@ PuppetLint::RakeTask.new(:lint) do |config|
 
   # Should the task fail if there were any warnings, defaults to false
   #config.fail_on_warnings = true
+
+  # Print out the context for the problem, defaults to false
+  # config.with_context = true
 end
 
 task :default => [:spec_prep, :lint, :do_test, :spec_clean]

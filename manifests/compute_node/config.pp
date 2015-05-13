@@ -79,17 +79,17 @@ class one::compute_node::config (
   } ->
 
   file { '/var/lib/one/.virtinst':
-    ensure  => directory,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0755',
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
   } ->
 
   file { '/var/lib/one/.libvirt':
-    ensure  => directory,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0755',
+    ensure => directory,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0755',
   } ->
 
   file { '/var/lib/libvirt/boot':
@@ -111,11 +111,11 @@ class one::compute_node::config (
   } ->
 
   file { '/var/lib/one/bin/imaginator':
-    ensure  => file,
-    owner   => 'oneadmin',
-    group   => 'oneadmin',
-    mode    => '0700',
-    source  => 'puppet:///modules/one/imaginator',
+    ensure => file,
+    owner  => 'oneadmin',
+    group  => 'oneadmin',
+    mode   => '0700',
+    source => 'puppet:///modules/one/imaginator',
   }
 
   if ($::osfamily == 'Debian') or ($::osfamily == 'RedHat' and versioncmp($::operatingsystemmajrelease, '7') < 0) {
