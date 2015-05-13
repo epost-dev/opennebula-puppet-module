@@ -385,6 +385,17 @@ class one (
             $libvirtd_cfg                   = $one::params::libvirtd_cfg,
             $libvirtd_source                = $one::params::libvirtd_source,
             $rubygems                       = $one::params::rubygems,
+            $sched_interval                 = $one::params::sched_interval,
+            $sched_max_vm                   = $one::params::sched_max_vm,
+            $sched_max_dispatch             = $one::params::sched_max_dispatch,
+            $sched_max_host                 = $one::params::sched_max_host,
+            $sched_live_rescheds            = $one::params::sched_live_rescheds,
+            $sched_default_policy           = $one::params::sched_default_policy,
+            $sched_default_rank             = $one::params::sched_default_rank,
+            $sched_default_ds_policy        = $one::params::sched_default_ds_policy,
+            $sched_default_ds_rank          = $one::params::sched_default_ds_rank,
+            $sched_log_system               = $one::params::sched_log_system,
+            $sched_log_debug_level          = $one::params::sched_log_debug_level,
             ) inherits one::params {
   include one::install
   include one::config
