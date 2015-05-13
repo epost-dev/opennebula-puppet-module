@@ -89,7 +89,7 @@ Create onevnet addressrange
 ```
 onevnet_addressrange { '<name>':
     ensure        => present | absent,
-    onevnet_name  => '<name>',
+    onevnet_name  => '<name>',            # this has to be an existing onevnet - will be autorequired if declared
     ar_id         => '<INT>',             # read only value
     protocol      => ip4 | ip6 | ip4_6 | ether,
     size          => '10',
@@ -97,8 +97,8 @@ onevnet_addressrange { '<name>':
     # attributes for ip4 and ip4_6:
     ip            => '10.0.2.20'
     # attributes for ip6:
-    global_prefix => '2001:a::',          # optional
-    ula_prefix    => 'fd01:a:b::',        # optional
+    globalprefix  => '2001:a::',          # optional
+    ulaprefix     => 'fd01:a:b::',        # optional
 }
 ```
 
