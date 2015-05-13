@@ -17,8 +17,10 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::compute_node::install {
-  package { $one::node_packages:
-      ensure => present,
+class one::compute_node::install(
+  $node_packages = $one::node_packages
+) {
+  package { $node_packages:
+      ensure => latest,
   }
 }

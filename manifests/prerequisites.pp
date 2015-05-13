@@ -18,12 +18,15 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::prerequisites {
+class one::prerequisites(
+  $one_repo_enable  = $one::one_repo_enable,
+  $one_version      = $one::one_version,
+) {
   case $::osfamily {
     'RedHat': {
-      if ( $one::one_repo_enable == 'true' ) {
+      if ( $one_repo_enable == 'true' ) {
         yumrepo { 'opennebula':
-          baseurl  => "http://downloads.opennebula.org/repo/4.10/CentOS/${::operatingsystemmajrelease}/x86_64/",
+          baseurl  => "http://downloads.opennebula.org/repo/${one_version}/CentOS/${::operatingsystemmajrelease}/x86_64/",
           descr    => 'OpenNebula',
           enabled  => 1,
           gpgcheck => 0,
@@ -31,15 +34,15 @@ class one::prerequisites {
       }
     }
     'Debian' : {
-      if ($one::one_repo_enable == 'true') {
+      if ($one_repo_enable == 'true') {
         include ::apt
         case $::operatingsystem {
           'Debian': {
-            $apt_location="4.10/Debian/${::operatingsystemmajrelease}"
+            $apt_location="${one_version}/Debian/${::operatingsystemmajrelease}"
             $apt_pin='-10'
           }
           'Ubuntu': {
-            $apt_location="4.10/Ubuntu/${::operatingsystemmajrelease}"
+            $apt_location="${one_version}/Ubuntu/${::operatingsystemmajrelease}"
             $apt_pin='500'
           }
           default: { fail("Unrecognized operating system ${::operatingsystem}") }
@@ -67,7 +70,7 @@ class one::prerequisites {
   group { 'oneadmin':
     ensure => present,
     gid    => $one::onegid,
-  }
+  } ->
   user { 'oneadmin':
     ensure     => present,
     uid        => $one::oneuid,

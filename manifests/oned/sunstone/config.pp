@@ -23,26 +23,28 @@ class one::oned::sunstone::config (
   $tmpdir             = $one::sunstone_tmpdir,
 ){
   File {
-    ensure  => 'file',
     owner   => 'root',
-    group   => 'oneadmin',
   }
   file { '/usr/lib/one/sunstone':
-    ensure  => 'directory',
+    ensure  => directory,
     owner   => 'oneadmin',
+    group   => 'oneadmin',
+    mode    => '0755',
     recurse => true,
-  }
+  } ->
   file { '/etc/one/sunstone-server.conf':
+    ensure  => file,
     content => template('one/sunstone-server.conf.erb'),
     notify  => Service['opennebula-sunstone'],
-  }
+  } ->
   file { '/etc/one/sunstone-views/admin.yaml':
-    source => 'puppet:///modules/one/sunstone-views_admin.yaml',
+    ensure => file,
     mode   => '0640',
-  }
+    source => 'puppet:///modules/one/sunstone-views_admin.yaml',
+  } ->
   file { '/etc/one/sunstone-views.yaml':
+    ensure  => file,
     mode    => '0640',
     content => template('one/sunstone-views.yaml.erb'),
-    require => File['/etc/one/sunstone-server.conf'],
   }
 }

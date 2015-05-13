@@ -25,28 +25,27 @@ class one::oned::install(
 ) {
 
   validate_bool($use_gems)
+  Package {
+    require  => Class['one::prerequisites'],
+  }
 
   if $use_gems {
     package { $rubygems :
       ensure   => latest,
-      provider => gem,
-      require  => Class['one::prerequisites'],
+      provider => 'gem',
     }
   } else {
     package { $rubygems_rpm :
-      ensure   => latest,
-      require  => Class['one::prerequisites'],
+      ensure  => latest,
     }
   }
   package { $oned_packages :
     ensure  => latest,
-    require => Class['one::prerequisites'],
   }
 
   if ($hook_scripts_pkgs) {
     package { $hook_scripts_pkgs :
       ensure  => latest,
-      require => Class['one::prerequisites'],
     }
   }
 }

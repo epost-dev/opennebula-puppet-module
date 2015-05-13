@@ -396,11 +396,14 @@ class one (
             $sched_default_ds_rank          = $one::params::sched_default_ds_rank,
             $sched_log_system               = $one::params::sched_log_system,
             $sched_log_debug_level          = $one::params::sched_log_debug_level,
+            $one_version                    = $one::params::one_version,
             ) inherits one::params {
+  include one::prerequisites
   include one::install
   include one::config
   include one::service
 
+  Class['one::prerequisites']->
   Class['one::install']->
   Class['one::config']->
   Class['one::service']
@@ -423,9 +426,9 @@ class one (
     include one::oned::sunstone
   }
   if($oneflow) {
-    class {'one::oned::oneflow': }
+    include one::oned::oneflow
   }
   if($onegate) {
-    class {'one::oned::onegate': }
+    include one::oned::onegate
   }
 }

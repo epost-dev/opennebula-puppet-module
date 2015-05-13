@@ -18,6 +18,6 @@
 #
 class one::oned::onegate::install {
   package { $one::oned_onegate_packages:
-    ensure => present,
+    ensure => latest,
   }
 }

@@ -47,6 +47,7 @@ acpid
 pkgs.each do |p| -%>
 <%= p %>
 <% end -%>
+%end
 
 %post --log=/root/post-install.log
 rm -v /etc/yum.repos.d/CentOS-*
@@ -56,3 +57,4 @@ if [ -f /etc/udev/rules.d/50-udev.rules ]; then
   sed -i 's/^KERNEL==".*, SYSFS{removable}=="1", GOTO="persistent_end"$//' /etc/udev/rules.d/50-udev.rules
   sed -i 's,mount -t iso9660 -L CONTEXT,mount -t iso9660 /dev/disk/by-label/CONTEXT,' /etc/init.d/vmcontext
 fi
+%end
