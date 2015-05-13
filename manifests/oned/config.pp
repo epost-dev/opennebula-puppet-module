@@ -54,10 +54,34 @@ class one::oned::config(
     fail("oned_vm_submit_on_hold must be one of 'YES' or 'NO'. Actual value: ${oned_vm_submit_on_hold}")
   }
 
+  if ! is_integer($sched_interval) {
+    fail("sched_interval must be of type integer. Actual value: ${sched_interval}" )
+  }
+  if ! is_integer($sched_max_vm) {
+    fail("sched_max_vm must be of type integer. Actual value: ${sched_max_vm}" )
+  }
+  if ! is_integer($sched_max_dispatch) {
+    fail("sched_max_dispatch must be of type integer. Actual value: ${sched_max_dispatch}" )
+  }
+  if ! is_integer($sched_max_host) {
+    fail("sched_max_host must be of type integer. Actual value: ${sched_max_host}" )
+  }
+  if ! is_integer($sched_live_rescheds) {
+    fail("sched_live_rescheds must be of type integer. Actual value: ${sched_live_rescheds}" )
+  }
+  if ! is_integer($sched_default_policy) {
+    fail("sched_default_policy must be of type integer. Actual value: ${sched_default_policy}" )
+  }
   validate_string($sched_default_rank)
+  if ! is_integer($sched_default_ds_policy) {
+    fail("sched_default_ds_policy must be of type integer. Actual value: ${sched_default_ds_policy}" )
+  }
   validate_string($sched_default_ds_rank)
   if ! member(['file', 'syslog'], $sched_log_system) {
     fail("sched_log_system must be one of 'file' or 'syslog'. Actual value: ${sched_log_system}")
+  }
+  if ! is_integer($sched_log_debug_level) {
+    fail("sched_log_debug_level must be of type integer. Actual value: ${sched_log_debug_level}" )
   }
 
 
