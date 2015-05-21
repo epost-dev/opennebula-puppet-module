@@ -83,4 +83,8 @@ Puppet::Type.newtype(:onevnet_addressrange) do
     self[:onevnet_name]
   end
 
+  validate do
+    raise Puppet::Error, 'Onevnet name is required' unless self[:onevnet_name].nil?
+  end
+
 end
