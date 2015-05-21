@@ -28,7 +28,7 @@ EOS
   newproperty(:im_mad) do
     desc "Information Driver"
     defaultto :dummy
-    newvalues(:kvm, :xen, :vmware, :ec2, :ganglia, :dummy)
+    newvalues(:kvm, :kvm_pull, :xen, :vmware, :ec2, :ganglia, :dummy)
   end
 
   newproperty(:vm_mad) do
