@@ -22,6 +22,7 @@ describe res_type do
 
   before :each do
     @vnet = res_type.new(:name => 'test')
+    @onevnet_name = res_type.new(:name => 'test')
     @vnet4 = res_type.new(:name => 'test')
     @vnet6 = res_type.new(:name => 'test')
   end
