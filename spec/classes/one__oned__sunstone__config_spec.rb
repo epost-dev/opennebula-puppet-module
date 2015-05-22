@@ -17,6 +17,7 @@ describe 'one::oned::sunstone::config', :type => :class do
         }
         it { should contain_file('/etc/one/sunstone-views/admin.yaml') \
         .with_ensure('file') \
+        .with_group('oneadmin') \
         .with_mode('0640')
         }
       end
@@ -28,6 +29,7 @@ describe 'one::oned::sunstone::config', :type => :class do
       end
       context 'with sunstone listen not ip set' do
         it { should contain_file('/etc/one/sunstone-server.conf') \
+        .with_group('oneadmin') \
         .with_content(/:host: /m)
         }
       end
@@ -39,7 +41,9 @@ describe 'one::oned::sunstone::config', :type => :class do
     - vcenter
     - support'
 
-        it { should contain_file('/etc/one/sunstone-server.conf').with_content(/#{expected_routes}/m)
+        it { should contain_file('/etc/one/sunstone-server.conf') \
+        .with_group('oneadmin') \
+        .with_content(/#{expected_routes}/m)
         }
       end
       context 'with support disabled' do
@@ -54,12 +58,14 @@ describe 'one::oned::sunstone::config', :type => :class do
       context 'with marketplace enabled' do
         let (:params) { {:enable_marketplace => 'yes'} }
         it { should contain_file('/etc/one/sunstone-views.yaml') \
+        .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
       end
       context 'with marketplace disabled' do
         let (:params) { {:enable_marketplace => 'no'} }
         it { should_not contain_file('/etc/one/sunstone-views.yaml') \
+        .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
       end
