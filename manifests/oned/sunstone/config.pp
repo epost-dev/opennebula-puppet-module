@@ -24,11 +24,11 @@ class one::oned::sunstone::config (
 ){
   File {
     owner   => 'root',
+    group   => 'oneadmin',
   }
   file { '/usr/lib/one/sunstone':
     ensure  => directory,
     owner   => 'oneadmin',
-    group   => 'oneadmin',
     mode    => '0755',
     recurse => true,
   } ->
