@@ -167,12 +167,14 @@ class one::params {
     'RedHat': {
       if $::operatingsystemmajrelease == '7' {
         $node_packages = ['opennebula-node-kvm',
-                          'sudo'
+                          'sudo',
+                          'ipset'
                           ]
       } else {
         $node_packages = ['opennebula-node-kvm',
                           'sudo',
-                          'python-virtinst'
+                          'python-virtinst',
+                          'ipset'
                           ]
       }
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
@@ -198,7 +200,8 @@ class one::params {
       $use_gems        = true
       $node_packages   = ['opennebula-node',
                           'sudo',
-                          'virtinst'
+                          'virtinst',
+                          'ipset'
                           ]
       $rubygems       = ['parse-cron', 'builder', 'sinatra']
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
