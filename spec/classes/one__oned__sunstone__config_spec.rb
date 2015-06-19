@@ -15,11 +15,6 @@ describe 'one::oned::sunstone::config', :type => :class do
         .with_group('oneadmin') \
         .with_recurse('true')
         }
-        it { should contain_file('/etc/one/sunstone-views/admin.yaml') \
-        .with_ensure('file') \
-        .with_group('oneadmin') \
-        .with_mode('0640')
-        }
       end
       context 'with sunstone listen ip set' do
         let (:params) { {:listen_ip => '1.2.3.4'} }
