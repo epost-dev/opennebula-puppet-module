@@ -48,6 +48,16 @@ Puppet::Type.type(:onevnet).provide(:cli) do
                     resource[:gateway]
                 end
             end if resource[:gateway]
+            xml.TEMPLATE do
+                xml.NETWORK_MASK do
+                    resource[:netmask]
+                end
+            end if resource[:netmask]
+            xml.TEMPLATE do
+                xml.NETWORK_ADDRESS do
+                    resource[:network_address]
+                end
+            end if resource[:network_address]
             xml.CONTEXT do
                 resource[:context].each do |k,v|
                     xml.send(k.upcase, v)
@@ -89,6 +99,8 @@ Puppet::Type.type(:onevnet).provide(:cli) do
               :context         => nil,
               :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.to_a unless vnet.xpath('./TEMPLATE/DNS').nil?),
               :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
+              :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
+              :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
               :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
               :phydev          => vnet.xpath('./PHYDEV').text,
               :vlanid          => vnet.xpath('./VLAN_ID').text

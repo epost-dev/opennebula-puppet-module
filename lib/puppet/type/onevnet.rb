@@ -45,6 +45,14 @@ Puppet::Type.newtype(:onevnet) do
     desc "Array of DNS servers to use"
   end
 
+  newproperty(:netmask) do
+      desc "Netmask for the network"
+  end
+
+  newproperty(:network_address) do
+      desc "Network address for the network"
+  end
+
   newproperty(:gateway) do
       desc "Gateway for network"
   end
