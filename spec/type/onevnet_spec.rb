@@ -38,7 +38,7 @@ describe res_type do
       end
   end
 
-  properties = [:dnsservers, :gateway, :model, :bridge, :vlanid, :context, :phydev]
+  properties = [:dnsservers, :gateway, :model, :bridge, :vlanid, :context, :phydev, :netmask, :network_address]
 
   properties.each do |property|
     it "should have a #{property} property" do
@@ -78,6 +78,16 @@ describe res_type do
   it 'should have property :phydev' do
       @vnet[:phydev] = 'eth0'
       @vnet[:phydev].should == 'eth0'
+  end
+
+  it 'should have property :netmask' do
+      @vnet[:netmask] = '255.255.0.0'
+      @vnet[:netmask].should == '255.255.0.0'
+  end
+
+  it 'should have property network_address' do
+      @vnet[:network_address] = '10.0.2.0'
+      @vnet[:network_address].should == '10.0.2.0'
   end
 
   parameter_tests = {
