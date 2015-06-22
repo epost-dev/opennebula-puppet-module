@@ -5,6 +5,7 @@ available_tabs:
     - system-tab
     - users-tab
     - groups-tab
+    - vdcs-tab
     - acls-tab
     - vresources-tab
     - vms-tab
@@ -16,6 +17,7 @@ available_tabs:
     - hosts-tab
     - datastores-tab
     - vnets-tab
+    - secgroups-tab
     - zones-tab
 <% if @enable_marketplace == 'yes' -%>
     - marketplace-tab
@@ -28,9 +30,11 @@ available_tabs:
 groups:
     oneadmin:
         - admin
-        - vdcadmin
+        - admin_vcenter
+        - groupadmin
+        - groupadmin_vcenter
         - user
         - cloud
-        - vcenter
+        - cloud_vcenter
 default:
     - cloud
