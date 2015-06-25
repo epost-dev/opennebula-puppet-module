@@ -46,7 +46,6 @@ describe 'onevnet type' do
       onevnet_addressrange { 'ar2':
           ensure        => present,
           onevnet_name  => 'vnet2',
-          ar_id         => '2',
           protocol      => ip4,
           ip_size       => '10',
           mac           => '02:00:0a:00:00:96',
@@ -75,7 +74,6 @@ describe 'onevnet type' do
       onevnet_addressrange { 'ar3':
           ensure        => present,
           onevnet_name  => 'vnet2',
-          ar_id         => '2',
           protocol      => ip6,
           ip_size       => '10',
           mac           => '02:00:0a:00:00:96',
