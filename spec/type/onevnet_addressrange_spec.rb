@@ -21,10 +21,10 @@ describe res_type do
 #  }
 
   before :each do
-    @vnet = res_type.new(:name => 'test')
-    @onevnet_name = res_type.new(:name => 'test')
-    @vnet4 = res_type.new(:name => 'test')
-    @vnet6 = res_type.new(:name => 'test')
+    @vnet = res_type.new(:name => 'test', :onevnet_name => 'testnet')
+    #@onevnet_name = res_type.new(:name => 'test')
+    @vnet4 = res_type.new(:name => 'test', :onevnet_name => 'testnet')
+    @vnet6 = res_type.new(:name => 'test', :onevnet_name => 'testnet')
   end
 
   it 'should have :name be its namevar' do
@@ -88,7 +88,8 @@ describe res_type do
       :invalid => ["0./fouzb&$", "&fr5"],
     },
   }
-  it_should_behave_like "a puppet type", parameter_tests, res_type_name
+
+  #it_should_behave_like "a puppet type", parameter_tests, res_type_name
 
   it 'should fail when passing wrong paramter to mac' do
       #expect {
