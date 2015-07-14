@@ -57,11 +57,17 @@ class one::compute_node::config (
   file { '/etc/sudoers.d/10_oneadmin':
     ensure => file,
     source => 'puppet:///modules/one/oneadmin_sudoers',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0440',
   } ->
 
   file { '/etc/sudoers.d/20_imaginator':
     ensure => file,
     source => 'puppet:///modules/one/sudoers_imaginator',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0440',
   } ->
 
   file { 'polkit-opennebula':
