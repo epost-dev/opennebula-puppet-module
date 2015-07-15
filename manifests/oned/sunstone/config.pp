@@ -21,6 +21,7 @@ class one::oned::sunstone::config (
   $enable_support     = $one::enable_support,
   $enable_marketplace = $one::enable_marketplace,
   $tmpdir             = $one::sunstone_tmpdir,
+  $sessions           = $one::sunstone_sessions,
 ){
   File {
     owner   => 'root',
