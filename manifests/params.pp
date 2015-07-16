@@ -63,6 +63,7 @@ class one::params {
   $enable_support            = hiera('one::oned::enable_support', 'yes')
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes')
   $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp')
+  $sunstone_sessions         = hiera('one::oned::sunstone_sessions', 'memory')
 
   # generic params for nodes and oned
   $oneuid = '9869'
