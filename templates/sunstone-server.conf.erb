@@ -24,7 +24,7 @@
 
 # OpenNebula sever contact information
 #
-:one_xmlrpc: http://localhost:2633/RPC2
+:one_xmlrpc: http://localhost:<%= scope.lookupvar('one::oned_port') %>/RPC2
 
 # Server Configuration
 #

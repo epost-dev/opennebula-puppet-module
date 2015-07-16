@@ -319,6 +319,7 @@ class one (
             $ha_setup           = false,
             $puppetdb           = false,
             $debug_level        = '0',
+            $oned_port                      = $one::params::oned_port,
             $oned_db                        = $one::params::oned_db,
             $oned_db_user                   = $one::params::oned_db_user,
             $oned_db_password               = $one::params::oned_db_password,
