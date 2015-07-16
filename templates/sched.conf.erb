@@ -58,7 +58,7 @@
 
 MESSAGE_SIZE = 1073741824
 
-ONED_PORT = 2633
+ONED_PORT = <%= scope.lookupvar('one::oned_port') %>
 
 SCHED_INTERVAL = <%= scope.lookupvar('one::sched_interval') %>
 
