@@ -337,6 +337,7 @@ class one (
             $oned_ldap_mapping_generate     = $one::params::oned_ldap_mapping_generate,
             $oned_ldap_mapping_timeout      = $one::params::oned_ldap_mapping_timeout,
             $oned_ldap_mapping_filename     = $one::params::oned_ldap_mapping_filename,
+            $oned_ldap_mappings             = $one::params::oned_ldap_mappings,
             $oned_ldap_mapping_key          = $one::params::oned_ldap_mapping_key,
             $oned_ldap_mapping_default      = $one::params::oned_ldap_mapping_default,
             $one_repo_enable                = $one::params::one_repo_enable,

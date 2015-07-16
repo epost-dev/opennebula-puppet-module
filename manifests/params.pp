@@ -47,6 +47,7 @@ class one::params {
   $oned_ldap_mapping_filename = hiera('one::oned::ldap_mapping_filename','undef')
   $oned_ldap_mapping_key = hiera('one::oned::ldap_mapping_key','undef')
   $oned_ldap_mapping_default = hiera('one::oned::ldap_mapping_default','undef')
+  $oned_ldap_mappings = hiera('one::oned::ldap_mappings', 'undef')
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
   # Which version

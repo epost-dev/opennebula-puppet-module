@@ -1,0 +1,6 @@
+<%
+# The gsub below is required because of a bug in puppet:
+# https://tickets.puppetlabs.com/browse/PUP-3120
+# Basically it indents the yaml which breaks the whole doc.
+%>
+<%= @oned_ldap_mappings.to_yaml.gsub(/^\s{2}/, '') %>
