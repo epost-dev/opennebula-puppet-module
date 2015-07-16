@@ -62,6 +62,36 @@ server 1:
     :user_group_field: '<%= scope.lookupvar('one::oned_ldap_user_group_field') %>'
 <% end -%>
 
+    # Generate mapping file from group template info
+    #:mapping_generate: true
+<% if scope.lookupvar('one::oned_ldap_mapping_generate') != 'undef' -%>
+    :mapping_generate: <%= scope.lookupvar('one::oned_ldap_mapping_generate') %>
+<% end -%>
+
+    # Seconds a mapping file remain untouched until the next regeneration
+    #:mapping_timeout: 300
+<% if scope.lookupvar('one::oned_ldap_mapping_timeout') != 'undef' -%>
+    :mapping_timeout: <%= scope.lookupvar('one::oned_ldap_mapping_timeout') %>
+<% end -%>
+
+    # Name of the mapping file in OpenNebula var diretory
+    #:mapping_filename: server1.yaml
+<% if scope.lookupvar('one::oned_ldap_mapping_filename') != 'undef' -%>
+    :mapping_filename: <%= scope.lookupvar('one::oned_ldap_mapping_filename') %>
+<% end -%>
+
+    # Key from the OpenNebula template to map to an AD group
+    #:mapping_key: GROUP_DN
+<% if scope.lookupvar('one::oned_ldap_mapping_key') != 'undef' -%>
+    :mapping_key: <%= scope.lookupvar('one::oned_ldap_mapping_key') %>
+<% end -%>
+
+    # Default group ID used for users in an AD group not mapped
+    #:mapping_default: 1
+<% if scope.lookupvar('one::oned_ldap_mapping_default') != 'undef' -%>
+    :mapping_default: <%= scope.lookupvar('one::oned_ldap_mapping_default') %>
+<% end -%>
+
 
 # this example server wont be called as it is not in the :order list
 server 2:
