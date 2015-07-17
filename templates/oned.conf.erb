@@ -70,7 +70,7 @@ MONITORING_THREADS  = <%= scope.lookupvar('one::monitoring_threads') %>
 
 SCRIPTS_REMOTE_DIR=/var/tmp/one
 
-PORT = 2633
+PORT = <%= scope.lookupvar('one::oned_port') %>
 
 <% if @backend == 'sqlite' -%>
 DB = [ backend = "sqlite" ]
