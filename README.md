@@ -78,7 +78,7 @@ onevnet { '<name>':
     bridge          => 'basebr0',
     #  name of the physical interface on which the bridge wiull run
     phydev          => 'br0',
-    dns_servers     => ['8.8.8.8', '4.4.4.4'],
+    dnsservers      => ['8.8.8.8', '4.4.4.4'],
     gateway         => '10.0.2.1',
     # add vlanid 
     vlanid          => '1550',
