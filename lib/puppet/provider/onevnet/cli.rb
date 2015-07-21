@@ -97,7 +97,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
               :ensure          => :present,
               :bridge          => vnet.xpath('./BRIDGE').text,
               :context         => nil,
-              :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.to_a unless vnet.xpath('./TEMPLATE/DNS').nil?),
+              :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(" ") unless vnet.xpath('./TEMPLATE/DNS').nil?),
               :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
               :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
               :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
@@ -127,6 +127,10 @@ Puppet::Type.type(:onevnet).provide(:cli) do
         when :addressrange
           k.each_pair do |key, value|
           end
+        when :dnsservers
+          [ 'DNS', "\"#{v.join(" ")}\"" ]
+        when :netmask
+          [ 'NETWORK_MASK', v ]
         else
           [ k.to_s.upcase, v ]
         end
