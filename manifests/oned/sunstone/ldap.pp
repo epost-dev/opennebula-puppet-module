@@ -38,7 +38,7 @@ class one::oned::sunstone::ldap (
     content => template('one/ldap_auth.conf.erb'),
     notify  => Service['opennebula'],
   }
-  if !empty($oned_ldap_mappings) {
+  if $oned_ldap_mappings != undef {
     validate_hash($oned_ldap_mappings)
     file { "/var/lib/one/${oned_ldap_mapping_filename}":
       ensure  => file,
