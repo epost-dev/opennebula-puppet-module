@@ -98,6 +98,8 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
         case k
           when :ip_size
             [ 'SIZE', v ]
+          when :ip_start
+            [ 'IP', v ]
           when :globalprefix
             [ 'GLOBAL_PREFIX', v ]
           when :ulaprefix
@@ -112,7 +114,7 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
     file.close
     self.debug(IO.read file.path)
     self.debug(@property_hash)
-    onevnet('updatear', resource[:onevnet_name], ar_id, file.path ) unless ( @property_hash.empty? or ar_id.nil? or defined? ar_id )
+    onevnet('updatear', resource[:onevnet_name], ar_id, file.path ) unless ( @property_hash.empty? or ar_id.nil? or !defined? ar_id )
     file.delete
   end
 
