@@ -361,6 +361,7 @@ class one (
             $hook_scripts_path              = $one::params::hook_scripts_path,
             $hook_scripts_pkgs              = $one::params::hook_scripts_pkgs,
             $hook_scripts                   = $one::params::hook_scripts,
+            $inherit_datastore_attrs        = $one::params::inherit_datastore_attrs,
             $oned_onegate_ip                = $one::params::oned_onegate_ip,
             $kickstart_network              = $one::params::kickstart_network,
             $kickstart_partition            = $one::params::kickstart_partition,

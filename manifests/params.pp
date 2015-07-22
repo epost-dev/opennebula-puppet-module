@@ -66,6 +66,9 @@ class one::params {
   $xmlrpc_keepalive_max_conn = hiera('one::oned::xmlrpc_keepalive_max_conn', '30')
   $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15')
 
+  # OpenNebula INHERIT attrs
+  $inherit_datastore_attrs   = hiera('one::oned::inherit_datastore_attrs', undef)
+
   # Sunstone configuration parameters
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
   $enable_support            = hiera('one::oned::enable_support', 'yes')
