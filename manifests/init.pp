@@ -62,6 +62,10 @@
 #   needs separate apache config
 #   only used if $sunstone is set to true
 #
+# $sunstone_novnc - default false
+#   defines whether novnc should be started for sunstone web interface
+#   fully optional and only used if $sunstone is set to true
+#
 # $ldap true|false - default false
 #   defines whether sunstone authentication to ldap should be enabled
 #   ldap is fully optional
@@ -312,6 +316,7 @@ class one (
             $oned               = false,
             $sunstone           = false,
             $sunstone_passenger = false,
+            $sunstone_novnc     = false,
             $ldap               = false,
             $oneflow            = false,
             $onegate            = false,
