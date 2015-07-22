@@ -67,7 +67,9 @@ class one::params {
   $xmlrpc_timeout            = hiera('one::oned::xmlrpc_timeout', '15')
 
   # OpenNebula INHERIT attrs
-  $inherit_datastore_attrs   = hiera('one::oned::inherit_datastore_attrs', undef)
+  # (NOTE: setting default to undef causes value to show up as "" in ERB
+  # template for ruby 1.9.x)
+  $inherit_datastore_attrs   = hiera('one::oned::inherit_datastore_attrs', [])
 
   # Sunstone configuration parameters
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
@@ -155,6 +157,11 @@ class one::params {
 
   # ensure xmlrpctuning is in string
   validate_string($xmlrpc_maxconn, $xmlrpc_maxconn_backlog, $xmlrpc_keepalive_timeout, $xmlrpc_keepalive_max_conn, $xmlrpc_timeout)
+
+  # ensure INHERIT attrs is array
+  if ($inherit_datastore_attrs) {
+    validate_array($inherit_datastore_attrs)
+  }
 
   if ($hook_scripts_pkgs) {
     validate_array($hook_scripts_pkgs)
