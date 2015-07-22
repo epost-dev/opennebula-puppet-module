@@ -21,6 +21,7 @@ class one::oned::config(
   $hook_scripts            = $one::hook_scripts,
   $vm_hook_scripts         = $one::vm_hook_scripts,
   $host_hook_scripts       = $one::host_hook_scripts,
+  $inherit_datastore_attrs = $one::inherit_datastore_attrs,
   $oned_port               = $one::oned_port,
   $oned_db                 = $one::oned_db,
   $oned_db_user            = $one::oned_db_user,
