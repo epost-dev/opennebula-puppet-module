@@ -77,6 +77,11 @@ class one::params {
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes')
   $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp')
   $sunstone_sessions         = hiera('one::oned::sunstone_sessions', 'memory')
+  $vnc_proxy_port            = hiera('one::oned::vnc_proxy_port', '29876')
+  $vnc_proxy_support_wss     = hiera('one::oned::vnc_proxy_support_wss', 'no')
+  $vnc_proxy_cert            = hiera('one::oned::vnc_proxy_cert', '')
+  $vnc_proxy_key             = hiera('one::oned::vnc_proxy_key', '')
+  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false')
 
   # generic params for nodes and oned
   $oneuid = '9869'
