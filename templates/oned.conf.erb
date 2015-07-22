@@ -869,6 +869,12 @@ INHERIT_DATASTORE_ATTR  = "CEPH_USER"
 INHERIT_DATASTORE_ATTR  = "GLUSTER_HOST"
 INHERIT_DATASTORE_ATTR  = "GLUSTER_VOLUME"
 
+<%- if @inherit_datastore_attrs != nil -%>
+  <%- @inherit_datastore_attrs.each do |attr| -%>
+INHERIT_DATASTORE_ATTR  = "<%= attr %>"
+  <%- end -%>
+<%- end -%>
+
 INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
 INHERIT_VNET_ATTR       = "BRIDGE_OVS"
 INHERIT_VNET_ATTR       = "FILTER_IP_SPOOFING"
