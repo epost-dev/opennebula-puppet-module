@@ -15,7 +15,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::service (
-  $sunstone_passenger = $one::sunstone_passenger
+  $sunstone_passenger = $one::sunstone_passenger,
+  $sunstone_novnc     = $one::sunstone_novnc
 ) {
   if $sunstone_passenger {
       $srv_ensure = stopped
@@ -28,5 +29,9 @@ class one::oned::sunstone::service (
     ensure  => $srv_ensure,
     enable  => $srv_enable,
     require => Service['opennebula'],
+  }
+  service { 'opennebula-novnc':
+    ensure  => $sunstone_novnc ? { true => running, default => stopped},
+    enable  => $sunstone_novnc,
   }
 }
