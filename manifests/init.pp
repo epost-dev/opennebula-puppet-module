@@ -62,6 +62,10 @@
 #   needs separate apache config
 #   only used if $sunstone is set to true
 #
+# $sunstone_novnc - default false
+#   defines whether novnc should be started for sunstone web interface
+#   fully optional and only used if $sunstone is set to true
+#
 # $ldap true|false - default false
 #   defines whether sunstone authentication to ldap should be enabled
 #   ldap is fully optional
@@ -312,6 +316,7 @@ class one (
             $oned               = false,
             $sunstone           = false,
             $sunstone_passenger = false,
+            $sunstone_novnc     = false,
             $ldap               = false,
             $oneflow            = false,
             $onegate            = false,
@@ -352,6 +357,11 @@ class one (
             $enable_support                 = $one::params::enable_support,
             $enable_marketplace             = $one::params::enable_marketplace,
             $sunstone_tmpdir                = $one::params::sunstone_tmpdir,
+            $vnc_proxy_port                 = $one::params::vnc_proxy_port,
+            $vnc_proxy_support_wss          = $one::params::vnc_proxy_support_wss,
+            $vnc_proxy_cert                 = $one::params::vnc_proxy_cert,
+            $vnc_proxy_key                  = $one::params::vnc_proxy_key,
+            $vnc_proxy_ipv6                 = $one::params::vnc_proxy_ipv6,
             $oneuid                         = $one::params::oneuid,
             $onegid                         = $one::params::onegid,
             $monitoring_interval            = $one::params::monitoring_interval,

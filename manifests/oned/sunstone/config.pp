@@ -17,11 +17,16 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip          = $one::sunstone_listen_ip,
-  $enable_support     = $one::enable_support,
-  $enable_marketplace = $one::enable_marketplace,
-  $tmpdir             = $one::sunstone_tmpdir,
-  $sessions           = $one::sunstone_sessions,
+  $listen_ip             = $one::sunstone_listen_ip,
+  $enable_support        = $one::enable_support,
+  $enable_marketplace    = $one::enable_marketplace,
+  $tmpdir                = $one::sunstone_tmpdir,
+  $sessions              = $one::sunstone_sessions,
+  $vnc_proxy_port        = $one::vnc_proxy_port,
+  $vnc_proxy_support_wss = $one::vnc_proxy_support_wss,
+  $vnc_proxy_cert        = $one::vnc_proxy_cert,
+  $vnc_proxy_key         = $one::vnc_proxy_key,
+  $vnc_proxy_ipv6        = $one::vnc_proxy_ipv6,
 ){
   File {
     owner   => 'root',
