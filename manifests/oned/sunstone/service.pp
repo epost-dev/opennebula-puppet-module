@@ -33,6 +33,5 @@ class one::oned::sunstone::service (
   service { 'opennebula-novnc':
     ensure  => $sunstone_novnc ? { true => running, default => stopped},
     enable  => $sunstone_novnc,
-    require => Service['opennebula-sunstone'],
   }
 }
