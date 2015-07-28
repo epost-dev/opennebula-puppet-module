@@ -1,5 +1,9 @@
 ---
+<% if @logo_png.empty? -%>
 logo: images/opennebula-sunstone-v4.0.png
+<% else -%>
+logo: images/custom_logo.png
+<% end -%>
 available_tabs:
     - dashboard-tab
     - system-tab

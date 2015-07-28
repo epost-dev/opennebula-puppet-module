@@ -354,6 +354,8 @@ class one (
             $xmlrpc_keepalive_max_conn      = $one::params::xmlrpc_keepalive_max_conn,
             $xmlrpc_timeout                 = $one::params::xmlrpc_timeout,
             $sunstone_listen_ip             = $one::params::sunstone_listen_ip,
+            $sunstone_logo_png              = $one::params::sunstone_logo_png,
+            $sunstone_logo_small_png        = $one::params::sunstone_logo_small_png,
             $enable_support                 = $one::params::enable_support,
             $enable_marketplace             = $one::params::enable_marketplace,
             $sunstone_tmpdir                = $one::params::sunstone_tmpdir,

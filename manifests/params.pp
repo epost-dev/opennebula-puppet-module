@@ -73,6 +73,8 @@ class one::params {
 
   # Sunstone configuration parameters
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
+  $sunstone_logo_png         = hiera('one::oned::sunstone_logo_png', undef)
+  $sunstone_logo_small_png   = hiera('one::oned::sunstone_logo_small_png', undef)
   $enable_support            = hiera('one::oned::enable_support', 'yes')
   $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes')
   $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp')
