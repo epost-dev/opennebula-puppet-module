@@ -50,6 +50,8 @@ class one::oned::config(
   $sched_default_ds_rank   = $one::sched_default_ds_rank,
   $sched_log_system        = $one::sched_log_system,
   $sched_log_debug_level   = $one::sched_log_debug_level,
+  $kvm_driver_emulator     = $one::kvm_driver_emulator,
+  $kvm_driver_nic_attrs    = $one::kvm_driver_nic_attrs,
   ) {
 
   if ! member(['YES', 'NO'], $oned_vm_submit_on_hold) {
@@ -119,6 +121,13 @@ class one::oned::config(
     purge   => true,
     force   => true,
     source  => $hook_scripts_path,
+  }
+
+  file { '/etc/one/vmm_exec/vmm_exec_kvm.conf':
+    ensure  => file,
+    owner   => 'root',
+    mode    => '0640',
+    content => template('one/vmm_exec_kvm.conf.erb'),
   }
 
   if ($backend == 'mysql') {

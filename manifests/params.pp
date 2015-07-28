@@ -71,6 +71,10 @@ class one::params {
   # template for ruby 1.9.x)
   $inherit_datastore_attrs   = hiera('one::oned::inherit_datastore_attrs', [])
 
+  # OpenNebula KVM driver parameters
+  $kvm_driver_emulator       = hiera ('one::oned::kvm_driver_emulator', 'undef')
+  $kvm_driver_nic_attrs      = hiera ('one::oned::kvm_driver_nic_attrs', 'undef')
+
   # Sunstone configuration parameters
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
   $enable_support            = hiera('one::oned::enable_support', 'yes')
