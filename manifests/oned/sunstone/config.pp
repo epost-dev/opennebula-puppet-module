@@ -27,6 +27,8 @@ class one::oned::sunstone::config (
   $vnc_proxy_cert        = $one::vnc_proxy_cert,
   $vnc_proxy_key         = $one::vnc_proxy_key,
   $vnc_proxy_ipv6        = $one::vnc_proxy_ipv6,
+  $logo_png              = $one::sunstone_logo_png,
+  $logo_small_png        = $one::sunstone_logo_small_png,
 ){
   File {
     owner   => 'root',
@@ -47,5 +49,35 @@ class one::oned::sunstone::config (
     ensure  => file,
     mode    => '0640',
     content => template('one/sunstone-views.yaml.erb'),
+  } ->
+  file { '/etc/one/sunstone-views/admin.yaml':
+    ensure  => file,
+    mode    => '0640',
+    content => template('one/sunstone-views-admin.yaml.erb'),
+  }
+
+  if $logo_png or $logo_small_png {
+    file { '/usr/lib/one/sunstone/public/images':
+      ensure  => directory,
+      mode    => '0755',
+    }
+  }
+
+  if $logo_png {
+    file { '/usr/lib/one/sunstone/public/images/custom_logo.png':
+      ensure  => file,
+      mode    => '0644',
+      source  => $logo_png,
+      require => File['/usr/lib/one/sunstone/public/images'],
+    }
+  }
+
+  if $logo_small_png {
+    file { '/usr/lib/one/sunstone/public/images/custom_logo_small.png':
+      ensure  => file,
+      mode    => '0644',
+      source  => $logo_small_png,
+      require => File['/usr/lib/one/sunstone/public/images'],
+    }
   }
 }
