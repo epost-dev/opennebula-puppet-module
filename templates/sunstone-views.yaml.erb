@@ -1,5 +1,9 @@
 ---
+<% if scope.lookupvar('one::sunstone_logo_png') != 'undef' -%>
+logo: images/custom_logo.png
+<% else -%>
 logo: images/opennebula-sunstone-v4.0.png
+<% end -%>
 available_tabs:
     - dashboard-tab
     - system-tab
