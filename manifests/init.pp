@@ -402,6 +402,8 @@ class one (
             $libvirtd_srv                   = $one::params::libvirtd_srv,
             $libvirtd_cfg                   = $one::params::libvirtd_cfg,
             $libvirtd_source                = $one::params::libvirtd_source,
+            $kvm_driver_emulator            = $one::params::kvm_driver_emulator,
+            $kvm_driver_nic_attrs           = $one::params::kvm_driver_nic_attrs,
             $rubygems                       = $one::params::rubygems,
             $sched_interval                 = $one::params::sched_interval,
             $sched_max_vm                   = $one::params::sched_max_vm,
