@@ -193,6 +193,26 @@ onevm { '<name>':
 }
 ```
 
+New in 4.12, security groups:
+```
+onesecgroup {'securitygroup1':
+   description => 'Optional description',
+   rules       => [ { protocol      => 'TCP|UDP|ICMP|IPSEC|ALL',
+                      rule_type     => 'INBOUND|OUTBOUND',
+                      ip            => '192.168.0.0',
+                      size          => '255',
+                      range         => '22,53,80:90,110,1024:65535',
+                      icmp_type     => 'optional, only applies for icmp',
+                    },
+                    { protocol  => 'ALL',
+                      rule_type => 'OUTBOUND',
+                    },
+                    ...
+                  ]
+ }
+```
+
+
 ##Support
 
 For questions or bugs [create an issue on Github](https://github.com/epost-dev/opennebula-puppet-module/issues/new).
