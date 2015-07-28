@@ -4,7 +4,7 @@
 #
 # Authors:
 # Based upon initial work from Ken Barber
-# Modified by Martin Alfke
+# Modified by John Noss, Harvard University FAS Research Computing, 2015
 #
 # Copyright
 # initial provider had no copyright
