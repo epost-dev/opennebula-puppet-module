@@ -62,7 +62,7 @@ class one::oned (
 
   if ($puppetdb == true) {
     # Realize all the known nodes
-    One_host <<| tag == $oneid |>> {
+    Onehost <<| tag == $oneid |>> {
       require => Class[one::oned::service],
     }
   }

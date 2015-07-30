@@ -49,8 +49,8 @@ class one::compute_node(
   Class['one::service']
 
   if ($puppetdb == true) {
-    # Register the node as a one_host in the puppetdb
-    @@one_host { $::fqdn :
+    # Register the node as a onehost in the puppetdb
+    @@onehost { $::fqdn :
       tag    => $oneid,
       im_mad => $im_mad,
       vm_mad => $vm_mad,
