@@ -36,6 +36,9 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             xml.DS_MAD resource[:dm]
             xml.BRIDGE_LIST resource[:bridgelist]
             xml.CEPH_HOST resource[:cephhost]
+            xml.CEPH_USER resource[:cephuser]
+            xml.CEPH_SECRET resource[:cephsecret]
+            xml.POOL_NAME resource[:poolname]
             xml.STAGING_DIR resource[:stagingdir]
             xml.BASE_PATH do
                 resource[:basepath]
@@ -72,6 +75,9 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             :basepath   => (datastore.xpath('./TEMPLATE/BASE_PATH').text unless datastore.xpath('./TEMPLATE/BASE_PATH').nil?),
             :bridgelist => (datastore.xpath('./TEMPLATE/BRIDGE_LIST').text unless datastore.xpath('./TEMPLATE/BRIDGE_LIST').nil?),
             :cephhost   => (datastore.xpath('./TEMPLATE/CEPH_HOST').text unless datastore.xpath('./TEMPLATE/CEPH_HOST').nil?),
+            :cephuser   => (datastore.xpath('./TEMPLATE/CEPH_USER').text unless datastore.xpath('./TEMPLATE/CEPH_USER').nil?),
+            :cephsecret => (datastore.xpath('./TEMPLATE/CEPH_SECRET').text unless datastore.xpath('./TEMPLATE/CEPH_SECRET').nil?),
+            :poolname   => (datastore.xpath('./TEMPLATE/POOL_NAME').text unless datastore.xpath('./TEMPLATE/POOL_NAME').nil?),
             :stagingdir => (datastore.xpath('./TEMPLATE/STAGING_DIR').text unless datastore.xpath('./TEMPLATE/STAGING_DIR').nil?),
             :disktype   => {'0' => 'file', '1' => 'block', '3' => 'rbd'}[datastore.xpath('./DISK_TYPE').text]
         )

@@ -64,6 +64,19 @@ Puppet::Type.newtype(:onedatastore) do
     desc "List of Ceph monitors, space separated"
   end
 
+  newproperty(:cephuser) do
+    desc "The OpenNebula Ceph user name. If set it is used by RBD commands"
+  end
+
+  newproperty(:cephsecret) do
+    desc "A generated UUID for a LibVirt secret (to hold the CephX authentication " +
+         "key in Libvirt on each hypervisor)"
+  end
+
+  newproperty(:poolname) do
+    desc "The OpenNebula Ceph pool name (defaults to one)"
+  end
+
   newproperty(:stagingdir) do
     desc "Temporary scratch space. Must be big enough to store raw image size plus sparse version"
   end
