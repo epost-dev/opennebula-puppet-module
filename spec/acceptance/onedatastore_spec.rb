@@ -88,8 +88,14 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'ceph_ds':
-        dm => 'ceph',
-        tm => 'ceph',
+        dm         => 'ceph',
+        tm         => 'ceph',
+        cephhost   => 'cephhost',
+        cephuser   => 'cephuser',
+        cephsecret => 'cephsecret',
+        pool_name  => 'cephpoolname',
+        disktype   => 'rbd',
+        bridgelist => 'host1 host2 host3'
       }
       EOS
 

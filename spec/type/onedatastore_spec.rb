@@ -26,7 +26,8 @@ describe res_type do
     res_type.key_attributes.should == [:name]
   end
 
-  properties = [:type, :dm, :tm, :disktype ]
+  properties = [:type, :dm, :tm, :disktype, :cephhost, :cephuser, :cephsecret,
+                :poolname, :bridgelist]
   properties.each do |property|
     it "should have a #{property} property" do
       described_class.attrclass(property).ancestors.should be_include(Puppet::Property)
@@ -55,6 +56,31 @@ describe res_type do
   it 'should have property :disktype' do
       @datastore[:disktype] = 'file'
       @datastore[:disktype].should == 'file'
+  end
+
+  it 'should have property :cephhost' do
+      @datastore[:cephhost] = 'cephhost'
+      @datastore[:cephhost].should == 'cephhost'
+  end
+
+  it 'should have property :cephuser' do
+      @datastore[:cephuser] = 'cephuser'
+      @datastore[:cephuser].should == 'cephuser'
+  end
+
+  it 'should have property :cephsecret' do
+      @datastore[:cephsecret] = 'cephsecret'
+      @datastore[:cephsecret].should == 'cephsecret'
+  end
+
+  it 'should have property :poolname' do
+      @datastore[:poolname] = 'poolname'
+      @datastore[:poolname].should == 'poolname'
+  end
+
+  it 'should have property :bridgelist' do
+      @datastore[:bridgelist] = 'host1 host2 host3'
+      @datastore[:bridgelist].should == 'host1 host2 host3'
   end
 
   parameter_tests = {
