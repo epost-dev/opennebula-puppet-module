@@ -173,6 +173,16 @@
 # $sunstone_tmpdir - default /var/tmp
 #   define a different tmp dir for sunstone
 #
+# $sunstone_logo_png - default use ONE logo
+#   use custom logo on sunstone login page
+#   used as the 'source' for image file resource
+#   e.g. puppet:///modules/mymodule/my-custom-logo.png
+#
+# $sunstone_logo_small_png - default use ONE logo
+#   use custom small logo in upper left corner of sunstone admin
+#   used as the 'source' for image file resource
+#   e.g. puppet:///modules/mymodule/my-custom-small-logo.png
+#
 # ===== OpenNebula host monitoring configuration
 # $monitoring_interval - default 60
 #   when shoudl monitoring start again in seconds
@@ -354,6 +364,8 @@ class one (
             $xmlrpc_keepalive_max_conn      = $one::params::xmlrpc_keepalive_max_conn,
             $xmlrpc_timeout                 = $one::params::xmlrpc_timeout,
             $sunstone_listen_ip             = $one::params::sunstone_listen_ip,
+            $sunstone_logo_png              = $one::params::sunstone_logo_png,
+            $sunstone_logo_small_png        = $one::params::sunstone_logo_small_png,
             $enable_support                 = $one::params::enable_support,
             $enable_marketplace             = $one::params::enable_marketplace,
             $sunstone_tmpdir                = $one::params::sunstone_tmpdir,
