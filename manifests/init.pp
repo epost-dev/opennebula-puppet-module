@@ -173,6 +173,16 @@
 # $sunstone_tmpdir - default /var/tmp
 #   define a different tmp dir for sunstone
 #
+# $sunstone_logo_png - default use ONE logo
+#   use custom logo on sunstone login page
+#   used as the 'source' for image file resource
+#   e.g. puppet:///modules/mymodule/my-custom-logo.png
+#
+# $sunstone_logo_small_png - default use ONE logo
+#   use custom small logo in upper left corner of sunstone admin
+#   used as the 'source' for image file resource
+#   e.g. puppet:///modules/mymodule/my-custom-small-logo.png
+#
 # ===== OpenNebula host monitoring configuration
 # $monitoring_interval - default 60
 #   when shoudl monitoring start again in seconds
