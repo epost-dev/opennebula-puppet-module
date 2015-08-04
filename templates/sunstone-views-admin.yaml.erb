@@ -1,7 +1,7 @@
-<% if @sunstone_logo_small_png.empty? -%>
-small_logo: images/opennebula-sunstone-v4.0-small.png
-<% else -%>
+<% if scope.lookupvar('one::sunstone_logo_small_png') != 'undef' -%>
 small_logo: images/custom_logo_small.png
+<% else -%>
+small_logo: images/opennebula-sunstone-v4.0-small.png
 <% end -%>
 provision_logo: images/one_small_logo.png
 enabled_tabs:
