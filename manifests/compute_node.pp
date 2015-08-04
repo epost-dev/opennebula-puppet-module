@@ -28,8 +28,9 @@
 class one::compute_node(
   $puppetdb = $one::puppetdb,
   $oneid    = $one::oneid,
-  $vtype    = $one::vtype,
-  $ntype    = $one::ntype,
+  $im_mad   = $one::im_mad,
+  $vm_mad   = $one::vm_mad,
+  $vn_mad   = $one::vn_mad,
 ) {
   include one::prerequisites
   include one::install
@@ -48,11 +49,12 @@ class one::compute_node(
   Class['one::service']
 
   if ($puppetdb == true) {
-    # Register the node in the puppetdb
-    @@one::oned::peer { $::fqdn :
-      tag   => $oneid,
-      vtype => $vtype,
-      ntype => $ntype,
+    # Register the node as a onehost in the puppetdb
+    @@onehost { $::fqdn :
+      tag    => $oneid,
+      im_mad => $im_mad,
+      vm_mad => $vm_mad,
+      vn_mad => $vn_mad,
     }
   }
 }
