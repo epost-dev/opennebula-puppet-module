@@ -111,12 +111,17 @@ This means: addressranges which are not set by Puppet will not be visible using 
 Create a ONE Datastore
 ```
 onedatastore { '<name>':
-    ensure   => present | absent,
-    type     => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
-    dm       => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
-    tm       => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
-    disktype => 'file' | 'block' | 'rdb',
-    basepath => '/var/lib/one/datastore',
+    ensure     => present | absent,
+    type       => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
+    dm         => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
+    tm         => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
+    cephhost   => 'cephhost', # (optional: ceph only)
+    cephuser   => 'cephuser', # (optional: ceph only)
+    cephsecret => 'ceph-secret-here', # (optional: ceph only)
+    poolname   => 'cephpoolname', # (optional: ceph only)
+    bridgelist => 'host1 host2 host3', # (optional: ceph only)
+    disktype   => 'file' | 'block' | 'rdb',
+    basepath   => '/var/lib/one/datastore',
 }
 ```
 
