@@ -1,11 +1,8 @@
 ---
 :backends:
-  - file
   - yaml
 :hierarchy:
   - docker
 
 :yaml:
-    :datadir: '/etc/puppet/data'
-:file:
     :datadir: '/etc/puppet/data'

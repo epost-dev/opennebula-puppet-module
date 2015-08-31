@@ -1,6 +1,23 @@
-FROM epost-dev/puppet
+FROM centos:6
 MAINTAINER Robert Waffen "robert.waffen@epost-dev.de"
 
-ADD . /etc/puppet/modules/one
-ADD ./spec/docker-int/hiera/hiera.yaml /etc/puppet/
-ADD ./spec/docker-int/hiera/docker.yaml /etc/puppet/data/
+ENV HOSTNAME localhost
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV FACTER_operatingsystemmajrelease="6"
+ENV FACTER_operatingsystemrelease="6.7"
+ENV FACTER_lsbmajdistrelease="6"
+
+RUN yum -y install https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm epel-release
+RUN yum makecache && yum -y install puppet tar hostname
+
+RUN puppet module install puppetlabs-apt
+RUN puppet module install puppetlabs-concat
+RUN puppet module install puppetlabs-mysql
+RUN puppet module install puppetlabs-apache
+RUN puppet module install puppetlabs-corosync
+RUN puppet module install rodjek-logrotate
+
+COPY hiera/hiera.yaml /etc/puppet/
+COPY hiera/docker.yaml /etc/puppet/data/
