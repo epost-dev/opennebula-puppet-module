@@ -63,9 +63,9 @@ Build a image with the one puppet module in it:
 
 Run puppet in the container, choose one:
 
-    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head.pp
-    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-node.pp
-    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/one-head-node.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-node.pp
+    docker run --rm epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-node.pp
 
 The files can be found in the spec directory of this project. One will build a one head,
 one will build a node and one a head which also can be a node.
