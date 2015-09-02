@@ -93,7 +93,7 @@ describe 'onedatastore type' do
         cephhost   => 'cephhost',
         cephuser   => 'cephuser',
         cephsecret => 'cephsecret',
-        pool_name  => 'cephpoolname',
+        poolname  => 'cephpoolname',
         disktype   => 'rbd',
         bridgelist => 'host1 host2 host3'
       }
