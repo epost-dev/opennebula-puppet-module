@@ -115,6 +115,7 @@ onedatastore { '<name>':
     type       => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
     dm         => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
     tm         => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
+    driver     => 'raw | qcow2',
     cephhost   => 'cephhost', # (optional: ceph only)
     cephuser   => 'cephuser', # (optional: ceph only)
     cephsecret => 'ceph-secret-here', # (optional: ceph only)

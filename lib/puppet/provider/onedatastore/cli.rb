@@ -35,6 +35,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             end if resource[:safe_dirs]
             xml.DS_MAD resource[:dm]
             xml.DISK_TYPE resource[:disktype]
+            xml.DRIVER resource[:driver]
             xml.BRIDGE_LIST resource[:bridgelist]
             xml.CEPH_HOST resource[:cephhost]
             xml.CEPH_USER resource[:cephuser]
@@ -80,6 +81,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
             :cephsecret => (datastore.xpath('./TEMPLATE/CEPH_SECRET').text unless datastore.xpath('./TEMPLATE/CEPH_SECRET').nil?),
             :poolname   => (datastore.xpath('./TEMPLATE/POOL_NAME').text unless datastore.xpath('./TEMPLATE/POOL_NAME').nil?),
             :stagingdir => (datastore.xpath('./TEMPLATE/STAGING_DIR').text unless datastore.xpath('./TEMPLATE/STAGING_DIR').nil?),
+            :driver     => (datastore.xpath('./TEMPLATE/DRIVER').text unless datastore.xpath('./TEMPLATE/DRIVER').nil?),
             :disktype   => {'0' => 'file', '1' => 'block', '3' => 'rbd'}[datastore.xpath('./DISK_TYPE').text]
         )
       end

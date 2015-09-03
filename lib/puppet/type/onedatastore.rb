@@ -52,6 +52,10 @@ Puppet::Type.newtype(:onedatastore) do
     desc "Choose a disk type: file, block, rdb"
   end
 
+  newproperty(:driver) do
+    desc "Choose a driver: raw, qcow2"
+  end
+
   newproperty(:basepath) do
     desc "Choose a base path"
   end

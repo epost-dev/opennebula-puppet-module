@@ -90,6 +90,7 @@ describe 'onedatastore type' do
       onedatastore { 'ceph_ds':
         dm         => 'ceph',
         tm         => 'ceph',
+        driver     => 'raw',
         cephhost   => 'cephhost',
         cephuser   => 'cephuser',
         cephsecret => 'cephsecret',
