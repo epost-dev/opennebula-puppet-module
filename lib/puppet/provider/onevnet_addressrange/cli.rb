@@ -109,12 +109,14 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
         end
       end
     }.map{|a| "#{a[0]} = #{a[1]}," unless a.nil? }.join("\n")
-    file << "AR_ID = #{ar_id}" unless ar_id.nil?
+    file << "AR_ID = #{resource[:ar_id]}" unless resource[:ar_id].nil?
     file << ']'
     file.close
     self.debug(IO.read file.path)
     self.debug(@property_hash)
-    onevnet('updatear', resource[:onevnet_name], ar_id, file.path ) unless ( @property_hash.empty? or ar_id.nil? or !defined? ar_id )
+    unless @property_hash.empty? or resource[:ar_id].nil? or not defined? resource[:ar_id]
+      onevnet('updatear', resource[:onevnet_name], resource[:ar_id], file.path)
+    end
     file.delete
   end
 
