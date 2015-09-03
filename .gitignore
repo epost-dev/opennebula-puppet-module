@@ -1,10 +1,11 @@
-vendor
+.idea/
+.vagrant/
+log/
+pkg/
+spec/fixtures/manifests/
+spec/fixtures/modules/
+vendor/
 *bundle
 *.swp
-spec/fixtures/modules
-spec/fixtures/manifests
-.idea
 .project
-.vagrant
-pkg
 Gemfile.lock
