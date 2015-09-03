@@ -49,6 +49,40 @@ To deploy a Opennebula instance locally run:
 
 where "boxname" can be debian or centos
 
+## Docker
+
+To deploy a Opennebula instance locally in a docker container run these commandos:
+
+First build an image with puppet and the sources in it (Depending on centos:6):
+
+    cd docker
+    docker build --rm -t epost-dev/one .
+    cd ..
+
+Run puppet in the container, choose one:
+
+Only build a container which acts as a opennebula head, gui, but not the kvm things:
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head.pp
+
+Only build a container which acts like a opennebula node:
+
+    # here is a common error i wasn't able to fix. centos 6 in docker has some issues with ksm
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-node.pp
+
+Build a container which acts as head and node
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-node.pp
+
+Build a container which has an apache for the openenbula sunstone configured:
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-httpd.pp
+
+This Docker command will add the current directory as ```ect/puppet/modules/one```. So one can test each new change without committing or rebuilding the image.
+
+The "spec" files can be found in the spec/docker-int directory of this project. One will build a one head,
+one will build a node and one a head which also can be a node. 
+
 ## Using the Module
 
 Example usage for opennebula puppet module
