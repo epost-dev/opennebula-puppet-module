@@ -84,9 +84,8 @@ Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
   def self.prefetch(resources)
     vnets = instances
     resources.keys.each do |name|
-      if provider = vnets.find{ |vnet| vnet.name == name }
-        resources[name].provider = provider
-      end
+      provider = vnets.find{ |vnet| vnet.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

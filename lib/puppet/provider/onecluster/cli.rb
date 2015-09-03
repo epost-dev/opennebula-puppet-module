@@ -98,9 +98,8 @@ Puppet::Type.type(:onecluster).provide(:cli) do
   def self.prefetch(resources)
     clusters = instances
     resources.keys.each do |name|
-      if provider = clusters.find{ |cluster| cluster.name == name }
-        resources[name].provider = provider
-      end
+      provider = clusters.find{ |cluster| cluster.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 
