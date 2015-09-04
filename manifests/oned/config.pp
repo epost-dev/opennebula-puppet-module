@@ -52,7 +52,7 @@ class one::oned::config(
   $sched_log_debug_level   = $one::sched_log_debug_level,
   $kvm_driver_emulator     = $one::kvm_driver_emulator,
   $kvm_driver_nic_attrs    = $one::kvm_driver_nic_attrs,
-  ) {
+) {
 
   if ! member(['YES', 'NO'], $oned_vm_submit_on_hold) {
     fail("oned_vm_submit_on_hold must be one of 'YES' or 'NO'. Actual value: ${oned_vm_submit_on_hold}")
@@ -123,11 +123,22 @@ class one::oned::config(
     source  => $hook_scripts_path,
   }
 
-  file { '/etc/one/vmm_exec/vmm_exec_kvm.conf':
-    ensure  => file,
-    owner   => 'root',
-    mode    => '0640',
-    content => template('one/vmm_exec_kvm.conf.erb'),
+  if $kvm_driver_emulator != 'undef' {
+    ini_setting{ 'set_kvm_driver_emulator':
+      ensure  => present,
+      path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
+      setting => 'EMULATOR',
+      value   => $kvm_driver_emulator,
+    }
+  }
+
+  if $kvm_driver_nic_attrs != 'undef' {
+    ini_setting{ 'set_kvm_driver_nic':
+      ensure  => present,
+      path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
+      setting => 'NIC',
+      value   => $kvm_driver_nic_attrs,
+    }
   }
 
   if ($backend == 'mysql') {
