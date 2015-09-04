@@ -73,7 +73,7 @@ describe 'onevnet type' do
 
       onevnet_addressrange { 'ar3':
           ensure        => present,
-          onevnet_name  => 'vnet2',
+          onevnet_name  => 'vnet3',
           protocol      => ip6,
           ip_size       => '10',
           mac           => '02:00:0a:00:00:96',

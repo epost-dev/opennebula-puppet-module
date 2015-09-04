@@ -11,15 +11,13 @@
 # Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 
-#require 'pry'
-
 require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onevnet).provide(:cli) do
-  desc "onevnet provider"
+  desc 'onevnet provider'
 
-  has_command(:onevnet, "onevnet") do
+  has_command(:onevnet, 'onevnet') do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
   end
 
@@ -29,44 +27,18 @@ Puppet::Type.type(:onevnet).provide(:cli) do
   def create
     file = Tempfile.new("onevnet-#{resource[:name]}")
     builder = Nokogiri::XML::Builder.new do |xml|
-        xml.VNET do
-            xml.NAME resource[:name]
-            xml.BRIDGE resource[:bridge]
-            xml.PHYDEV do
-                resource[:phydev]
-            end if resource[:phydev]
-            xml.VLAN_ID do
-                resource[:vlanid]
-            end if resource[:vlanid]
-            xml.TEMPLATE do
-                xml.DNS do
-                    resource[:dnsservers]
-                end
-            end if resource[:dnsservers]
-            xml.TEMPLATE do
-                xml.GATEWAY do
-                    resource[:gateway]
-                end
-            end if resource[:gateway]
-            xml.TEMPLATE do
-                xml.NETWORK_MASK do
-                    resource[:netmask]
-                end
-            end if resource[:netmask]
-            xml.TEMPLATE do
-                xml.NETWORK_ADDRESS do
-                    resource[:network_address]
-                end
-            end if resource[:network_address]
-            xml.CONTEXT do
-                resource[:context].each do |k,v|
-                    xml.send(k.upcase, v)
-                end if resource[:context]
-            end
-        end
-        # end xml vnet do
+      xml.VNET do
+        xml.NAME resource[:name]
+        xml.BRIDGE resource[:bridge]
+        xml.PHYDEV resource[:phydev] if resource[:phydev]
+        xml.VLAN_ID resource[:vlanid] if resource[:vlanid]
+        xml.DNS resource[:dnsservers].join(' ') if resource[:dnsservers]
+        xml.GATEWAY resource[:gateway] if resource[:gateway]
+        xml.NETWORK_MASK resource[:netmask] if resource[:netmask]
+        xml.NETWORK_ADDRESS resource[:network_address] if resource[:network_address]
+        xml.CONTEXT resource[:context].each { |k, v| xml.send(k.upcase, v) } if resource[:context]
+      end
     end
-    # end builder
     tempfile = builder.to_xml
     file.write(tempfile)
     file.close
@@ -89,31 +61,29 @@ Puppet::Type.type(:onevnet).provide(:cli) do
 
   # Return the full hash of all existing onevnet resources
   def self.instances
-      vnets = Nokogiri::XML(onevnet('list','-x')).root.xpath('/VNET_POOL/VNET')
-#pry.binding
-      vnets.collect do |vnet|
-          new(
-              :name            => vnet.xpath('./NAME').text,
-              :ensure          => :present,
-              :bridge          => vnet.xpath('./BRIDGE').text,
-              :context         => nil,
-              :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(" ") unless vnet.xpath('./TEMPLATE/DNS').nil?),
-              :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
-              :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
-              :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
-              :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?),
-              :phydev          => vnet.xpath('./PHYDEV').text,
-              :vlanid          => vnet.xpath('./VLAN_ID').text
-          )
-      end
+    vnets = Nokogiri::XML(onevnet('list', '-x')).root.xpath('/VNET_POOL/VNET')
+    vnets.collect do |vnet|
+      new(
+          :ensure   => :present,
+          :name     => vnet.xpath('./NAME').text,
+          :bridge   => vnet.xpath('./BRIDGE').text,
+          :phydev   => vnet.xpath('./PHYDEV').text,
+          :vlanid   => vnet.xpath('./VLAN_ID').text,
+          :context  => nil,
+          :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(' ') unless vnet.xpath('./TEMPLATE/DNS').nil?),
+          :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
+          :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
+          :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
+          :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?)
+      )
+    end
   end
 
   def self.prefetch(resources)
     vnets = instances
     resources.keys.each do |name|
-      if provider = vnets.find{ |vnet| vnet.name == name }
-        resources[name].provider = provider
-      end
+      provider = vnets.find { |vnet| vnet.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 
@@ -122,24 +92,22 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     file << @property_hash.map { |k, v|
       unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
         case k
-        when :vlanid
-          [ 'VLAN_ID', v ]
-        when :addressrange
-          k.each_pair do |key, value|
-          end
-        when :dnsservers
-          [ 'DNS', "\"#{v.join(" ")}\"" ]
-        when :netmask
-          [ 'NETWORK_MASK', v ]
-        else
-          [ k.to_s.upcase, v ]
+          when :vlanid
+            ['VLAN_ID', v]
+          when :addressrange
+            k.each_pair { |key, value|}
+          when :dnsservers
+            ['DNS', "\"#{v.join(' ')}\""]
+          when :netmask
+            ['NETWORK_MASK', v]
+          else
+            [k.to_s.upcase, v]
         end
       end
-    }.map{|a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
     file.close
     self.debug(IO.read file.path)
     onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
     file.delete
   end
-
 end

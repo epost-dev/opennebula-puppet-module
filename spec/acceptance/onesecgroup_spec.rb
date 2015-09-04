@@ -4,8 +4,7 @@ describe 'onesecgroup type' do
   before :all do
     pp =<<-EOS
       class { 'one':
-        oned        => true,
-        one_version => '4.12',
+        oned => true,
       }
     EOS
     apply_manifest(pp, :catch_failures => true)

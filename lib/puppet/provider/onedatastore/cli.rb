@@ -90,9 +90,8 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   def self.prefetch(resources)
     datastores = instances
     resources.keys.each do |name|
-      if provider = datastores.find{ |datastore| datastore.name == name }
-        resources[name].provider = provider
-      end
+      provider = datastores.find{ |datastore| datastore.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

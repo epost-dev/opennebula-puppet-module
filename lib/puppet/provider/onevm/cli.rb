@@ -63,14 +63,13 @@ Puppet::Type.type(:onevm).provide(:cli) do
   def self.prefetch(resources)
     vms = instances
     resources.keys.each do |name|
-      if provider = vms.find{ |vm| vm.name == name }
-        resources[name].provider = provider
-      end
+      provider = vms.find{ |vm| vm.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 
   # setters
   def template=(value)
-      raise "Can not modify a VM template"
+      raise 'Can not modify a VM template'
   end
 end
