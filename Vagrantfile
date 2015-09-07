@@ -25,6 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define 'centos' do |centos|
     centos.vm.box = 'puppetlabs/centos-6.6-64-puppet'
+    config.vm.box_version = '1.0.1'
     centos.vm.provision 'shell', inline: '/usr/bin/yum -y install epel-release'
     centos.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
     centos.vm.provision 'puppet' do |puppet|
