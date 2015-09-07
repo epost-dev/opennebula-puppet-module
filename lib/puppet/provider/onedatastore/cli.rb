@@ -5,6 +5,7 @@
 # Authors:
 # Based upon initial work from Ken Barber
 # Modified by Martin Alfke
+# Modified by Robert Waffen <robert.waffen@epost-dev.de>
 #
 # Copyright
 # initial provider had no copyright
@@ -24,13 +25,13 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   mk_resource_methods
 
   def self.get_attributes
-    xml_nodes = [:name, :tm_mad, :type, :safe_dirs, :ds_mad, :disk_type, :driver, :bridge_list,
-                 :ceph_host, :ceph_user, :ceph_secret, :pool_name, :staging_dir, :base_path, :ensure, :cluster]
+    [:name, :tm_mad, :type, :safe_dirs, :ds_mad, :disk_type, :driver, :bridge_list,
+     :ceph_host, :ceph_user, :ceph_secret, :pool_name, :staging_dir, :base_path,
+     :ensure, :cluster]
   end
 
   def create
     file = Tempfile.new("onedatastore-#{resource[:name]}")
-
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.DATASTORE do
         self.class.get_attributes.each do |node|
@@ -38,7 +39,6 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
         end
       end
     end
-
     tempfile = builder.to_xml
     file.write(tempfile)
     file.close
@@ -59,7 +59,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def self.get_datastore(xml)
-    datastore_hash = {}
+    datastore_hash = Hash.new
     get_attributes.each do |node|
       if node == :type
         case xml.css("#{node.to_s.upcase}").first.text
@@ -68,19 +68,16 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
           when '2' then text = 'FILE_DS'
         end
         datastore_hash[node] = text
-        next
-      end
-
-      if node == :disk_type
+      elsif node == :disk_type
         case xml.css("#{node.to_s.upcase}").first.text
           when '0' then text = 'file'
           when '1' then text = 'block'
           when '3' then text = 'rbd'
         end
         datastore_hash[node] = text
-        next
+      else
+        datastore_hash[node] = xml.css("#{node.to_s.upcase}").first.text unless xml.css("#{node.to_s.upcase}").first.nil?
       end
-      datastore_hash[node] = xml.css("#{node.to_s.upcase}").first.text unless xml.css("#{node.to_s.upcase}").first.nil?
     end
     datastore_hash
   end
@@ -88,16 +85,15 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   def self.instances
     datastores = Nokogiri::XML(onedatastore('list', '-x')).xpath('/DATASTORE_POOL/DATASTORE')
     datastores.collect do |datastore|
-      data_hash = get_datastore datastore
+      data_hash = get_datastore(datastore)
       data_hash[:ensure] = :present
       new(data_hash)
     end
   end
 
   def self.prefetch(resources)
-    datastores = instances
     resources.keys.each do |name|
-      provider = datastores.find { |datastore| datastore.name == name }
+      provider = instances.find { |datastore| datastore.name == name }
       resources[name].provider = provider unless provider.nil?
     end
   end
