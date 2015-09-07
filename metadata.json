@@ -1,6 +1,6 @@
 {
   "name": "epostdev-one",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Deutsche Post E-POST Development GmbH",
   "summary": "OpenNebula management module - Manage OpenNebula nodes, management oned, sunstone webinterface",
   "license": "Apache-2.0",
@@ -25,6 +25,6 @@
   "dependencies": [
     { "name": "puppetlabs/stdlib", "version_requirement": "> 2.2.0" },
     { "name": "puppetlabs/apt", "version_requirement": "< 2.0.0" },
-    { "name": "puppetlabs/inifile", "version_requirement": "< 1.4.0" }
+    { "name": "puppetlabs/inifile", "version_requirement": "> 1.4.0" }
   ]
 }
