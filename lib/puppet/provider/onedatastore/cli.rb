@@ -13,7 +13,6 @@
 
 require 'rubygems'
 require 'nokogiri'
-require 'pp'
 
 Puppet::Type.type(:onedatastore).provide(:cli) do
   desc 'onedatastore provider'
@@ -43,8 +42,9 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     tempfile = builder.to_xml
     file.write(tempfile)
     file.close
-    self.debug "Adding new network using datastore: #{tempfile}"
+    self.debug "Adding new datastore using: #{tempfile}"
     onedatastore('create', file.path)
+    file.delete
     @property_hash[:ensure] = :present
   end
 
@@ -58,7 +58,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     @property_hash[:ensure] == :present
   end
 
-  def self.get_list_of_datastores(xml)
+  def self.get_datastore(xml)
     datastore_hash = {}
     get_attributes.each do |node|
       if node == :type
@@ -88,7 +88,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   def self.instances
     datastores = Nokogiri::XML(onedatastore('list', '-x')).xpath('/DATASTORE_POOL/DATASTORE')
     datastores.collect do |datastore|
-      data_hash = get_list_of_datastores datastore
+      data_hash = get_datastore datastore
       data_hash[:ensure] = :present
       new(data_hash)
     end
