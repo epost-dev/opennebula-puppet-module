@@ -15,8 +15,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'nfs_ds':
-        tm   => 'shared',
-        type => 'system_ds',
+        tm_mad   => 'shared',
+        type     => 'system_ds',
       }
       EOS
 
@@ -30,9 +30,9 @@ describe 'onedatastore type' do
       skip
       pp = <<-EOS
       onedatastore { 'kernels':
-        dm        => 'fs',
+        ds_mad    => 'fs',
         safe_dirs => '/var/tmp/files',
-        tm        => 'ssh',
+        tm_mad    => 'ssh',
         type      => 'file_ds',
       }
       EOS
@@ -46,8 +46,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'production':
-        dm   => 'fs',
-        tm   => 'shared',
+        ds_mad => 'fs',
+        tm_mad => 'shared',
       }
       EOS
 
@@ -60,8 +60,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'vmfs_ds':
-        dm => 'vmfs',
-        tm => 'vmfs',
+        ds_mad => 'vmfs',
+        tm_mad => 'vmfs',
       }
       EOS
 
@@ -74,8 +74,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'lvm_ds':
-        dm => 'fs_lvm',
-        tm => 'fs_lvm',
+        ds_mad => 'fs_lvm',
+        tm_mad => 'fs_lvm',
       }
       EOS
 
@@ -88,15 +88,15 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'ceph_ds':
-        dm         => 'ceph',
-        tm         => 'ceph',
-        driver     => 'raw',
-        cephhost   => 'cephhost',
-        cephuser   => 'cephuser',
-        cephsecret => 'cephsecret',
-        poolname  => 'cephpoolname',
-        disktype   => 'rbd',
-        bridgelist => 'host1 host2 host3'
+        ds_mad      => 'ceph',
+        tm_mad      => 'ceph',
+        driver      => 'raw',
+        ceph_host   => 'cephhost',
+        ceph_user   => 'cephuser',
+        ceph_secret => 'cephsecret',
+        pool_name   => 'cephpoolname',
+        disk_type   => 'rbd',
+        bridge_list => 'host1 host2 host3'
       }
       EOS
 
