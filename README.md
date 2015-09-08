@@ -6,6 +6,19 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 ## Requirements
 
+### Other Puppet Modules
+One needs the following other modules:
+
+- [puppetlabs/stdlib  > 2.2.0](https://github.com/puppetlabs/puppetlabs-stdlib)
+- [puppetlabs/apt     < 2.0.0](https://github.com/puppetlabs/puppetlabs-apt)
+- [puppetlabs/inifile > 1.4.0](https://github.com/puppetlabs/puppetlabs-inifile)
+
+How to install:
+
+    puppet module install puppetlabs-stdlib
+    puppet module install puppetlabs-apt
+    puppet module install puppetlabs-inifile
+
 ### Debian Wheezy
 
 Tested with puppet 3.7.4 from wheezy backports.
@@ -259,6 +272,6 @@ For questions or bugs [create an issue on Github](https://github.com/epost-dev/o
 
 ##License
 
-Copyright © 2013 [Deutsche Post E-Post Development GmbH](http://epost.de)
+Copyright © 2013 - 2015 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
 Distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
