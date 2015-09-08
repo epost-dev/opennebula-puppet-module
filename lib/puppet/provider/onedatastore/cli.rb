@@ -27,7 +27,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   def self.get_attributes
     [:name, :tm_mad, :type, :safe_dirs, :ds_mad, :disk_type, :driver, :bridge_list,
      :ceph_host, :ceph_user, :ceph_secret, :pool_name, :staging_dir, :base_path,
-     :ensure, :cluster]
+     :ensure, :cluster, :cluster_id]
   end
 
   def create
@@ -96,6 +96,22 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
       provider = instances.find { |datastore| datastore.name == name }
       resources[name].provider = provider unless provider.nil?
     end
+  end
+
+  def flush
+    file = Tempfile.new("onedatastore-#{resource[:name]}")
+
+    tempfile = @property_hash.map { |k, v|
+      unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
+        [k.to_s.upcase, v]
+      end
+    }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+
+    file.write(tempfile)
+    file.close
+    self.debug "Updating datastore using:\n#{tempfile}"
+    onedatastore('update', resource[:name], file.path, '--append') unless @property_hash.empty?
+    file.delete
   end
 
   #setters
