@@ -35,6 +35,10 @@ Puppet::Type.newtype(:onedatastore) do
     desc 'Add datastore to a cluster'
   end
 
+  newproperty(:cluster_id) do
+    desc 'Add datastore to a cluster_id'
+  end
+
   newproperty(:ds_mad) do
     desc 'Choose a datastore manager: filesystem, vmware, iscsi, lvm, vmfs, ceph'
   end
