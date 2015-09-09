@@ -143,22 +143,24 @@ This means: addressranges which are not set by Puppet will not be visible using 
 
 
 Create a ONE Datastore
-```
-onedatastore { '<name>':
-    ensure     => present | absent,
-    type       => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
-    dm         => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
-    tm         => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
-    driver     => 'raw | qcow2',
-    cephhost   => 'cephhost', # (optional: ceph only)
-    cephuser   => 'cephuser', # (optional: ceph only)
-    cephsecret => 'ceph-secret-here', # (optional: ceph only)
-    poolname   => 'cephpoolname', # (optional: ceph only)
-    bridgelist => 'host1 host2 host3', # (optional: ceph only)
-    disktype   => 'file' | 'block' | 'rdb',
-    basepath   => '/var/lib/one/datastore',
-}
-```
+
+    onedatastore { '<name>':
+        ensure      => present | absent,
+        type        => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
+        ds_mad      => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
+        tm_mad      => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
+        driver      => 'raw | qcow2',
+        ceph_host   => 'cephhost', # (optional: ceph only)
+        ceph_user   => 'cephuser', # (optional: ceph only)
+        ceph_secret => 'ceph-secret-here', # (optional: ceph only)
+        pool_name   => 'cephpoolname', # (optional: ceph only)
+        bridge_list => 'host1 host2 host3', # (optional: ceph only)
+        disk_type   => 'file' | 'block' | 'rdb',
+        base_path   => '/some/lib/path/datastore', #Optional
+        cluster     => 'somename', # Optional
+        cluster_id  => '1234', # Optional
+    }
+
 
 Create a ONE Host
 ```
