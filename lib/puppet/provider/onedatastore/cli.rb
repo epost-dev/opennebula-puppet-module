@@ -5,6 +5,7 @@
 # Authors:
 # Based upon initial work from Ken Barber
 # Modified by Martin Alfke
+# Modified by Robert Waffen <robert.waffen@epost-dev.de>
 #
 # Copyright
 # initial provider had no copyright
@@ -15,42 +16,35 @@ require 'rubygems'
 require 'nokogiri'
 
 Puppet::Type.type(:onedatastore).provide(:cli) do
-  desc "onedatastore provider"
+  desc 'onedatastore provider'
 
-  has_command(:onedatastore, "onedatastore") do
+  has_command(:onedatastore, 'onedatastore') do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
   end
 
   mk_resource_methods
 
+  def self.get_attributes
+    [:name, :tm_mad, :type, :safe_dirs, :ds_mad, :disk_type, :driver, :bridge_list,
+     :ceph_host, :ceph_user, :ceph_secret, :pool_name, :staging_dir, :base_path,
+     :ensure, :cluster, :cluster_id]
+  end
+
   def create
     file = Tempfile.new("onedatastore-#{resource[:name]}")
     builder = Nokogiri::XML::Builder.new do |xml|
-        xml.DATASTORE do
-            xml.NAME resource[:name]
-            xml.TM_MAD resource[:tm]
-            xml.TYPE resource[:type].to_s.upcase
-            xml.SAFE_DIRS do
-                xml.send(resource[:safe_dirs].join(' '))
-            end if resource[:safe_dirs]
-            xml.DS_MAD resource[:dm]
-            xml.DISK_TYPE resource[:disktype]
-            xml.DRIVER resource[:driver]
-            xml.BRIDGE_LIST resource[:bridgelist]
-            xml.CEPH_HOST resource[:cephhost]
-            xml.CEPH_USER resource[:cephuser]
-            xml.CEPH_SECRET resource[:cephsecret]
-            xml.POOL_NAME resource[:poolname]
-            xml.STAGING_DIR resource[:stagingdir]
-            xml.BASE_PATH do
-                resource[:basepath]
-            end if resource[:basepath]
+      xml.DATASTORE do
+        self.class.get_attributes.each do |node|
+          xml.send node.to_s.upcase, resource[node] unless resource[node].nil?
         end
+      end
     end
     tempfile = builder.to_xml
     file.write(tempfile)
     file.close
+    self.debug "Adding new datastore using: #{tempfile}"
     onedatastore('create', file.path)
+    file.delete
     @property_hash[:ensure] = :present
   end
 
@@ -64,55 +58,80 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     @property_hash[:ensure] == :present
   end
 
-  def self.instances
-      datastores = Nokogiri::XML(onedatastore('list','-x')).root.xpath('/DATASTORE_POOL/DATASTORE').map
-      datastores.collect do |datastore|
-        new(
-            :name       => datastore.xpath('./NAME').text,
-            :ensure     => :present,
-            :type       => datastore.xpath('./TEMPLATE/TYPE').text,
-            :dm         => (datastore.xpath('./TEMPLATE/DS_MAD').text unless datastore.xpath('./TEMPLATE/DS_MAD').nil?),
-            :safe_dirs  => (datastore.xpath('./TEMPLATE/SAFE_DIRS').text unless datastore.xpath('./TEMPLATE/SAFE_DIRS').nil?),
-            :tm         => (datastore.xpath('./TEMPLATE/TM_MAD').text unless datastore.xpath('./TEMPLATE/TM_MAD').nil?),
-            :basepath   => (datastore.xpath('./TEMPLATE/BASE_PATH').text unless datastore.xpath('./TEMPLATE/BASE_PATH').nil?),
-            :bridgelist => (datastore.xpath('./TEMPLATE/BRIDGE_LIST').text unless datastore.xpath('./TEMPLATE/BRIDGE_LIST').nil?),
-            :cephhost   => (datastore.xpath('./TEMPLATE/CEPH_HOST').text unless datastore.xpath('./TEMPLATE/CEPH_HOST').nil?),
-            :cephuser   => (datastore.xpath('./TEMPLATE/CEPH_USER').text unless datastore.xpath('./TEMPLATE/CEPH_USER').nil?),
-            :cephsecret => (datastore.xpath('./TEMPLATE/CEPH_SECRET').text unless datastore.xpath('./TEMPLATE/CEPH_SECRET').nil?),
-            :poolname   => (datastore.xpath('./TEMPLATE/POOL_NAME').text unless datastore.xpath('./TEMPLATE/POOL_NAME').nil?),
-            :stagingdir => (datastore.xpath('./TEMPLATE/STAGING_DIR').text unless datastore.xpath('./TEMPLATE/STAGING_DIR').nil?),
-            :driver     => (datastore.xpath('./TEMPLATE/DRIVER').text unless datastore.xpath('./TEMPLATE/DRIVER').nil?),
-            :disktype   => {'0' => 'file', '1' => 'block', '3' => 'rbd'}[datastore.xpath('./DISK_TYPE').text]
-        )
+  def self.get_datastore(xml)
+    datastore_hash = Hash.new
+    get_attributes.each do |node|
+      if node == :type
+        case xml.css("#{node.to_s.upcase}").first.text
+          when '0' then text = 'IMAGE_DS'
+          when '1' then text = 'SYSTEM_DS'
+          when '2' then text = 'FILE_DS'
+        end
+        datastore_hash[node] = text
+      elsif node == :disk_type
+        case xml.css("#{node.to_s.upcase}").first.text
+          when '0' then text = 'file'
+          when '1' then text = 'block'
+          when '3' then text = 'rbd'
+        end
+        datastore_hash[node] = text
+      else
+        datastore_hash[node] = xml.css("#{node.to_s.upcase}").first.text unless xml.css("#{node.to_s.upcase}").first.nil?
       end
+    end
+    datastore_hash
+  end
+
+  def self.instances
+    datastores = Nokogiri::XML(onedatastore('list', '-x')).xpath('/DATASTORE_POOL/DATASTORE')
+    datastores.collect do |datastore|
+      data_hash = get_datastore(datastore)
+      data_hash[:ensure] = :present
+      new(data_hash)
+    end
   end
 
   def self.prefetch(resources)
-    datastores = instances
     resources.keys.each do |name|
-      provider = datastores.find{ |datastore| datastore.name == name }
+      provider = instances.find { |datastore| datastore.name == name }
       resources[name].provider = provider unless provider.nil?
     end
   end
 
+  def flush
+    file = Tempfile.new("onedatastore-#{resource[:name]}")
+
+    tempfile = @property_hash.map { |k, v|
+      unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
+        [k.to_s.upcase, v]
+      end
+    }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+
+    file.write(tempfile)
+    file.close
+    self.debug "Updating datastore using:\n#{tempfile}"
+    onedatastore('update', resource[:name], file.path, '--append') unless @property_hash.empty?
+    file.delete
+  end
+
   #setters
   def type=(value)
-      raise "Can not modify type. You need to delete and recreate the datastore"
+    raise 'Can not modify type. You need to delete and recreate the datastore'
   end
 
-  def dm=(value)
-      raise "Can not modify ds_mad. You need to delete and recreate the datastore"
+  def ds_mad=(value)
+    raise 'Can not modify ds_mad. You need to delete and recreate the datastore'
   end
 
-  def tm=(value)
-      raise "Can not modify tm_mad. You need to delete and recreate the datastore"
+  def tm_mad=(value)
+    raise 'Can not modify tm_mad. You need to delete and recreate the datastore'
   end
 
-  def disktype=(value)
-      raise "Can not modify disktype. You need to delete and recreate the datastore"
+  def disk_type=(value)
+    raise 'Can not modify disktype. You need to delete and recreate the datastore'
   end
 
-  def basepath=(value)
-      raise "Can not modify basepath. You need to delete and recreate the datastore"
+  def base_path=(value)
+    raise 'Can not modify basepath. You need to delete and recreate the datastore'
   end
 end

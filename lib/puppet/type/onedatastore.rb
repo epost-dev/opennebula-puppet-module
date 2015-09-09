@@ -11,28 +11,19 @@
 # Deutsche Post E-POST Development GmbH - 2014, 2015
 #
 Puppet::Type.newtype(:onedatastore) do
-  @doc = "Type for managing datastores in OpenNebula using the onedatastore" +
-         "wrapper command."
+  @doc = 'Type for managing datastores in OpenNebula using the onedatastore wrapper command.'
 
   ensurable
 
   newparam(:name, :namevar => true) do
-    desc "Name of datastore."
+    desc 'Name of datastore.'
     validate do |value|
-        fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
     end
   end
 
-#  newproperty(:preset) do
-#      desc "Use a preset. Valid values: filesystem, vmfs, iscsi, lvm, ceph"
-#  end
-
-#  newproperty(:cluster) do
-#      desc "Add datastore to a cluster"
-#  end
-
   newproperty(:type) do
-    desc "Choose type of datastore. Valid values: images, system, files"
+    desc 'Choose type of datastore. Valid values: images, system, files'
     defaultto :IMAGE_DS
     newvalues(:IMAGE_DS, :SYSTEM_DS, :FILE_DS, :image_ds, :system_ds, :file_ds)
     munge do |value|
@@ -40,57 +31,60 @@ Puppet::Type.newtype(:onedatastore) do
     end
   end
 
-  newproperty(:dm) do
-    desc "Choose a datastore manager: filesystem, vmware, iscsi, lvm, vmfs, ceph"
+  newproperty(:cluster) do
+    desc 'Add datastore to a cluster'
   end
 
-  newproperty(:tm) do
-    desc "Choose a transport manager: shared, ssh, qcow2, iscsi, lvm, vmfs, ceph, dummy"
+  newproperty(:cluster_id) do
+    desc 'Add datastore to a cluster_id'
   end
 
-  newproperty(:disktype) do
-    desc "Choose a disk type: file, block, rdb"
+  newproperty(:ds_mad) do
+    desc 'Choose a datastore manager: filesystem, vmware, iscsi, lvm, vmfs, ceph'
+  end
+
+  newproperty(:tm_mad) do
+    desc 'Choose a transport manager: shared, ssh, qcow2, iscsi, lvm, vmfs, ceph, dummy'
+  end
+
+  newproperty(:disk_type) do
+    desc 'Choose a disk type: file, block, rdb'
   end
 
   newproperty(:driver) do
-    desc "Choose a driver: raw, qcow2"
+    desc 'Choose a driver: raw, qcow2'
   end
 
-  newproperty(:basepath) do
-    desc "Choose a base path"
+  newproperty(:base_path) do
+    desc 'Choose a base path'
   end
 
-  newproperty(:bridgelist) do
-    desc "List of frontend hosts, space separated, for Ceph"
+  newproperty(:bridge_list) do
+    desc 'List of frontend hosts, space separated, for Ceph'
   end
 
-  newproperty(:cephhost) do
-    desc "List of Ceph monitors, space separated"
+  newproperty(:ceph_host) do
+    desc 'List of Ceph monitors, space separated'
   end
 
-  newproperty(:cephuser) do
-    desc "The OpenNebula Ceph user name. If set it is used by RBD commands"
+  newproperty(:ceph_user) do
+    desc 'The OpenNebula Ceph user name. If set it is used by RBD commands'
   end
 
-  newproperty(:cephsecret) do
-    desc "A generated UUID for a LibVirt secret (to hold the CephX authentication " +
-         "key in Libvirt on each hypervisor)"
+  newproperty(:ceph_secret) do
+    desc 'A generated UUID for a LibVirt secret (to hold the CephX authentication key in Libvirt on each hypervisor)'
   end
 
-  newproperty(:poolname) do
-    desc "The OpenNebula Ceph pool name (defaults to one)"
+  newproperty(:pool_name) do
+    desc 'The OpenNebula Ceph pool name (defaults to one)'
   end
 
-  newproperty(:stagingdir) do
-    desc "Temporary scratch space. Must be big enough to store raw image size plus sparse version"
+  newproperty(:staging_dir) do
+    desc 'Temporary scratch space. Must be big enough to store raw image size plus sparse version'
   end
 
   newproperty(:safe_dirs, :array_matching => :all) do
-    desc "Array of safe directories"
+    desc 'Array of safe directories'
   end
-
-#  newproperty(:restricteddirs, :array_matching => :all) do
-#      desc "Array of restricted directory names"
-#  end
 
 end
