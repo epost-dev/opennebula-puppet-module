@@ -71,6 +71,7 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
             end if resource[:context]
         end
     end
+    tempfile = builder.to_xml
     file.write(tempfile)
     file.close
     self.debug "Creating template using #{tempfile}"
@@ -114,9 +115,8 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
   def self.prefetch(resources)
     templates = instances
     resources.keys.each do |name|
-      if provider = templates.find{ |template| template.name == name }
-        resources[name].provider = provider
-      end
+      provider = templates.find { |template| template.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

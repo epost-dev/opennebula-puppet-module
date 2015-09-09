@@ -53,9 +53,8 @@ Puppet::Type.type(:onehost).provide(:cli) do
   def self.prefetch(resources)
     hosts = instances
     resources.keys.each do |name|
-      if provider = hosts.find{ |host| host.name == name }
-        resources[name].provider = provider
-      end
+      provider = hosts.find{ |host| host.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

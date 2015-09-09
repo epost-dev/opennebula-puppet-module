@@ -6,6 +6,19 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 ## Requirements
 
+### Other Puppet Modules
+One needs the following other modules:
+
+- [puppetlabs/stdlib  > 2.2.0](https://github.com/puppetlabs/puppetlabs-stdlib)
+- [puppetlabs/apt     < 2.0.0](https://github.com/puppetlabs/puppetlabs-apt)
+- [puppetlabs/inifile > 1.4.0](https://github.com/puppetlabs/puppetlabs-inifile)
+
+How to install:
+
+    puppet module install puppetlabs-stdlib
+    puppet module install puppetlabs-apt
+    puppet module install puppetlabs-inifile
+
 ### Debian Wheezy
 
 Tested with puppet 3.7.4 from wheezy backports.
@@ -48,6 +61,40 @@ To deploy a Opennebula instance locally run:
      vagrant up <boxname>
 
 where "boxname" can be debian or centos
+
+## Docker
+
+To deploy a Opennebula instance locally in a docker container run these commandos:
+
+First build an image with puppet and the sources in it (Depending on centos:6):
+
+    cd docker
+    docker build --rm -t epost-dev/one .
+    cd ..
+
+Run puppet in the container, choose one:
+
+Only build a container which acts as a opennebula head, gui, but not the kvm things:
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head.pp
+
+Only build a container which acts like a opennebula node:
+
+    # here is a common error i wasn't able to fix. centos 6 in docker has some issues with ksm
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-node.pp
+
+Build a container which acts as head and node
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-node.pp
+
+Build a container which has an apache for the openenbula sunstone configured:
+
+    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-httpd.pp
+
+This Docker command will add the current directory as ```ect/puppet/modules/one```. So one can test each new change without committing or rebuilding the image.
+
+The "spec" files can be found in the spec/docker-int directory of this project. One will build a one head,
+one will build a node and one a head which also can be a node. 
 
 ## Using the Module
 
@@ -109,21 +156,24 @@ This means: addressranges which are not set by Puppet will not be visible using 
 
 
 Create a ONE Datastore
-```
-onedatastore { '<name>':
-    ensure     => present | absent,
-    type       => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
-    dm         => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
-    tm         => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
-    cephhost   => 'cephhost', # (optional: ceph only)
-    cephuser   => 'cephuser', # (optional: ceph only)
-    cephsecret => 'ceph-secret-here', # (optional: ceph only)
-    poolname   => 'cephpoolname', # (optional: ceph only)
-    bridgelist => 'host1 host2 host3', # (optional: ceph only)
-    disktype   => 'file' | 'block' | 'rdb',
-    basepath   => '/var/lib/one/datastore',
-}
-```
+
+    onedatastore { '<name>':
+        ensure      => present | absent,
+        type        => 'IMAGE_DS' | 'SYSTEM_DS' | 'FILE_DS',
+        ds_mad      => 'fs' | 'vmware' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph',
+        tm_mad      => 'shared' | 'ssh' | 'qcow2' | 'iscsi' | 'lvm' | 'vmfs' | 'ceph' | 'dummy',
+        driver      => 'raw | qcow2',
+        ceph_host   => 'cephhost', # (optional: ceph only)
+        ceph_user   => 'cephuser', # (optional: ceph only)
+        ceph_secret => 'ceph-secret-here', # (optional: ceph only)
+        pool_name   => 'cephpoolname', # (optional: ceph only)
+        bridge_list => 'host1 host2 host3', # (optional: ceph only)
+        disk_type   => 'file' | 'block' | 'rdb',
+        base_path   => '/some/lib/path/datastore', #Optional
+        cluster     => 'somename', # Optional
+        cluster_id  => '1234', # Optional
+    }
+
 
 Create a ONE Host
 ```
@@ -224,6 +274,6 @@ For questions or bugs [create an issue on Github](https://github.com/epost-dev/o
 
 ##License
 
-Copyright © 2013 [Deutsche Post E-Post Development GmbH](http://epost.de)
+Copyright © 2013 - 2015 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
 Distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).

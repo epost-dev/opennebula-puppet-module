@@ -83,9 +83,8 @@ Puppet::Type.type(:onesecgroup).provide(:cli) do
   def self.prefetch(resources)
     secgroups = instances
     resources.keys.each do |name|
-      if provider = secgroups.find{ |secgroup| secgroup.name == name }
-        resources[name].provider = provider
-      end
+      provider = secgroups.find{ |secgroup| secgroup.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

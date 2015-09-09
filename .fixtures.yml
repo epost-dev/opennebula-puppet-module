@@ -4,5 +4,6 @@ fixtures:
         apt: 
           repo: "https://github.com/puppetlabs/puppetlabs-apt.git"
           ref: "1.8.0"
+        inifile: "https://github.com/puppetlabs/puppetlabs-inifile"
     symlinks:
-        one: "../../../"
+        one: "#{source_dir}"

@@ -105,9 +105,8 @@ Puppet::Type.type(:oneimage).provide(:cli) do
   def self.prefetch(resources)
     images = instances
     resources.keys.each do |name|
-      if provider = images.find{ |image| image.name == name }
-        resources[name].provider = provider
-      end
+      provider = images.find{ |image| image.name == name }
+      resources[name].provider = provider unless provider.nil?
     end
   end
 

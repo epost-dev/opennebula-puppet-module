@@ -51,7 +51,7 @@ class one::params {
   # should we enable opennebula repos?
   $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
   # Which version
-  $one_version = hiera('one::one_version', '4.10' )
+  $one_version = hiera('one::one_version', '4.12' )
   # should VM_SUBMIT_ON_HOLD be enabled in oned.conf?
   $oned_vm_submit_on_hold    = hiera('one::oned::vm_submit_on_hold', 'NO')
 
