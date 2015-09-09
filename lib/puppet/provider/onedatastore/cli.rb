@@ -105,7 +105,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
       unless resource[k].nil? or resource[k].to_s.empty? or [:name, :provider, :ensure].include?(k)
         [k.to_s.upcase, v]
       end
-    }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    }.map { |a| "#{a[0]} = \"#{a[1]}\"" unless a.nil? }.join("\n")
 
     file.write(tempfile)
     file.close
