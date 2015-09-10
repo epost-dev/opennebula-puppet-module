@@ -28,6 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box_version = '1.0.1'
     centos.vm.provision 'shell', inline: '/usr/bin/yum -y install epel-release'
     centos.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
+    centos.vm.provision 'shell', inline: 'puppet module install puppetlabs-inifile'
     centos.vm.provision 'puppet' do |puppet|
       puppet.manifests_path = 'manifests'
       puppet.manifest_file = 'init.pp'
@@ -41,6 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define 'debian' do |debian|
     debian.vm.box = 'puppetlabs/debian-7.8-64-puppet'
     debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
+    debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-inifile'
     debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-apt'
     debian.vm.provision 'puppet' do |puppet|
       puppet.manifests_path = 'manifests'
