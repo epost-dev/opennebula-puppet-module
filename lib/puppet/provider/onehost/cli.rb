@@ -21,10 +21,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
   end
 
-  #optional_commands(:onecluster, "onecluster") do
-  #  environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
-  #end
-
   mk_resource_methods
 
   def create
@@ -134,7 +130,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     elsif validate_cluster==false
       raise "Onehost cannot be updated. Invalid Cluster ID"
     elsif @property_hash[:cluster_id].to_s == "-1"
-      self.debug("going to add host to cluster")
       add_to_cluster
     else
       switch_cluster

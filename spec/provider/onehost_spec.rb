@@ -6,7 +6,7 @@ provider_class = Puppet::Type.type(:onehost).provider(:onehost)
 describe provider_class do
   let(:resource ) {
     Puppet::Type::Onehost.new({
-      :name => 'new_cluster',
+      :name => 'new_host',
     })
   }
 
