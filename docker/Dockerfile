@@ -12,7 +12,8 @@ ENV FACTER_lsbmajdistrelease="6"
 RUN yum -y install https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm epel-release
 RUN yum makecache && yum -y install puppet tar hostname
 
-RUN puppet module install puppetlabs-apt
+RUN puppet module install puppetlabs-inifile
+RUN puppet module install puppetlabs-stdlib
 RUN puppet module install puppetlabs-concat
 RUN puppet module install puppetlabs-mysql
 RUN puppet module install puppetlabs-apache
