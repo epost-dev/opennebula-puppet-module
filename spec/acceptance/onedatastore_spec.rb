@@ -189,7 +189,7 @@ describe 'onedatastore type' do
         type     => 'system_ds',
       } ->
 
-      onehost { 'host01':
+      onehost { 'host02':
         im_mad => 'kvm',
         vm_mad => 'kvm',
         vn_mad => 'dummy',
@@ -208,7 +208,7 @@ describe 'onedatastore type' do
 
       onecluster { 'production':
           ensure     => present,
-          hosts      => 'host01',
+          hosts      => 'host02',
           vnets      => 'vnet1',
           datastores => 'ds1',
       }
