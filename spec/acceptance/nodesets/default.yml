@@ -7,3 +7,4 @@ HOSTS:
     hypervisor : vagrant
 CONFIG:
   type: foss
+  log_level: verbose
