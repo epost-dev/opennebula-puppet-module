@@ -25,9 +25,8 @@ describe 'onedatastore type' do
     end
   end
 
-  describe 'when creating a Files datastore' do
-    it 'should idempotently run' do
-      skip
+  describe 'when creating a File datastore' do
+    it 'work without errors' do
       pp = <<-EOS
       onedatastore { 'kernels':
         ds_mad    => 'fs',
@@ -38,7 +37,6 @@ describe 'onedatastore type' do
       EOS
 
       apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
     end
   end
 
@@ -180,6 +178,43 @@ describe 'onedatastore type' do
 
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when assigning a Datastore to a Cluster' do
+    it 'should work with no errors' do
+      pp = <<-EOS
+      onedatastore { 'ds1':
+        tm_mad   => 'shared',
+        type     => 'system_ds',
+      } ->
+
+      onehost { 'host01':
+        im_mad => 'kvm',
+        vm_mad => 'kvm',
+        vn_mad => 'dummy',
+      } ->
+
+      onevnet { 'vnet1':
+          ensure          => present,
+          bridge          => 'basebr0',
+          phydev          => 'br0',
+          dnsservers      => ['8.8.8.8', '4.4.4.4'],
+          gateway         => '10.0.2.1',
+          vlanid          => '1550',
+          netmask         => '255.255.0.0',
+          network_address => '10.0.2.0',
+      } ->
+
+      onecluster { 'production':
+          ensure     => present,
+          hosts      => 'host01',
+          vnets      => 'vnet1',
+          datastores => 'ds1',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
     end
   end
 
