@@ -2,23 +2,49 @@ require 'spec_helper_acceptance'
 
 describe 'onecluster type' do
   before :all do
-    skip
     pp = <<-EOS
     class { 'one':
       oned => true,
     }
-    ->
-    onehost { ['host01', 'host02']:
-      ensure  => present, # FIXME: ensurable should default to :present...
+    onehost { 'host01':
+      im_mad => 'dummy',
+      vm_mad => 'dummy',
+      vn_mad => 'dummy',
+      status => 'disabled',
     }
-    ->
-    onevnet { ['Blue LAN', 'Red LAN']:
-      type       => 'fixed',
-      bridge     => 'vbr1',
+
+    onehost { 'host02':
+      im_mad => 'dummy',
+      vm_mad => 'dummy',
+      vn_mad => 'dummy',
+      status => 'disabled',
     }
+
+    onevnet { 'vnet1':
+      ensure          => present,
+      bridge          => 'basebr0',
+      phydev          => 'br0',
+      dnsservers      => ['8.8.8.8', '4.4.4.4'],
+      gateway         => '10.0.2.1',
+      vlanid          => '1550',
+      netmask         => '255.255.0.0',
+      network_address => '10.0.2.0',
+    }
+
+    onevnet { 'vnet2':
+      ensure          => present,
+      bridge          => 'basebr0',
+      phydev          => 'br0',
+      dnsservers      => ['8.8.8.8', '4.4.4.4'],
+      gateway         => '10.0.2.1',
+      vlanid          => '1550',
+      netmask         => '255.255.0.0',
+      network_address => '10.0.2.0',
+    }
+
     EOS
     apply_manifest(pp, :catch_failures => true)
-    apply_manifest(pp, :catch_changes => true)
+    #apply_manifest(pp, :catch_changes => true) # FIXME - Hosts can't run idempotently
   end
 
   after :all do
@@ -26,7 +52,12 @@ describe 'onecluster type' do
     onehost { ['host01', 'host02']:
       ensure => absent,
     }
-    onevnet { ['Blue LAN', 'Red LAN']:
+
+    onevnet { ['vnet1', 'vnet2']:
+      ensure => absent,
+    }
+
+    onedatastore { ['system', 'default', 'files']:
       ensure => absent,
     }
     EOS
@@ -36,9 +67,10 @@ describe 'onecluster type' do
 
   describe 'when creating a cluster' do
     it 'should idempotently run' do
-      skip
       pp = <<-EOS
-      onecluster { 'production': }
+      onecluster { 'production':
+        ensure => present,
+      }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
@@ -48,7 +80,6 @@ describe 'onecluster type' do
 
   describe 'when adding a host to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         hosts => 'host01',
@@ -62,7 +93,6 @@ describe 'onecluster type' do
 
   describe 'when adding a datastore to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => 'system',
@@ -76,10 +106,9 @@ describe 'onecluster type' do
 
   describe 'when adding a vnet to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
-        vnets => 'Blue LAN',
+        vnets => 'vnet1',
       }
       EOS
 
@@ -90,7 +119,6 @@ describe 'onecluster type' do
 
   describe 'when adding an array of hosts to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         hosts => ['host01', 'host02'],
@@ -104,7 +132,6 @@ describe 'onecluster type' do
 
   describe 'when adding an array of datastores to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => ['system','default','files'],
@@ -118,10 +145,9 @@ describe 'onecluster type' do
 
   describe 'when adding an array of vnets to a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
-        vnets => ['Blue LAN', 'Red LAN'],
+        vnets => ['vnet1', 'vnet2'],
       }
       EOS
 
@@ -132,10 +158,9 @@ describe 'onecluster type' do
 
   describe 'when removing a host from a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
-        hosts => 'host02',
+        hosts => 'host01',
       }
       EOS
 
@@ -146,7 +171,6 @@ describe 'onecluster type' do
 
   describe 'when removing a datastore from a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
         datastores => 'default',
@@ -160,10 +184,22 @@ describe 'onecluster type' do
 
   describe 'when removing a vnet from a cluster' do
     it 'should idempotently run' do
-      skip
       pp =<<-EOS
       onecluster { 'production':
-        vnets => ['Red LAN'],
+         vnets => 'vnet1',
+      }
+      EOS
+
+      apply_manifest(pp, :catch_failures => true)
+      apply_manifest(pp, :catch_changes => true)
+    end
+  end
+
+  describe 'when removing all vnets from a cluster' do
+    it 'should idempotently run' do
+      pp =<<-EOS
+      onecluster { 'production':
+         vnets => [],
       }
       EOS
 
@@ -174,8 +210,6 @@ describe 'onecluster type' do
 
   describe 'when destroying a cluster' do
     it 'should idempotently run' do
-      skip
-      pending 'Fail in acceptance tests only???'
       pp =<<-EOS
       onecluster { 'production':
         ensure => absent,
