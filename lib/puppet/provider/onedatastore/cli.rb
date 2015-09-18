@@ -61,7 +61,12 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   def self.get_datastore(xml)
     datastore_hash = Hash.new
     get_attributes.each do |node|
-      if node == :type
+      if node == :base_path
+        ## removes a char, one or more digits from the end
+        #  required to match basepath /tmp vs /tmp/102
+        text = xml.css("#{node.to_s.upcase}").first.text.sub!(/.\d+\z/, '')
+        datastore_hash[node] = text
+      elsif node == :type
         case xml.css("#{node.to_s.upcase}").first.text
           when '0' then text = 'IMAGE_DS'
           when '1' then text = 'SYSTEM_DS'

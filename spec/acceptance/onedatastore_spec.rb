@@ -12,16 +12,65 @@ describe 'onedatastore type' do
   end
 
   describe 'when creating a System datastore' do
-    it 'should idempotently run' do
+
+    after(:each) do
       pp = <<-EOS
       onedatastore { 'nfs_ds':
-        tm_mad   => 'shared',
-        type     => 'system_ds',
+        ensure => absent,
       }
       EOS
 
       apply_manifest(pp, :catch_failures => true)
       apply_manifest(pp, :catch_changes => true)
+    end
+
+    context "with default values" do
+      it 'should idempotently run' do
+        pp = <<-EOS
+        onedatastore { 'nfs_ds':
+          tm_mad   => 'shared',
+          type     => 'system_ds',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
+      end
+    end
+
+    context "with custom values" do
+      it 'should idempotently run' do
+        pp = <<-EOS
+        onedatastore { 'nfs_ds':
+          ensure    => present,
+          type      => 'system_ds',
+          tm_mad    => 'shared',
+          driver    => 'raw',
+          disk_type => 'file',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
+      end
+    end
+
+    context "with custom basepath" do
+      it 'should idempotently run' do
+        pp = <<-EOS
+        onedatastore { 'nfs_ds':
+          ensure    => present,
+          type      => 'system_ds',
+          tm_mad    => 'shared',
+          driver    => 'raw',
+          disk_type => 'file',
+          base_path => '/tmp',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
+      end
     end
   end
 
