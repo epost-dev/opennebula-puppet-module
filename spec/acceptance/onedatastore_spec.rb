@@ -55,6 +55,23 @@ describe 'onedatastore type' do
       end
     end
 
+    context "with custom basepath" do
+      it 'should idempotently run' do
+        pp = <<-EOS
+        onedatastore { 'nfs_ds':
+          ensure    => present,
+          type      => 'system_ds',
+          tm_mad    => 'shared',
+          driver    => 'raw',
+          disk_type => 'file',
+          base_path => '/tmp',
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
+      end
+    end
   end
 
   describe 'when creating a File datastore' do
