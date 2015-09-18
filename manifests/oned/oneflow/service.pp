@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::oneflow::service {
-  service {'oneflow-server':
+  service {'opennebula-flow':
     ensure  => running,
     enable  => true,
     require => Service['opennebula'],
