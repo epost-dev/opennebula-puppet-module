@@ -126,6 +126,7 @@ class one::oned::config(
   if $kvm_driver_emulator != 'undef' {
     ini_setting{ 'set_kvm_driver_emulator':
       ensure  => present,
+      section => '',
       path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
       setting => 'EMULATOR',
       value   => $kvm_driver_emulator,
@@ -135,6 +136,7 @@ class one::oned::config(
   if $kvm_driver_nic_attrs != 'undef' {
     ini_setting{ 'set_kvm_driver_nic':
       ensure  => present,
+      section => '',
       path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
       setting => 'NIC',
       value   => $kvm_driver_nic_attrs,
