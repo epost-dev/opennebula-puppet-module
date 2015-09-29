@@ -219,7 +219,7 @@ describe 'one', :type => :class do
                 it { should contain_package('ruby-treetop') }
                 it { should contain_package('ruby-polyglot') }
               end
-              it { should contain_service('oneflow-server').with_ensure('running') }
+              it { should contain_service('opennebula-flow').with_ensure('running') }
             end
             context 'with onegate' do
               let(:params) { {
