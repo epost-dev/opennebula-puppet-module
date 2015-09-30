@@ -197,12 +197,10 @@ class one::params {
     'RedHat': {
       if $::operatingsystemmajrelease == '7' {
         $node_packages = ['opennebula-node-kvm',
-                          'sudo',
                           'ipset'
                           ]
       } else {
         $node_packages = ['opennebula-node-kvm',
-                          'sudo',
                           'python-virtinst',
                           'ipset'
                           ]
@@ -229,7 +227,6 @@ class one::params {
     'Debian': {
       $use_gems        = true
       $node_packages   = ['opennebula-node',
-                          'sudo',
                           'virtinst',
                           'ipset'
                           ]
