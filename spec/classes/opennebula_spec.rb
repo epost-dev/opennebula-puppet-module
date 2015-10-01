@@ -235,7 +235,7 @@ describe 'one', :type => :class do
               elsif f[:osfamily] == 'Debian'
                 #it { should contain_package('parse-cron') }
               end
-              it { should contain_service('onegate-server').with_ensure('running') }
+              it { should contain_service('opennebula-gate').with_ensure('running') }
             end
             context 'with sunstone' do
               let(:params) { {
