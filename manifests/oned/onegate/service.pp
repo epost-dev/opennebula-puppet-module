@@ -17,7 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::onegate::service {
-  service {'onegate-server':
+  service {'opennebula-gate':
     ensure  => running,
     enable  => true,
     require => Service['opennebula'],
