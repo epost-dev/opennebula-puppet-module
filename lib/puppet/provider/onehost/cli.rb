@@ -13,6 +13,7 @@
 
 require 'rubygems'
 require 'nokogiri'
+require 'pp'
 
 Puppet::Type.type(:onehost).provide(:cli) do
   desc "onehost provider"
@@ -29,6 +30,8 @@ Puppet::Type.type(:onehost).provide(:cli) do
     else
       onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad], '--cluster', resource[:cluster_id])
     end
+    Puppet.debug("Validate Resource State")
+    post_validate_change
     @property_hash[:ensure] = :present
   end
 
@@ -43,23 +46,28 @@ Puppet::Type.type(:onehost).provide(:cli) do
 
   def disable
     onehost('disable', resource[:name])
+    post_validate_change
   end
 
   def enable
     onehost('enable', resource[:name])
+    post_validate_change
   end
 
   def add_to_cluster
     onecluster("addhost", resource[:cluster_id], resource[:name])
+    post_validate_change
   end
 
   def delete_from_cluster
     onecluster("delhost", @property_hash[:cluster_id], resource[:name])
+    post_validate_change
   end
 
   def switch_cluster
     delete_from_cluster
     add_to_cluster
+    post_validate_change
   end
 
   def validate_cluster
@@ -99,6 +107,46 @@ Puppet::Type.type(:onehost).provide(:cli) do
     end
   end
 
+  def postfetch()
+    host = Nokogiri::XML(onehost('show', resource[:name], '-x')).root.xpath('/HOST')
+    @post_property_hash = Hash.new
+    @post_property_hash[:name] = host.xpath('./NAME').text.to_s
+    @post_property_hash[:im_mad] = host.xpath('./IM_MAD').text.to_s
+    @post_property_hash[:vm_mad] = host.xpath('./VM_MAD').text.to_s
+    @post_property_hash[:vn_mad] = host.xpath('./VN_MAD').text.to_s
+    @post_property_hash[:cluster_id] = host.xpath('./CLUSTER_ID').text.to_s
+    @post_property_hash[:status] = {'0' => 'init', '2' => 'enabled','3' => 'error', '4' => 'disabled'}[host.xpath('./STATE').text.to_s]
+  end
+
+  def post_validate_change()
+    postfetch
+
+    resource_state = Hash.new
+    resource_state[:name] = resource[:name].to_s
+    resource_state[:im_mad] = resource[:im_mad].to_s
+    resource_state[:vm_mad] = resource[:vm_mad].to_s
+    resource_state[:vn_mad] = resource[:vn_mad].to_s
+    resource_state[:status] = resource[:status].to_s
+    resource_state[:cluster_id] = resource[:cluster_id].to_s
+
+    max_attempts = 3
+    attempts = 0
+    sleep_time = 30
+
+    while @post_property_hash != resource_state do
+        attempts += 1
+        sleep sleep_time
+        postfetch
+        if @post_property_hash[:status].to_s == 'error' and resource_state[:status].to_s != 'error'
+          raise "Failed to apply resource, final Resource state: #{@post_property_hash[:status]}"
+        end
+        if attempts == max_attempts and @post_property_hash != resource_state
+          raise "Failed to apply resource change"
+        end
+    end
+
+  end
+
   # setters
   def im_mad=(value)
      raise "onehosts can not be updated. You have to remove and recreate the host"
@@ -123,9 +171,7 @@ Puppet::Type.type(:onehost).provide(:cli) do
   end
 
   def cluster_id=(value)
-    if resource[:status] == "error"
-      raise "Host in wrong state to perform update on Cluster ID"
-    elsif value.to_s == "-1" and @property_hash[:cluster_id].to_s != "-1"
+    if value.to_s == "-1" and @property_hash[:cluster_id].to_s != "-1"
       delete_from_cluster
     elsif validate_cluster==false
       raise "Onehost cannot be updated. Invalid Cluster ID"
