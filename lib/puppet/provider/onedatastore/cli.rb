@@ -127,7 +127,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     #     READY     = 0, /** < Datastore ready to use */
     #     DISABLED  = 1  /** < System Datastore can not be used */
     # };
-    status_ready = 1
+    status_ready = 0
     datastore = Nokogiri::XML(onedatastore('show', resource[:name], '-x')).root.xpath('DATASTORE')
     (datastore.xpath('STATE').text.to_i == status_ready)
   end
