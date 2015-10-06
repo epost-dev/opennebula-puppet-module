@@ -61,7 +61,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     @property_hash[:ensure] = :present
   end
 
-  def post_validate_change()
+  def post_validate_change
     [1..3].each do
       if is_status_success?
         break
