@@ -62,6 +62,11 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def post_validate_change
+    self.debug "post_validate_change: #{resource[:self_test]}"
+    if resource[:self_test].to_s == 'false'
+      return
+    end
+
     [1..3].each do
       if is_status_success?
         break
@@ -173,7 +178,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
 
     file.write(tempfile)
     file.close
-    self.debug "Updating datastore using:\n#{tempfile}"
+    Puppet.debug("Updating datastore using:\n#{tempfile}")
     onedatastore('update', resource[:name], file.path, '--append') unless @property_hash.empty?
     file.delete
   end

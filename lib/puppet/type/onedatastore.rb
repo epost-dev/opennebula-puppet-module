@@ -87,4 +87,10 @@ Puppet::Type.newtype(:onedatastore) do
     desc 'Array of safe directories'
   end
 
+  newproperty(:self_test) do
+    desc 'Flag to activate self-test: defaults to false; must be true|false'
+    defaultto :false
+    newvalues(:true, :false)
+  end
+
 end
