@@ -62,10 +62,12 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   end
 
   def post_validate_change
-    self.debug "post_validate_change: #{resource[:self_test]}"
-    if resource[:self_test].to_s == 'false'
+    unless resource[:self_test]
+      self.debug ":self_test not defined"
       return
     end
+
+    self.debug ":self_test defined"
 
     [1..3].each do
       if is_status_success?
