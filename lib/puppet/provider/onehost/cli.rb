@@ -84,19 +84,58 @@ Puppet::Type.type(:onehost).provide(:cli) do
     end
   end
 
+  def get_status_codes( status_code )
+    case status_code
+      when 0
+      	return 'init'
+      when 1
+      	return 'update'
+      when 2
+      	return 'enabled'
+      when 3
+      	return 'error'
+      when 4
+      	return 'disabled'
+      when 5..7
+      	return 'enabled'
+      else
+      	raise "Status Code out of Range"
+    end
+  end
+
   def self.instances
-     hosts = Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST')
-     hosts.collect do |host|
-       new(
-           :name   => host.xpath('./NAME').text,
-           :ensure => :present,
-           :im_mad => host.xpath('./IM_MAD').text,
-           :vm_mad => host.xpath('./VM_MAD').text,
-           :vn_mad => host.xpath('./VN_MAD').text,
-           :cluster_id => host.xpath('./CLUSTER_ID').text,
-           :status => {'0' => 'init', '2' => 'enabled','3' => 'error', '4' => 'disabled'}[host.xpath('./STATE').text]
-       )
-     end
+	#   enum HostState
+	#{
+	#    INIT                 = 0, /**< Initial state for enabled hosts. */
+	#    MONITORING_MONITORED = 1, /**< Monitoring the host (from monitored). */
+	#    MONITORED            = 2, /**< The host has been successfully monitored. */
+	#    ERROR                = 3, /**< An error ocurrer while monitoring the host. */
+	#    DISABLED             = 4, /**< The host is disabled won't be monitored. */
+	#    MONITORING_ERROR     = 5, /**< Monitoring the host (from error). */
+	#    MONITORING_INIT      = 6, /**< Monitoring the host (from init). */
+	#    MONITORING_DISABLED  = 7  /**< Monitoring the host (from disabled). */
+	#};
+	# This provider simplifies OpenNebula states by combining them into two valid super states
+	# a) "disabled" ( 4 )
+	# b) "enabled" which consists of any state other than DISABLED ( 0 ,1, 2, 3 ,5 ,6 ,7 )
+    # This is required since the state can dynamically change during runtime which might conflict
+    # with a puppet tries to apply
+    # (e.g. Puppet should not try to recover a host form an update state),
+    # hence we consider update, init and error as type of enabled
+    #
+	 hosts = Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST')
+	 hosts.collect do |host|
+	   new(
+	       :name   => host.xpath('./NAME').text,
+	       :ensure => :present,
+	       :im_mad => host.xpath('./IM_MAD').text,
+	       :vm_mad => host.xpath('./VM_MAD').text,
+	       :vn_mad => host.xpath('./VN_MAD').text,
+	       :cluster_id => host.xpath('./CLUSTER_ID').text,
+	       :status => {'0' => 'enabled', '1' => 'enabled', '2' => 'enabled','3' => 'enabled', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text]
+	       #:status => {'0' => 'init', '1' => 'update', '2' => 'enabled','3' => 'error', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text]
+	   )
+	 end
   end
 
   def self.prefetch(resources)
@@ -108,6 +147,10 @@ Puppet::Type.type(:onehost).provide(:cli) do
     end
   end
 
+  def flush
+    Puppet.debug("nothing to flush here, bye bye")
+  end
+
   def postfetch()
     host = Nokogiri::XML(onehost('show', resource[:name], '-x')).root.xpath('/HOST')
     @post_property_hash = Hash.new
@@ -116,12 +159,18 @@ Puppet::Type.type(:onehost).provide(:cli) do
     @post_property_hash[:vm_mad] = host.xpath('./VM_MAD').text.to_s
     @post_property_hash[:vn_mad] = host.xpath('./VN_MAD').text.to_s
     @post_property_hash[:cluster_id] = host.xpath('./CLUSTER_ID').text.to_s
-    @post_property_hash[:status] = {'0' => 'init', '2' => 'enabled','3' => 'error', '4' => 'disabled'}[host.xpath('./STATE').text.to_s]
+    #@post_property_hash[:status] = {'0' => 'enabled', '1' => 'enabled', '2' => 'enabled','3' => 'enabled', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text.to_s]
+    @post_property_hash[:status] = {'0' => 'init', '1' => 'update', '2' => 'enabled','3' => 'error', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text.to_s]
+
   end
 
   def post_validate_change()
+    unless resource[:self_test]
+      Puppet.debug("nothing to validate, bye bye")
+      return
+    end
+    Puppet.debug("Validating state")
     postfetch
-
     resource_state = Hash.new
     resource_state[:name] = resource[:name].to_s
     resource_state[:im_mad] = resource[:im_mad].to_s
