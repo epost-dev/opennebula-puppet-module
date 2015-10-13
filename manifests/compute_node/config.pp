@@ -85,7 +85,7 @@ class one::compute_node::config (
     ensure => file,
     path   => $_polkit_file_path,
     owner  => 'root',
-    group  => 'root'
+    group  => 'root',
     source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
   } ->
 
