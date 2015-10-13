@@ -6,7 +6,7 @@ describe 'onetemplate type' do
     class { 'one':
       oned => true,
     }
-    onetemplate { 'test-vm':
+    onetemplate { 'test-template':
       ensure => absent,
     }
     EOS
@@ -14,35 +14,22 @@ describe 'onetemplate type' do
     apply_manifest(pp, :catch_changes => true)
   end
 
-  describe 'when creating a template with deprecated properties' do
+  after :all do
+    pp =<<-EOS
+    onetemplate { 'test-template':
+      ensure => absent,
+    }
+    EOS
+    apply_manifest(pp, :catch_failures => true)
+    apply_manifest(pp, :catch_changes => true)
+  end
+
+  describe 'when creating a template with default properties' do
     it 'should idempotently run' do
-      skip
       pp = <<-EOS
-        onetemplate { 'test-vm':
-          # Capacity
+        onetemplate { 'test-template':
           cpu    => 1,
           memory => 128,
-
-          # OS
-          os_kernel     => '/vmlinuz',
-          os_initrd     => '/initrd.img',
-          os_root       => 'sda1',
-          os_kernel_cmd => 'ro xencons=tty console=tty1',
-
-          # Features
-          acpi        => true,
-          pae         => true,
-
-          # Disks
-          disks  => [ 'Data', 'Experiments', ],
-
-          # Network
-          nics   => [ 'Blue', 'Red', ],
-
-          # I/O Devices
-          graphics_type   => 'vnc',
-          graphics_listen => '0.0.0.0',
-          graphics_port   => 5,
         }
       EOS
 
@@ -51,24 +38,11 @@ describe 'onetemplate type' do
     end
   end
 
-  describe 'when destroying a template' do
-    it 'should idempotently run' do
-      pp =<<-EOS
-      onetemplate { 'test-vm':
-        ensure => absent,
-      }
-      EOS
-
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
-  end
-
-  describe 'when creating a template' do
+  describe 'when creating a template with custom properties' do
     it 'should idempotently run' do
       skip
       pp = <<-EOS
-        onetemplate { 'test-vm':
+        onetemplate { 'test-template':
           # Capacity
           cpu    => 1,
           memory => 128,
@@ -118,7 +92,7 @@ describe 'onetemplate type' do
   describe 'when destroying a template' do
     it 'should idempotently run' do
       pp =<<-EOS
-      onetemplate { 'test-vm':
+      onetemplate { 'test-template':
         ensure => absent,
       }
       EOS
