@@ -58,8 +58,8 @@ class one::oned::sunstone::config (
 
   if $sunstone_logo_png != 'undef' or $sunstone_logo_small_png != 'undef' {
     file { '/usr/lib/one/sunstone/public/images':
-      ensure  => directory,
-      mode    => '0755',
+      ensure => directory,
+      mode   => '0755',
     }
   }
 

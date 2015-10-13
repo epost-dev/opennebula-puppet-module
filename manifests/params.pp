@@ -12,7 +12,7 @@
 #
 # Contributors:
 # - Martin Alfke
-# - Achim Ledermüller (Netways GmbH)
+# - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
 #
 # === License
@@ -49,7 +49,7 @@ class one::params {
   $oned_ldap_mapping_default = hiera('one::oned::ldap_mapping_default','undef')
   $oned_ldap_mappings = hiera('one::oned::ldap_mappings',undef)
   # should we enable opennebula repos?
-  $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
+  $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' ) # lint:ignore:quoted_booleans
   # Which version
   $one_version = hiera('one::one_version', '4.12' )
   # should VM_SUBMIT_ON_HOLD be enabled in oned.conf?
@@ -87,7 +87,7 @@ class one::params {
   $vnc_proxy_support_wss     = hiera('one::oned::vnc_proxy_support_wss', 'no')
   $vnc_proxy_cert            = hiera('one::oned::vnc_proxy_cert', '')
   $vnc_proxy_key             = hiera('one::oned::vnc_proxy_key', '')
-  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false')
+  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false') # lint:ignore:quoted_booleans
 
   # generic params for nodes and oned
   $oneuid = '9869'
@@ -128,8 +128,7 @@ class one::params {
   $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
 
   $preseed_data              = hiera ('one::node::preseed::data', {})
-  $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url',
-                                      'http://ftp.debian.org/debian')
+  $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url', 'http://ftp.debian.org/debian')
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
   $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 
@@ -180,13 +179,13 @@ class one::params {
 
   if ($hook_scripts) {
     validate_hash($hook_scripts)
-    $vm_hook_scripts=$hook_scripts['VM']
+    $vm_hook_scripts = $hook_scripts['VM'] # lint:ignore:variable_contains_upcase
 
     if ($vm_hook_scripts) {
       validate_hash($vm_hook_scripts)
     }
 
-    $host_hook_scripts=$hook_scripts['HOST']
+    $host_hook_scripts = $hook_scripts['HOST'] # lint:ignore:variable_contains_upcase
     if ($host_hook_scripts) {
       validate_hash($host_hook_scripts)
     }
@@ -196,16 +195,18 @@ class one::params {
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '7' {
-        $node_packages = ['opennebula-node-kvm',
-                          'sudo',
-                          'ipset'
-                          ]
+        $node_packages = [
+          'opennebula-node-kvm',
+          'sudo',
+          'ipset',
+        ]
       } else {
-        $node_packages = ['opennebula-node-kvm',
-                          'sudo',
-                          'python-virtinst',
-                          'ipset'
-                          ]
+        $node_packages = [
+          'opennebula-node-kvm',
+          'sudo',
+          'python-virtinst',
+          'ipset',
+        ]
       }
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
@@ -213,36 +214,39 @@ class one::params {
       $oned_sunstone_packages = 'opennebula-sunstone'
       $oned_sunstone_ldap_pkg = ['ruby-ldap','rubygem-net-ldap']
       # params for oneflow (optional, needs one::oneflow set to true)
-      $oned_oneflow_packages = ['opennebula-flow',
-                                'rubygem-treetop',
-                                'rubygem-polyglot'
-                                ]
+      $oned_oneflow_packages = [
+        'opennebula-flow',
+        'rubygem-treetop',
+        'rubygem-polyglot',
+      ]
       # params for onegate (optional, needs one::onegate set to true)
       $oned_onegate_packages = ['opennebula-gate', 'rubygem-parse-cron']
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
-      $use_gems           = str2bool(hiera('one::oned::install::use_gems', 'true'))
+      $use_gems           = str2bool(hiera('one::oned::install::use_gems', 'true')) # lint:ignore:quoted_booleans
       $rubygems           = ['builder', 'sinatra']
       $rubygems_rpm       = ['rubygem-builder', 'rubygem-sinatra']
     }
     'Debian': {
       $use_gems        = true
-      $node_packages   = ['opennebula-node',
-                          'sudo',
-                          'virtinst',
-                          'ipset'
-                          ]
+      $node_packages   = [
+        'opennebula-node',
+        'sudo',
+        'virtinst',
+        'ipset',
+      ]
       $rubygems       = ['parse-cron', 'builder', 'sinatra']
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
       $oned_sunstone_packages = 'opennebula-sunstone'
       $oned_sunstone_ldap_pkg = ['ruby-ldap','ruby-net-ldap']
-      $oned_oneflow_packages = ['opennebula-flow',
-                                'ruby-treetop',
-                                'ruby-polyglot'
-                                ]
+      $oned_oneflow_packages = [
+        'opennebula-flow',
+        'ruby-treetop',
+        'ruby-polyglot',
+      ]
       $oned_onegate_packages = ['opennebula-gate']
       $libvirtd_srv = 'libvirt-bin'
       $libvirtd_cfg = '/etc/default/libvirt-bin'
@@ -250,7 +254,7 @@ class one::params {
     }
     default: {
       fail("Your OS - ${::osfamily} - is not yet supported.
-            Please add required functionality to params.pp")
+        Please add required functionality to params.pp")
     }
   }
 }
