@@ -33,5 +33,5 @@ if puppetversion = ENV['PUPPET_GEM_VERSION']
     gem 'hiera-puppet', :require => false
   end
 else
-  gem 'puppet', :require => false
+  gem 'puppet', '< 4', :require => false
 end

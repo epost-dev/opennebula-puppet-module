@@ -60,7 +60,7 @@ describe 'one', :type => :class do
             elsif f[:osfamily] == 'Debian'
               it { should contain_package('opennebula-node') }
             end
-            it { should contain_package('sudo') }
+
             if f[:osfamily] == 'RedHat' and f[:operatingsystemmajrelease].to_i < 7
               it { should contain_package('python-virtinst') }
             elsif f[:osfamily] == 'Debian'
