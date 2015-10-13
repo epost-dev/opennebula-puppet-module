@@ -17,7 +17,6 @@ describe 'onedatastore type' do
       pp = <<-EOS
       onedatastore { 'nfs_ds':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -31,7 +30,6 @@ describe 'onedatastore type' do
         onedatastore { 'nfs_ds':
           tm_mad    => 'shared',
           type      => 'system_ds',
-          self_test => false,
         }
         EOS
 
@@ -49,7 +47,6 @@ describe 'onedatastore type' do
           tm_mad    => 'shared',
           driver    => 'raw',
           disk_type => 'file',
-          self_test => false,
         }
         EOS
 
@@ -68,7 +65,6 @@ describe 'onedatastore type' do
           driver    => 'raw',
           disk_type => 'file',
           base_path => '/tmp',
-          self_test => false,
         }
         EOS
 
@@ -86,7 +82,6 @@ describe 'onedatastore type' do
         safe_dirs => '/var/tmp/files',
         tm_mad    => 'ssh',
         type      => 'file_ds',
-        self_test => false,
       }
       EOS
 
@@ -100,7 +95,6 @@ describe 'onedatastore type' do
       onedatastore { 'production':
         ds_mad    => 'fs',
         tm_mad    => 'shared',
-        self_test => false,
       }
       EOS
 
@@ -115,7 +109,6 @@ describe 'onedatastore type' do
       onedatastore { 'vmfs_ds':
         ds_mad    => 'vmfs',
         tm_mad    => 'vmfs',
-        self_test => false,
       }
       EOS
 
@@ -130,7 +123,6 @@ describe 'onedatastore type' do
       onedatastore { 'lvm_ds':
         ds_mad    => 'fs_lvm',
         tm_mad    => 'fs_lvm',
-        self_test => false,
       }
       EOS
 
@@ -152,7 +144,6 @@ describe 'onedatastore type' do
         pool_name   => 'cephpoolname',
         disk_type   => 'rbd',
         bridge_list => 'host1 host2 host3',
-        self_test   => false,
       }
       EOS
 
@@ -166,7 +157,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'nfs_ds':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -180,7 +170,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'kernels':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -194,7 +183,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'production':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -208,7 +196,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'vmfs_ds':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -222,7 +209,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'lvm_ds':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
@@ -236,7 +222,6 @@ describe 'onedatastore type' do
       pp =<<-EOS
       onedatastore { 'ceph_ds':
         ensure    => absent,
-        self_test => false,
       }
       EOS
 
