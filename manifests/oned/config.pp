@@ -147,7 +147,7 @@ class one::oned::config(
 
     file { $backup_dir:
       ensure => directory,
-      mode   => '0700'
+      mode   => '0700',
     } ->
 
     file { $backup_script_path:

@@ -37,20 +37,31 @@ class one::compute_node::config (
   validate_string ($debian_mirror_url)
   validate_hash   ($preseed_data)
 
+  $_polkit_file_path = $::osfamily ? {
+    'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
+    'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
+  }
+
   file { '/etc/libvirt/libvirtd.conf':
     ensure => file,
     source => 'puppet:///modules/one/libvirtd.conf',
+    owner  => 'root',
+    group  => 'root',
     notify => Service[$libvirtd_srv],
   } ->
 
   file { $libvirtd_cfg:
     ensure => file,
     source => $libvirtd_source,
+    owner  => 'root',
+    group  => 'root',
     notify => Service[$libvirtd_srv],
   } ->
 
   file { '/etc/udev/rules.d/80-kvm.rules':
     ensure => file,
+    owner  => 'root',
+    group  => 'root',
     source => 'puppet:///modules/one/udev-kvm-rules',
   } ->
 
@@ -72,16 +83,17 @@ class one::compute_node::config (
 
   file { 'polkit-opennebula':
     ensure => file,
-    path   => $::osfamily ? {
-      'RedHat' => '/etc/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
-      'Debian' => '/var/lib/polkit-1/localauthority/50-local.d/50-org.libvirt.unix.manage-opennebula.pkla',
-    },
+    path   => $_polkit_file_path,
+    owner  => 'root',
+    group  => 'root'
     source => 'puppet:///modules/one/50-org.libvirt.unix.manage-opennebula.pkla',
   } ->
 
   file { '/etc/libvirt/qemu.conf':
     ensure => file,
-    source => 'puppet:///modules/one/qemu.conf'
+    owner  => 'root',
+    group  => 'root',
+    source => 'puppet:///modules/one/qemu.conf',
   } ->
 
   file { '/var/lib/one/.virtinst':
@@ -105,8 +117,7 @@ class one::compute_node::config (
     mode   => '0771',
   } ->
 
-  file { ['/var/lib/one/etc/kickstart.d',
-    '/var/lib/one/etc/preseed.d']:
+  file { ['/var/lib/one/etc/kickstart.d', '/var/lib/one/etc/preseed.d']:
     ensure  => directory,
     owner   => 'oneadmin',
     group   => 'oneadmin',
@@ -128,6 +139,8 @@ class one::compute_node::config (
     file { '/sbin/brctl':
       ensure => link,
       target => '/usr/sbin/brctl',
+      owner  => 'root',
+      group  => 'root',
     }
   }
 
