@@ -5,7 +5,9 @@
 #
 define one::compute_node::add_kickstart(
   $kickstart_tmpl = 'one/kickstart.ks.erb',
-  $data = undef
+  $networkconfig  = $one::compute_node::config::networkconfig,
+  $partitions     = $one::compute_node::config::partitions,
+  $data           = undef
 ) {
   validate_string ($kickstart_tmpl)
   file { "/var/lib/one/etc/kickstart.d/${name}.ks":
