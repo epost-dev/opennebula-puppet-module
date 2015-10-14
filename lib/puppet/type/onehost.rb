@@ -53,9 +53,4 @@ EOS
     defaultto :'-1'
   end
 
-  newproperty(:status) do
-    desc "Disable/Enable Host"
-    defaultto :enabled
-  end
-
 end
