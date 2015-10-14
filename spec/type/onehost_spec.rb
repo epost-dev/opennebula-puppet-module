@@ -44,11 +44,6 @@ describe res_type do
       @host[:cluster_id].should == '-1'
   end
 
-  it 'should have property :status' do
-      @host[:status] = 'enabled'
-      @host[:status].should == 'enabled'
-  end
-
   parameter_tests = {
     :name => {
       :valid => ["test", "foo"],

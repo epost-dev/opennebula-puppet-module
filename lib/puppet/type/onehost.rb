@@ -25,6 +25,11 @@ EOS
     end
   end
 
+  newparam(:self_test, :boolean => true) do
+    desc "Control Flag to enable strict checking of applied changes by updating the property_hash
+    after waiting on the result of an OpenNebula transaction"
+  end
+
   newproperty(:im_mad) do
     desc "Information Driver"
     defaultto :dummy
@@ -46,11 +51,6 @@ EOS
   newproperty(:cluster_id) do
     desc "Cluster ID"
     defaultto :'-1'
-  end
-
-  newproperty(:status) do
-    desc "Disable/Enable Host"
-    defaultto :enabled
   end
 
 end
