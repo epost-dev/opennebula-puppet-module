@@ -1,0 +1,13 @@
+HOSTS:
+  debian-7-x64-docker:
+    roles:
+      -default
+    platform: debian-7-x86_64
+    image: debian:7
+    hypervisor: docker
+    docker_preserve_image: true
+    docker_image_commands:
+      - apt-get install -y wget net-tools
+CONFIG:
+  log_level: verbose
+  type: foss

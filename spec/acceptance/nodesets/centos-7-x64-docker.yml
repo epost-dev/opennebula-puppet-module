@@ -1,0 +1,15 @@
+HOSTS:
+  centos-7-x64:
+    platform: el-7-x86_64
+    hypervisor : docker
+    image: centos:centos7
+    docker_preserve_image: true
+    docker_cmd: '["/usr/sbin/init"]'
+    docker_image_commands:
+      - 'yum -y swap -- remove fakesystemd -- install systemd systemd-libs'
+      - 'yum install -y crontabs tar wget'
+      - 'yum -y install epel-release tar rubygem-nokogiri'
+      - 'yum -y update; yum clean all'
+CONFIG:
+  type: foss
+  log_level: debug
