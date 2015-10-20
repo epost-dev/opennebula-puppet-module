@@ -131,7 +131,7 @@ class one::compute_node::config (
     ensure => file,
     owner  => 'oneadmin',
     group  => 'oneadmin',
-    mode   => '0700',
+    mode   => '0500',
     source => 'puppet:///modules/one/imaginator',
   }
 
