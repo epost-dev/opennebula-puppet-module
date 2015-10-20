@@ -129,9 +129,9 @@ class one::compute_node::config (
 
   file { '/var/lib/one/bin/imaginator':
     ensure => file,
-    owner  => 'oneadmin',
+    owner  => 'root',
     group  => 'oneadmin',
-    mode   => '0500',
+    mode   => '0550',
     source => 'puppet:///modules/one/imaginator',
   }
 
