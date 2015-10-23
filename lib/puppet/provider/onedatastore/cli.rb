@@ -49,13 +49,8 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     file.write(tempfile)
     file.close
     self.debug "Adding new datastore using: #{tempfile}"
-    begin
-      onedatastore('create', file.path)
-      post_validate_change
-    rescue Exception => e
-      destroy 
-      raise e
-    end
+    onedatastore('create', file.path)
+    post_validate_change
     file.delete
     
     @property_hash[:ensure] = :present
