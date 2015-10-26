@@ -6,6 +6,11 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 ## Requirements
 
+### Supported Platforms
+
+We support Puppet 3.1.1 on CentOS 6 with OpenNebula 4.12.
+
+
 ### Other Puppet Modules
 One needs the following other modules:
 
@@ -19,13 +24,6 @@ How to install:
     puppet module install puppetlabs-apt
     puppet module install puppetlabs-inifile
 
-### Debian Wheezy
-
-Tested with puppet 3.7.4 from wheezy backports.
-To use the open nebula repositories for wheezy, set one::enable_opennebula_repo to true and install packages for puppet and the puppetlabs-apt module:
-
-    apt-get install -t wheezy-backports puppet
-    apt-get install -t wheezy-backports puppet-module-puppetlabs-apt
 
 ### Centos
 
