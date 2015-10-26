@@ -1,32 +1,35 @@
 # opennebula-puppet-module
 
+The one (short for OpenNebula) module allows to install and manage your OpenNebula cloud.
+
+[![Build Status](https://travis-ci.org/epost-dev/opennebula-puppet-module.png)](https://travis-ci.org/epost-dev/opennebula-puppet-module)
+
+## Table of Contents
 [Requirements]: #requirements
 [Running tests]: #running-tests
 [Using the Module]: #using-the-module
 [Usage of opennebula puppet resource types]: #usage-of-opennebula-puppet-resource-types
-
-## Table of Contents
+[Support]: #support
+[License]: #license
 
 1. [Requirements][Requirements]
 2. [Running tests][Running tests]
 3. [Using the Module][Using the Module]
 4. [Usage of opennebula puppet resource types][Usage of opennebula puppet resource types]
-
-The one (short for OpenNebula) module allows to install and manage your OpenNebula cloud.
-
-[![Build Status](https://travis-ci.org/epost-dev/opennebula-puppet-module.png)](https://travis-ci.org/epost-dev/opennebula-puppet-module)
+5. [Support][Support]
+6. [License][License]
 
 ## Requirements
 
 ### Supported Platforms
 
-#### Centos 6
+**Centos**
 
 We support Puppet 3.1.1 on CentOS 6.7 with OpenNebula 4.12.1. 
 You need to add the EPEL repository because the module needs some packages from there.
 
-### Other Puppet Modules
-One needs the following other modules:
+### Puppet Module Dependencies
+The ONe-Module needs the following other modules:
 
 - [puppetlabs/stdlib  > 2.2.0](https://github.com/puppetlabs/puppetlabs-stdlib)
 - [puppetlabs/apt     < 2.0.0](https://github.com/puppetlabs/puppetlabs-apt)
@@ -274,11 +277,11 @@ Create a ONE Security Groups (ONe <= 4.12):
 
 
 
-##Support
+## Support
 
 For questions or bugs [create an issue on Github](https://github.com/epost-dev/opennebula-puppet-module/issues/new).
 
-##License
+## License
 
 Copyright © 2013 - 2015 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
