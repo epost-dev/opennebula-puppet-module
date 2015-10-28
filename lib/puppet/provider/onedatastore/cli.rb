@@ -44,7 +44,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
           xml.send node.to_s.upcase, resource[node] unless resource[node].nil?
 
           if node.to_s == "cluster_id" and not resource[node].nil?
-            self.debug "Warning: #{node} specified but datastore will not be added to the cluster; the only change is that the parameter is added to the onedatastore template; call `onecluster adddatastore` to add the datastore to the cluster"
+            self.warning "#{node} specified but datastore will not be added to the cluster; the only change is that the parameter is added to the onedatastore template; call `onecluster adddatastore` to add the datastore to the cluster"
           end
         end
       end
