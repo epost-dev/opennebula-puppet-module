@@ -6,18 +6,16 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 
 ## Table of Contents
 [Requirements]: #requirements
-[Running tests]: #running-tests
 [Using the Module]: #using-the-module
 [Usage of opennebula puppet resource types]: #usage-of-opennebula-puppet-resource-types
 [Support]: #support
 [License]: #license
 
 1. [Requirements][Requirements]
-2. [Running tests][Running tests]
-3. [Using the Module][Using the Module]
-4. [Usage of opennebula puppet resource types][Usage of opennebula puppet resource types]
-5. [Support][Support]
-6. [License][License]
+2. [Using the Module][Using the Module]
+3. [Usage of opennebula puppet resource types][Usage of opennebula puppet resource types]
+4. [Support][Support]
+5. [License][License]
 
 ## Requirements
 
@@ -35,75 +33,11 @@ The ONe-Module needs the following other modules:
 - [puppetlabs/apt     < 2.0.0](https://github.com/puppetlabs/puppetlabs-apt)
 - [puppetlabs/inifile > 1.4.0](https://github.com/puppetlabs/puppetlabs-inifile)
 
-How to install:
+**How to install**:
 
     puppet module install puppetlabs-stdlib
     puppet module install puppetlabs-apt
     puppet module install puppetlabs-inifile
-
-## Running tests
-
-To run the rspec-puppet tests for this module install the needed gems with [bundler](http://bundler.io):
-
-     bundle install --path=vendor
-
-And run the tests and puppet-lint:
-
-     bundle exec rake
-
-### Acceptance Tests
-
-Please note: Acceptance tests require vagrant & virtualbox to be installed.
-
-To run acceptance tests on the default centos 6 vm:
-
-     bundle exec rake beaker
-
-for testing on debian wheezy simply run:
-
-     RS_SET=debian-7-x64 bundle exec rake beaker
-
-### Vagrant
-
-To deploy a Opennebula instance locally run:
-
-     vagrant up <boxname>
-
-where "boxname" can be debian or centos
-
-### Docker
-
-To deploy a Opennebula instance locally in a docker container run these commandos:
-
-First build an image with puppet and the sources in it (Depending on centos:6):
-
-    cd docker
-    docker build --rm -t epost-dev/one .
-    cd ..
-
-Run puppet in the container, choose one:
-
-Only build a container which acts as a opennebula head, gui, but not the kvm things:
-
-    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head.pp
-
-Only build a container which acts like a opennebula node:
-
-    # here is a common error i wasn't able to fix. centos 6 in docker has some issues with ksm
-    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-node.pp
-
-Build a container which acts as head and node
-
-    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-node.pp
-
-Build a container which has an apache for the openenbula sunstone configured:
-
-    docker run --rm -v $(pwd):/etc/puppet/modules/one epost-dev/one puppet apply /etc/puppet/modules/one/spec/docker-int/one-head-httpd.pp
-
-This Docker command will add the current directory as ```ect/puppet/modules/one```. So one can test each new change without committing or rebuilding the image.
-
-The "spec" files can be found in the spec/docker-int directory of this project. One will build a one head,
-one will build a node and one a head which also can be a node. 
 
 ## Using the Module
 
@@ -280,6 +214,8 @@ Create a ONE Security Groups (ONe <= 4.12):
 ## Support
 
 For questions or bugs [create an issue on Github](https://github.com/epost-dev/opennebula-puppet-module/issues/new).
+
+How to contribute: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
