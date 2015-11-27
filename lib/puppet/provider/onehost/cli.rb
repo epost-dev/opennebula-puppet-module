@@ -119,16 +119,4 @@ Puppet::Type.type(:onehost).provide(:cli) do
      raise "onehosts can not be updated. You have to remove and recreate the host"
   end
 
-  def cluster_id=(value)
-    if value.to_s == "-1" and @property_hash[:cluster_id].to_s != "-1"
-      delete_from_cluster
-    elsif validate_cluster==false
-      raise "Onehost cannot be updated. Invalid Cluster ID"
-    elsif @property_hash[:cluster_id].to_s == "-1"
-      add_to_cluster
-    else
-      switch_cluster
-    end
-  end
-
 end
