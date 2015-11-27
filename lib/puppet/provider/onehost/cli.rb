@@ -17,18 +17,14 @@ require 'nokogiri'
 Puppet::Type.type(:onehost).provide(:cli) do
   desc "onehost provider"
 
-  commands(:onehost => "onehost", :onecluster => "onecluster") do
+  commands(:onehost => "onehost") do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
   end
 
   mk_resource_methods
 
   def create
-    if resource[:cluster_id].to_s == "-1"
-      onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad])
-    else
-      onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad], '--cluster', resource[:cluster_id])
-    end
+    onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad])
     Puppet.debug("Validate Resource State")
     post_validate_change
     @property_hash[:ensure] = :present
@@ -44,32 +40,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     @property_hash[:ensure] == :present
   end
 
-  def add_to_cluster
-    onecluster("addhost", resource[:cluster_id], resource[:name])
-  end
-
-  def delete_from_cluster
-    onecluster("delhost", @property_hash[:cluster_id], resource[:name])
-  end
-
-  def switch_cluster
-    delete_from_cluster
-    add_to_cluster
-  end
-
-  def validate_cluster
-    clusters  = Nokogiri::XML(onecluster("list", "-x")).root.xpath('/CLUSTER_POOL/CLUSTER')
-    cluster_ids = Array.new
-    clusters.each do | name |
-      cluster_ids << name.xpath("./ID").text
-    end
-    if cluster_ids.include? resource[:cluster_id].to_s
-      return true
-    else
-      return false
-    end
-  end
-
   def self.instances
      hosts = Nokogiri::XML(onehost('list','-x')).root.xpath('/HOST_POOL/HOST')
      hosts.collect do |host|
@@ -78,8 +48,7 @@ Puppet::Type.type(:onehost).provide(:cli) do
            :ensure => :present,
            :im_mad => host.xpath('./IM_MAD').text,
            :vm_mad => host.xpath('./VM_MAD').text,
-           :vn_mad => host.xpath('./VN_MAD').text,
-           :cluster_id => host.xpath('./CLUSTER_ID').text
+           :vn_mad => host.xpath('./VN_MAD').text
         )
 	 end
   end
@@ -102,7 +71,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     @post_property_hash[:im_mad] = host.xpath('./IM_MAD').text.to_s
     @post_property_hash[:vm_mad] = host.xpath('./VM_MAD').text.to_s
     @post_property_hash[:vn_mad] = host.xpath('./VN_MAD').text.to_s
-    @post_property_hash[:cluster_id] = host.xpath('./CLUSTER_ID').text.to_s
     @post_property_hash[:status] = {'0' => 'init', '1' => 'update', '2' => 'enabled','3' => 'error', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text]
   end
 
@@ -119,7 +87,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     resource_state[:vm_mad] = resource[:vm_mad].to_s
     resource_state[:vn_mad] = resource[:vn_mad].to_s
     resource_state[:status] = 'enabled' # <- Hardcoded since enabled is the only reasonable state
-    resource_state[:cluster_id] = resource[:cluster_id].to_s
 
     max_attempts = 3
     attempts = 0
