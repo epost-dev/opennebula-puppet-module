@@ -48,9 +48,4 @@ EOS
     newvalues(:'802.1Q', :dummy, :ebtables, :fw, :ovswitch, :vmware)
   end
 
-  newproperty(:cluster_id) do
-    desc "Cluster ID"
-    defaultto :'-1'
-  end
-
 end

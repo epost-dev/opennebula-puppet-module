@@ -39,11 +39,6 @@ describe res_type do
       @host[:vm_mad].should == :kvm
   end
 
-  it 'should have property :cluster_id' do
-      @host[:cluster_id] = '-1'
-      @host[:cluster_id].should == '-1'
-  end
-
   parameter_tests = {
     :name => {
       :valid => ["test", "foo"],
