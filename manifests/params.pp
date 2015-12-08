@@ -156,6 +156,12 @@ class one::params {
   $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
   $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
 
+  # OpenNebula Datastore parameters
+  $datastore_capacity_check    = hiera ('one::oned::datastore_capacity_check', 'yes')
+  $default_image_type          = hiera ('one::oned::default_image_type', 'OS')
+  $default_device_prefix       = hiera ('one::oned::default_device_prefix', 'hd')
+  $default_cdrom_device_prefix = hiera ('one::oned::default_cdrom_device_prefix', 'hd')
+
   # Data Validation
 
   # the priv key is mandatory on the head.
