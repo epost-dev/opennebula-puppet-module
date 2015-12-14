@@ -22,6 +22,7 @@
 class one::params {
   # OpenNebula parameters
   $oned_port        = hiera('one::oned::port', '2633')
+  $oned_listen_address = hiera('one::oned_listen_address', '0.0.0.0')
   $oned_db          = hiera('one::oned::db', 'oned')
   $oned_db_user     = hiera('one::oned::db_user', 'oned')
   $oned_db_password = hiera('one::oned::db_password', 'oned')
