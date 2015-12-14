@@ -44,6 +44,13 @@
 :memcache_port: 11211
 :memcache_namespace: opennebula.sunstone
 
+# Excution environment for Sunstone
+#   dev, Instead of pulling the minified js all the files will be pulled (app/main.js)
+#     Check the Building from Source guide in the docs, for details on how to run
+#     Sunstone in development
+#   prod, the minified js will be used (dist/main.js)
+:env: 'prod'
+
 ################################################################################
 # Log
 ################################################################################
