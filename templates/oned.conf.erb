@@ -356,6 +356,8 @@ IM_MAD = [
 
 #-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
@@ -420,6 +422,13 @@ IM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate=migrate_local,save"
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute remote commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+#    -i try to do live-snapshot if available. Currently supported only for kvm
+#       with qcow2 as the datastore TM_MAD. If not available, it will fallback
+#       on the default (-d)
 #
 #  Note: You can use type = "qemu" to use qemu emulated guests, e.g. if your
 #  CPU does not have virtualization extensions or use nested Qemu-KVM hosts
@@ -427,18 +436,11 @@ IM_MAD = [
 VM_MAD = [
     name       = "kvm",
     executable = "one_vmm_exec",
-    arguments  = "-t 15 -r 5 kvm",
+    arguments  = "-t 15 -r 0 -i kvm",
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "kvm" ]
-#-------------------------------------------------------------------------------
-VM_MAD = [
-    name       = "qemu",
-    executable = "one_vmm_exec",
-    arguments  = "-t 15 -r 0 kvm",
-    default    = "vmm_exec/vmm_exec_kvm.conf",
-    type       = "qemu" ]
-#-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  XEN Virtualization Driver Manager Configuration
@@ -448,8 +450,12 @@ VM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate,save"
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
 #-------------------------------------------------------------------------------
-
+#
 # Driver for Xen 3.x
 #VM_MAD = [
 #    name       = "xen",
@@ -457,7 +463,7 @@ VM_MAD = [
 #    arguments  = "-t 15 -r 0 xen3",
 #    default    = "vmm_exec/vmm_exec_xen3.conf",
 #    type       = "xen" ]
-
+#
 # Driver for Xen 4.x
 VM_MAD = [
     name       = "xen",
@@ -472,6 +478,10 @@ VM_MAD = [
 #  VMware Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vmware",
@@ -481,16 +491,20 @@ VM_MAD = [
 #    type       = "vmware" ]
 #-------------------------------------------------------------------------------
 
-
 #-------------------------------------------------------------------------------
 #  vCenter Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
+#    default    = "vmm_exec/vmm_exec_vcenter.conf",
 #    type       = "xml" ]
 #-------------------------------------------------------------------------------
 
