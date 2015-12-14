@@ -135,26 +135,25 @@ DEFAULT_COST = [
 #  These are configuration parameters for oned's xmlrpc-c server
 #
 #  MAX_CONN: Maximum number of simultaneous TCP connections the server
-#  will maintain - default 15
+#  will maintain
 #
 #  MAX_CONN_BACKLOG: Maximum number of TCP connections the operating system
 #  will accept on the server's behalf without the server accepting them from
-#  the operating system - default 15
+#  the operating system
 #
 #  KEEPALIVE_TIMEOUT: Maximum time in seconds that the server allows a
-#  connection to be open between RPCs - default 15
+#  connection to be open between RPCs
 #
 #  KEEPALIVE_MAX_CONN: Maximum number of RPCs that the server will execute on
-#  a single connection - default 30
+#  a single connection
 #
 #  TIMEOUT: Maximum time in seconds the server will wait for the client to
-#  do anything while processing an RPC - default 15
+#  do anything while processing an RPC
 #
 #  RPC_LOG: Create a separated log file for xml-rpc requests, in
 #  "/var/log/one/one_xmlrpc.log".
 #
-#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses. Only relevant for
-#  slave zones.
+#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
 #
 #  LOG_CALL_FORMAT: Format string to log XML-RPC calls. Interpreted strings:
 #     %i -- request id
