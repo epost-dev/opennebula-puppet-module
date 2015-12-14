@@ -267,9 +267,9 @@ DEFAULT_CDROM_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_cdrom_device_pr
 #        not be effective.
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "collectd",
-    executable = "collectd",
-    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
+      name       = "collectd",
+      executable = "collectd",
+      arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -278,9 +278,9 @@ IM_MAD = [
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "kvm",
-    executable = "one_im_ssh",
-    arguments  = "-r 3 -t 15 kvm" ]
+      name       = "kvm",
+      executable = "one_im_ssh",
+      arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
