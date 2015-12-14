@@ -4,35 +4,6 @@ logo: images/custom_logo.png
 <% else -%>
 logo: images/opennebula-sunstone-v4.0.png
 <% end -%>
-available_tabs:
-    - dashboard-tab
-    - system-tab
-    - users-tab
-    - groups-tab
-    - vdcs-tab
-    - acls-tab
-    - vresources-tab
-    - vms-tab
-    - templates-tab
-    - images-tab
-    - files-tab
-    - infra-tab
-    - clusters-tab
-    - hosts-tab
-    - datastores-tab
-    - vnets-tab
-    - secgroups-tab
-    - zones-tab
-<% if @enable_marketplace == 'yes' -%>
-    - marketplace-tab
-<% end -%>
-    - oneflow-dashboard
-    - oneflow-services
-    - oneflow-templates
-    - provision-tab
-<% if @enable_support == 'yes' -%>
-    - support-tab
-<% end -%>
 groups:
     oneadmin:
         - admin

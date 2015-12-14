@@ -6,23 +6,23 @@ small_logo: images/opennebula-sunstone-v4.14-small.png
 provision_logo: images/one_small_logo.png
 enabled_tabs:
     - dashboard-tab
-    - system-tab
-    - users-tab
-    - groups-tab
-    - vdcs-tab
-    - acls-tab
+    #- system-tab
+    #- users-tab
+    #- groups-tab
+    #- vdcs-tab
+    #- acls-tab
     - vresources-tab
     - vms-tab
     - templates-tab
     - images-tab
     - files-tab
     - infra-tab
-    - clusters-tab
-    - hosts-tab
+    #- clusters-tab
+    #- hosts-tab
     - datastores-tab
     - vnets-tab
     - secgroups-tab
-    - zones-tab
+    #- zones-tab
 <% if @enable_marketplace == 'yes' -%>
     - marketplace-tab
 <% end -%>
@@ -30,9 +30,7 @@ enabled_tabs:
     - oneflow-services-tab
     - oneflow-templates-tab
     - settings-tab
-<% if @enable_support == 'yes' -%>
-    - support-tab
-<% end -%>
+    #- support-tab
 autorefresh: true
 features:
     showback: true
@@ -44,12 +42,13 @@ tabs:
             Sunstone.toggle_top: false
         widgets_three_per_row:
         widgets_two_per_row:
-            - storage
             - network
+            - storage
+            #- vms
         widgets_one_per_row:
             - vms
-            - hosts
-            - users
+            #- hosts
+            #- users
         widgets_one_footer:
     system-tab:
         panel_tabs:
@@ -148,10 +147,10 @@ tabs:
             vm_hotplugging_tab: true
             vm_network_tab: true
             vm_snapshot_tab: true
-            vm_placement_tab: true
+            vm_placement_tab: false
             vm_actions_tab: true
-            vm_template_tab: true
-            vm_log_tab: true
+            vm_template_tab: false
+            vm_log_tab: false
         table_columns:
             - 0       # Checkbox
             - 1       # ID
@@ -170,18 +169,18 @@ tabs:
             VM.refresh: true
             VM.create_dialog: true
             VM.rename: true
-            VM.chown: true
-            VM.chgrp: true
+            VM.chown: false
+            VM.chgrp: false
             VM.chmod: true
-            VM.deploy: true
-            VM.migrate: true
-            VM.migrate_live: true
+            VM.deploy: false
+            VM.migrate: false
+            VM.migrate_live: false
             VM.hold: true
             VM.release: true
             VM.suspend: true
             VM.resume: true
             VM.stop: true
-            VM.recover: true
+            VM.recover: false
             VM.reboot: true
             VM.reboot_hard: true
             VM.poweroff: true
@@ -204,8 +203,8 @@ tabs:
             VM.disk_snapshot_create: true
             VM.disk_snapshot_revert: true
             VM.disk_snapshot_delete: true
-            VM.resched: true
-            VM.unresched: true
+            VM.resched: false
+            VM.unresched: false
     templates-tab:
         panel_tabs:
             template_info_tab: true
@@ -224,8 +223,8 @@ tabs:
             Template.update_dialog: true
             Template.instantiate_vms: true
             Template.rename: true
-            Template.chown: true
-            Template.chgrp: true
+            Template.chown: false
+            Template.chgrp: false
             Template.chmod: true
             Template.clone_dialog: true
             Template.delete: true
@@ -237,7 +236,7 @@ tabs:
             features: true
             input_output: true
             context: true
-            scheduling: true
+            scheduling: false
             hybrid: true
             other: true
     images-tab:
@@ -263,8 +262,8 @@ tabs:
             Image.refresh: true
             Image.create_dialog: true
             Image.rename: true
-            Image.chown: true
-            Image.chgrp: true
+            Image.chown: false
+            Image.chgrp: false
             Image.chmod: true
             Image.enable: true
             Image.disable: true
@@ -296,8 +295,8 @@ tabs:
             File.refresh: true
             File.create_dialog: true
             File.rename: true
-            File.chown: true
-            File.chgrp: true
+            File.chown: false
+            File.chgrp: false
             File.chmod: true
             File.enable: true
             File.disable: true
@@ -356,7 +355,7 @@ tabs:
             Host.delete: true
     datastores-tab:
         panel_tabs:
-            datastore_info_tab: true
+            datastore_info_tab: false
             datastore_image_tab: true
         table_columns:
             - 0         # Checkbox
@@ -369,19 +368,19 @@ tabs:
             #- 7         # Basepath
             #- 8         # TM
             #- 9         # DS
-            - 10        # Type
-            - 11        # Status
+            #- 10        # Type
+            #- 11        # Status
         actions:
             Datastore.refresh: true
-            Datastore.create_dialog: true
-            Datastore.addtocluster: true
+            Datastore.create_dialog: false
+            Datastore.addtocluster: false
             Datastore.rename: true
-            Datastore.chown: true
-            Datastore.chgrp: true
+            Datastore.chown: false
+            Datastore.chgrp: false
             Datastore.chmod: true
-            Datastore.delete: true
-            Datastore.enable: true
-            Datastore.disable: true
+            Datastore.delete: false
+            Datastore.enable: false
+            Datastore.disable: false
     vnets-tab:
         panel_tabs:
             vnet_info_tab: true
@@ -401,18 +400,18 @@ tabs:
             #- 9         # VLAN ID
         actions:
             Network.refresh: true
-            Network.create_dialog: true
+            Network.create_dialog: false
             Network.import_dialog: false
             Network.update_dialog: true
-            Network.addtocluster: true
+            Network.addtocluster: false
             Network.rename: true
-            Network.chown: true
-            Network.chgrp: true
+            Network.chown: false
+            Network.chgrp: false
             Network.chmod: true
             Network.delete: true
             Network.hold_lease: true
             Network.release_lease: true
-            Network.add_ar: true
+            Network.add_ar: false
             Network.remove_ar: true
             Network.update_ar: true
     secgroups-tab:
@@ -489,9 +488,9 @@ tabs:
                 RoleVM.shutdown_hard: true
                 RoleVM.delete: true
                 RoleVM.delete_recreate: true
-                RoleVM.resched: true
-                RoleVM.unresched: true
-                RoleVM.recover: true
+                RoleVM.resched: false
+                RoleVM.unresched: false
+                RoleVM.recover: false
         table_columns:
             - 0         # Checkbox
             - 1         # ID
@@ -501,8 +500,8 @@ tabs:
             - 5         # State
         actions:
             Service.refresh: true
-            Service.chown: true
-            Service.chgrp: true
+            Service.chown: false
+            Service.chgrp: false
             Service.chmod: true
             Service.shutdown: true
             Service.recover: true
@@ -521,8 +520,8 @@ tabs:
             ServiceTemplate.refresh: true
             ServiceTemplate.create_dialog: true
             ServiceTemplate.instantiate: true
-            ServiceTemplate.chown: true
-            ServiceTemplate.chgrp: true
+            ServiceTemplate.chown: false
+            ServiceTemplate.chgrp: false
             ServiceTemplate.chmod: true
             ServiceTemplate.delete: true
     zones-tab:
