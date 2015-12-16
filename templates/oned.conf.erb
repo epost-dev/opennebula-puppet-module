@@ -212,12 +212,12 @@ MAC_PREFIX   = "02:00"
 
 #DATASTORE_BASE_PATH = /var/lib/one/datastores
 
-DATASTORE_CAPACITY_CHECK = "yes"
+DATASTORE_CAPACITY_CHECK = "<%= scope.lookupvar('one::datastore_capacity_check') %>"
 
-DEFAULT_IMAGE_TYPE    = "OS"
-DEFAULT_DEVICE_PREFIX = "hd"
+DEFAULT_IMAGE_TYPE    = "<%= scope.lookupvar('one::default_image_type') %>"
+DEFAULT_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_device_prefix') %>"
 
-DEFAULT_CDROM_DEVICE_PREFIX = "hd"
+DEFAULT_CDROM_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_cdrom_device_prefix') %>"
 
 #*******************************************************************************
 # Information Driver Configuration

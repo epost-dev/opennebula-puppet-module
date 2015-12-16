@@ -439,6 +439,10 @@ class one (
   $sched_default_ds_rank          = $one::params::sched_default_ds_rank,
   $sched_log_system               = $one::params::sched_log_system,
   $sched_log_debug_level          = $one::params::sched_log_debug_level,
+  $datastore_capacity_check       = $one::params::datastore_capacity_check,
+  $default_image_type             = $one::params::default_image_type,
+  $default_device_prefix          = $one::params::default_device_prefix,
+  $default_cdrom_device_prefix    = $one::params::default_cdrom_device_prefix,
   $one_version                    = $one::params::one_version,
 ) inherits one::params {
   include one::prerequisites
