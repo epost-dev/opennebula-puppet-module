@@ -36,6 +36,8 @@ else
   gem 'puppet', '< 4', :require => false
 end
 
+gem 'parallel_tests'
+
 # puppet lint plugins
 # https://puppet.community/plugins/#puppet-lint
 gem 'puppet-lint-appends-check',

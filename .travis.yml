@@ -12,7 +12,7 @@ rvm:
   - 2.1.2
 language: ruby
 bundler_args: --without development --without integration
-script: "bundle exec rake"
+script: "bundle exec rake parallel_spec"
 env:
   - PUPPET_GEM_VERSION=3.1.1
   - PUPPET_GEM_VERSION=3.2.4

@@ -2,6 +2,7 @@ require 'rake'
 require 'rubygems'
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint'
+require 'parallel_tests/cli'
 
 desc 'Run the tests'
 RSpec::Core::RakeTask.new(:do_test) do |t|
@@ -17,6 +18,13 @@ desc 'Generate the docs'
 RSpec::Core::RakeTask.new(:doc) do |t|
   t.rspec_opts = ['--format', 'documentation']
   t.pattern = 'spec/*/*_spec.rb'
+end
+
+desc "Parallel spec tests"
+task :parallel_spec do
+  Rake::Task[:spec_prep].invoke
+  ParallelTests::CLI.new.run('--type test -t rspec spec/classes spec/provider spec/type'.split)
+  Rake::Task[:spec_clean].invoke
 end
 
 PuppetLint::RakeTask.new(:lint) do |config|
