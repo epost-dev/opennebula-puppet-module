@@ -28,7 +28,9 @@
 #  scripts.
 #
 #  PORT: Port where oned will listen for xmlrpc calls.
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #  LISTEN_ADDRESS: Host IP to listen on for xmlrpc calls (default: all IPs).
+<% end -%>
 #
 #  DB: Configuration attributes for the database backend
 #   backend : can be sqlite or mysql (default is sqlite)
@@ -73,7 +75,9 @@ SCRIPTS_REMOTE_DIR=/var/tmp/one
 
 PORT = <%= scope.lookupvar('one::oned_port') %>
 
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 LISTEN_ADDRESS = "<%= scope.lookupvar('one::oned_listen_address') %>"
+<% end -%>
 
 <% if @backend == 'sqlite' -%>
 DB = [ backend = "sqlite" ]
@@ -115,6 +119,7 @@ FEDERATION = [
     MASTER_ONED = ""
 ]
 
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #*******************************************************************************
 # Default showback cost
 #-------------------------------------------------------------------------------
@@ -128,6 +133,7 @@ DEFAULT_COST = [
     MEMORY_COST = 0,
     DISK_COST   = 0
 ]
+<% end -%>
 
 #*******************************************************************************
 # XML-RPC server configuration
@@ -288,10 +294,17 @@ IM_MAD = [
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 # IM_MAD = [
 #       name       = "kvm",
 #       executable = "one_im_ssh",
 #       arguments  = "-r 3 -t 15 kvm-probes" ]
+<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+IM_MAD = [
+    name       = "kvm_pull",
+    executable = "one_im_ssh",
+    arguments  = "-r 3 -t 15 kvm-probes" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -307,10 +320,17 @@ IM_MAD = [
 #    arguments  = "-r 3 -t 15 xen3" ]
 
 # Driver for Xen 4.x
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 IM_MAD = [
     name       = "xen",
     executable = "one_im_ssh",
     arguments  = "-r 3 -t 15 xen4" ]
+<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+#IM_MAD = [
+#    name       = "xen",
+#    executable = "one_im_ssh",
+#    arguments  = "-r 3 -t 15 xen4" ]
+<% end -%>
 
 #-------------------------------------------------------------------------------
 #  XEN SSH-pull Information Driver Manager Configuration
@@ -356,8 +376,10 @@ IM_MAD = [
 
 #-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% end -%>
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
@@ -422,6 +444,7 @@ IM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate=migrate_local,save"
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute remote commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
@@ -429,6 +452,7 @@ IM_MAD = [
 #    -i try to do live-snapshot if available. Currently supported only for kvm
 #       with qcow2 as the datastore TM_MAD. If not available, it will fallback
 #       on the default (-d)
+<% end -%>
 #
 #  Note: You can use type = "qemu" to use qemu emulated guests, e.g. if your
 #  CPU does not have virtualization extensions or use nested Qemu-KVM hosts
@@ -436,10 +460,23 @@ IM_MAD = [
 VM_MAD = [
     name       = "kvm",
     executable = "one_vmm_exec",
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
     arguments  = "-t 15 -r 0 -i kvm",
+<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+    arguments  = "-t 15 -r 5 kvm",
+<% end -%>
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "kvm" ]
 
+<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+#-------------------------------------------------------------------------------
+VM_MAD = [
+    name       = "qemu",
+    executable = "one_vmm_exec",
+    arguments  = "-t 15 -r 0 kvm",
+    default    = "vmm_exec/vmm_exec_kvm.conf",
+    type       = "qemu" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -450,10 +487,12 @@ VM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate,save"
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
 #       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #
 # Driver for Xen 3.x
@@ -465,12 +504,21 @@ VM_MAD = [
 #    type       = "xen" ]
 #
 # Driver for Xen 4.x
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 VM_MAD = [
     name       = "xen",
     executable = "one_vmm_exec",
     arguments  = "-t 15 -r 0 xen4",
     default    = "vmm_exec/vmm_exec_xen4.conf",
     type       = "xen" ]
+<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+#VM_MAD = [
+#    name       = "xen",
+#    executable = "one_vmm_exec",
+#    arguments  = "-t 15 -r 0 xen4",
+#    default    = "vmm_exec/vmm_exec_xen4.conf",
+#    type       = "xen" ]
+<% end -%>
 #
 #-------------------------------------------------------------------------------
 
@@ -478,10 +526,12 @@ VM_MAD = [
 #  VMware Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
 #       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vmware",
@@ -495,16 +545,20 @@ VM_MAD = [
 #  vCenter Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
 #       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #    default    = "vmm_exec/vmm_exec_vcenter.conf",
+<% end -%>
 #    type       = "xml" ]
 #-------------------------------------------------------------------------------
 
@@ -616,6 +670,9 @@ DATASTORE_MAD = [
 #               - SHUTDOWN, after the VM is shutdown
 #               - STOP, after the VM is stopped (including VM image transfers)
 #               - DONE, after the VM is deleted or shutdown
+<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+#               - FAILED, when the VM enters the failed state
+<% end -%>
 #               - CUSTOM, user defined specific STATE and LCM_STATE combination
 #                 of states to trigger the hook.
 #   command   : path is relative to $ONE_LOCATION/var/remotes/hook
@@ -727,7 +784,28 @@ HOST_HOOK = [
   <% end -%>
 <%- end -%>
 #-------------------------------------------------------------------------------
-
+<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+# These two hooks can be used to automatically delete or resubmit VMs that reach
+# the "failed" state. This way, the administrator doesn't have to interact
+# manually to release its resources or retry the deployment.
+#
+#
+# Only one of them should be uncommented.
+#-------------------------------------------------------------------------------
+#
+#VM_HOOK = [
+#   name      = "on_failure_delete",
+#   on        = "FAILED",
+#   command   = "/usr/bin/env onevm delete",
+#   arguments = "$ID" ]
+#
+#VM_HOOK = [
+#   name      = "on_failure_recreate",
+#   on        = "FAILED",
+#   command   = "/usr/bin/env onevm delete --recreate",
+#   arguments = "$ID" ]
+#
+<% end -%>
 #-------------------------------------------------------------------------------
 # Examples for DNS and puppet hooks
 #-------------------------------------------------------------------------------
@@ -772,6 +850,7 @@ HOST_HOOK = [
 #               defined all the modules available will be enabled
 #   authz     : list of authentication modules separated by commas
 #
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 # DEFAULT_AUTH: The default authentication driver to use when OpenNebula does
 # not know the user and needs to authenticate it externally.  If you want to
 # use "default" (not recommended, but supported for backwards compatibility
@@ -779,6 +858,7 @@ HOST_HOOK = [
 # driver in /var/lib/one/remotes/auth, and add "default" to the 'auth'
 # parameter in the 'AUTH_MAD' section.
 #
+<% end -%>
 # SESSION_EXPIRATION_TIME: Time in seconds to keep an authenticated token as
 # valid. During this time, the driver is not used. Use 0 to disable session
 # caching
@@ -794,10 +874,17 @@ HOST_HOOK = [
 
 AUTH_MAD = [
     executable = "one_auth_mad",
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
     authn = "ssh,x509,ldap,server_cipher,server_x509"
+<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+    authn = "ssh,x509,ldap,server_cipher,server_x509,default"
+<% end -%>
 ]
-
-#DEFAULT_AUTH = "default"
+<% if scope.lookupvar('one::oned_default_auth') != 'undef' -%>
+DEFAULT_AUTH = "<%= scope.lookupvar('one::oned_default_auth') %>"
+<% elsif scope.function_versioncmp([@one_version,'4.14']) >= 0 and @ldap -%>
+DEFAULT_AUTH = "ldap"
+<% end -%>
 
 SESSION_EXPIRATION_TIME = 900
 
@@ -837,12 +924,14 @@ VM_RESTRICTED_ATTR = "DISK/WRITE_BYTES_SEC"
 VM_RESTRICTED_ATTR = "DISK/TOTAL_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/READ_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/WRITE_IOPS_SEC"
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 #VM_RESTRICTED_ATTR = "DISK/SIZE"
 VM_RESTRICTED_ATTR = "DISK/ORIGINAL_SIZE"
 VM_RESTRICTED_ATTR = "CPU_COST"
 VM_RESTRICTED_ATTR = "MEMORY_COST"
 VM_RESTRICTED_ATTR = "DISK_COST"
 VM_RESTRICTED_ATTR = "PCI"
+<% end -%>
 
 #VM_RESTRICTED_ATTR = "RANK"
 #VM_RESTRICTED_ATTR = "SCHED_RANK"
@@ -890,7 +979,9 @@ VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
 INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
 INHERIT_DATASTORE_ATTR  = "CEPH_USER"
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 INHERIT_DATASTORE_ATTR  = "CEPH_CONF"
+<% end -%>
 
 INHERIT_DATASTORE_ATTR  = "GLUSTER_HOST"
 INHERIT_DATASTORE_ATTR  = "GLUSTER_VOLUME"
@@ -905,7 +996,9 @@ INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
 INHERIT_VNET_ATTR       = "BRIDGE_OVS"
 INHERIT_VNET_ATTR       = "FILTER_IP_SPOOFING"
 INHERIT_VNET_ATTR       = "FILTER_MAC_SPOOFING"
+<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
 INHERIT_VNET_ATTR       = "MTU"
+<% end -%>
 
 #*******************************************************************************
 # Transfer Manager Driver Behavior Configuration

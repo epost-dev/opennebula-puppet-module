@@ -17,6 +17,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::config(
+  $one_version                 = $one::one_version,
+  $ldap                        = $one::ldap,
   $hook_scripts_path           = $one::hook_scripts_path,
   $hook_scripts                = $one::hook_scripts,
   $vm_hook_scripts             = $one::vm_hook_scripts,

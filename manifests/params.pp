@@ -27,6 +27,8 @@ class one::params {
   $oned_db_user     = hiera('one::oned::db_user', 'oned')
   $oned_db_password = hiera('one::oned::db_password', 'oned')
   $oned_db_host     = hiera('one::oned::db_host', 'localhost')
+  # default auth parameter - if needed for override
+  $oned_default_auth = hiera('one::oned_default_auth','undef')
   # ldap stuff (optional needs one::oned::ldap in hiera set to true)
   $oned_ldap_host = hiera('one::oned::ldap_host','ldap')
   $oned_ldap_port = hiera('one::oned::ldap_port','636')

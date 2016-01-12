@@ -351,6 +351,7 @@ class one (
   $oned_db_password               = $one::params::oned_db_password,
   $oned_db_host                   = $one::params::oned_db_host,
   $oned_vm_submit_on_hold         = $one::params::oned_vm_submit_on_hold,
+  $oned_default_auth              = $one::params::oned_default_auth,
   $oned_ldap_host                 = $one::params::oned_ldap_host,
   $oned_ldap_port                 = $one::params::oned_ldap_port,
   $oned_ldap_base                 = $one::params::oned_ldap_base,
