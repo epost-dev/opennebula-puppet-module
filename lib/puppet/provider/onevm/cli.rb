@@ -12,11 +12,12 @@
 #
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 require 'tempfile'
 require 'erb'
 
 Puppet::Type.type(:onevm).provide(:cli) do
+  confine :feature => :nokogiri
   desc "onevm provider"
 
   has_command(:onevm, "onevm") do

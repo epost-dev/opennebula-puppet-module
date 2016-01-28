@@ -12,9 +12,10 @@
 #
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 
 Puppet::Type.type(:onehost).provide(:cli) do
+  confine :feature => :nokogiri
   desc "onehost provider"
 
   commands(:onehost => "onehost") do
