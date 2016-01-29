@@ -7,6 +7,8 @@ describe 'one::oned::sunstone::config', :type => :class do
     context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
       let(:facts) { f }
       let (:hiera_config) { hiera_config }
+      let (:pre_condition) { 'include one' }
+
       context 'general' do
         it { should contain_class('one::oned::sunstone::config') }
         it { should contain_file('/usr/lib/one/sunstone') \
