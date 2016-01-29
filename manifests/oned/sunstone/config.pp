@@ -17,6 +17,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
+  $one_version             = $one::one_version,
   $listen_ip               = $one::sunstone_listen_ip,
   $enable_support          = $one::enable_support,
   $enable_marketplace      = $one::enable_marketplace,
