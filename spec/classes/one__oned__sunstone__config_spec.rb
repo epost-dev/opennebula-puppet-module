@@ -54,14 +54,14 @@ describe 'one::oned::sunstone::config', :type => :class do
       end
       context 'with marketplace enabled' do
         let (:params) { {:enable_marketplace => 'yes'} }
-        it { should contain_file('/etc/one/sunstone-views.yaml') \
+        it { should contain_file('/etc/one/sunstone-views/admin.yaml') \
         .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
       end
       context 'with marketplace disabled' do
         let (:params) { {:enable_marketplace => 'no'} }
-        it { should_not contain_file('/etc/one/sunstone-views.yaml') \
+        it { should_not contain_file('/etc/one/sunstone-views/admin.yaml') \
         .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
