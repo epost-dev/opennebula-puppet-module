@@ -52,16 +52,30 @@ describe 'one::oned::sunstone::config', :type => :class do
 
         it { should_not contain_file('/etc/one/sunstone-server.conf').with_content(/#{unexpected_routes}/m) }
       end
-      context 'with marketplace enabled' do
-        let (:params) { {:enable_marketplace => 'yes'} }
+      context 'with marketplace enabled on 4.14' do
+        let (:params) { {:enable_marketplace => 'yes', :one_version => '4.14'} }
         it { should contain_file('/etc/one/sunstone-views/admin.yaml') \
         .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
       end
-      context 'with marketplace disabled' do
-        let (:params) { {:enable_marketplace => 'no'} }
+      context 'with marketplace enabled on 4.12' do
+        let (:params) { {:enable_marketplace => 'yes', :one_version => '4.12'} }
+        it { should contain_file('/etc/one/sunstone-views.yaml') \
+        .with_group('oneadmin') \
+        .with_content(/- marketplace-tab/m)
+        }
+      end
+      context 'with marketplace disabled on 4.14' do
+        let (:params) { {:enable_marketplace => 'no', :one_version => '4.14'} }
         it { should_not contain_file('/etc/one/sunstone-views/admin.yaml') \
+        .with_group('oneadmin') \
+        .with_content(/- marketplace-tab/m)
+        }
+      end
+      context 'with marketplace disabled on 4.12' do
+        let (:params) { {:enable_marketplace => 'no', :one_version => '4.12'} }
+        it { should_not contain_file('/etc/one/sunstone-views.yaml') \
         .with_group('oneadmin') \
         .with_content(/- marketplace-tab/m)
         }
