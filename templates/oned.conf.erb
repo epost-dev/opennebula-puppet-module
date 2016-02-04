@@ -882,7 +882,7 @@ AUTH_MAD = [
 ]
 <% if scope.lookupvar('one::oned_default_auth') != 'undef' -%>
 DEFAULT_AUTH = "<%= scope.lookupvar('one::oned_default_auth') %>"
-<% elsif scope.lookupvar('one::version_gte_4_14') and @ldap -%>
+<% elsif scope.lookupvar('one::version_gte_4_14') and scope.lookupvar('one::ldap') -%>
 DEFAULT_AUTH = "ldap"
 <% end -%>
 
