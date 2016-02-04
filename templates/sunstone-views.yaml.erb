@@ -4,7 +4,7 @@ logo: images/custom_logo.png
 <% else -%>
 logo: images/opennebula-sunstone-v4.0.png
 <% end -%>
-<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 available_tabs:
     - dashboard-tab
     - system-tab

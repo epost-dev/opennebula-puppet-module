@@ -53,7 +53,7 @@
 #    - system: defines the logging system:
 #          file      to log in the sched.log file
 #          syslog    to use the syslog facilities
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    - debug_level:
 #           0 = ERROR
 #           1 = WARNING
@@ -63,7 +63,7 @@
 #           5 = DDDEBUG Includes detailed information about the scheduling
 #                       decision, such as VM requirements, Host ranking for
 #                       each VM, etc. This will impact the performance
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
 #    - debug_level: 0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
 <% end -%>
 #*******************************************************************************

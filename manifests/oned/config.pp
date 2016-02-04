@@ -94,7 +94,6 @@ class one::oned::config(
     fail("sched_log_debug_level must be of type integer. Actual value: ${sched_log_debug_level}" )
   }
 
-
   File {
     owner  => 'oneadmin',
     group  => 'oneadmin',

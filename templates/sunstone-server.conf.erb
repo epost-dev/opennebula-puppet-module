@@ -31,7 +31,7 @@
 :host: <%= @listen_ip %>
 :port: 9869
 
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 # Place where to store sessions, this value can be memory, memcache or memcache-dalli
 <% else -%>
 # Place where to store sessions, this value can be memory or memcache
@@ -48,7 +48,7 @@
 :memcache_port: 11211
 :memcache_namespace: opennebula.sunstone
 
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 # Excution environment for Sunstone
 #   dev, Instead of pulling the minified js all the files will be pulled (app/main.js)
 #     Check the Building from Source guide in the docs, for details on how to run

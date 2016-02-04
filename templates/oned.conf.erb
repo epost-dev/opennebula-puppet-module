@@ -28,7 +28,7 @@
 #  scripts.
 #
 #  PORT: Port where oned will listen for xmlrpc calls.
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #  LISTEN_ADDRESS: Host IP to listen on for xmlrpc calls (default: all IPs).
 <% end -%>
 #
@@ -75,7 +75,7 @@ SCRIPTS_REMOTE_DIR=/var/tmp/one
 
 PORT = <%= scope.lookupvar('one::oned_port') %>
 
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 LISTEN_ADDRESS = "<%= scope.lookupvar('one::oned_listen_address') %>"
 <% end -%>
 
@@ -119,7 +119,7 @@ FEDERATION = [
     MASTER_ONED = ""
 ]
 
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #*******************************************************************************
 # Default showback cost
 #-------------------------------------------------------------------------------
@@ -294,12 +294,12 @@ IM_MAD = [
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 # IM_MAD = [
 #       name       = "kvm",
 #       executable = "one_im_ssh",
 #       arguments  = "-r 3 -t 15 kvm-probes" ]
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
 IM_MAD = [
     name       = "kvm_pull",
     executable = "one_im_ssh",
@@ -320,12 +320,12 @@ IM_MAD = [
 #    arguments  = "-r 3 -t 15 xen3" ]
 
 # Driver for Xen 4.x
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 IM_MAD = [
     name       = "xen",
     executable = "one_im_ssh",
     arguments  = "-r 3 -t 15 xen4" ]
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
 #IM_MAD = [
 #    name       = "xen",
 #    executable = "one_im_ssh",
@@ -376,7 +376,7 @@ IM_MAD = [
 
 #-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 <% end -%>
@@ -444,7 +444,7 @@ IM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate=migrate_local,save"
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute remote commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
@@ -460,15 +460,15 @@ IM_MAD = [
 VM_MAD = [
     name       = "kvm",
     executable = "one_vmm_exec",
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
     arguments  = "-t 15 -r 0 -i kvm",
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
     arguments  = "-t 15 -r 5 kvm",
 <% end -%>
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "kvm" ]
 
-<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "qemu",
@@ -487,7 +487,7 @@ VM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate,save"
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
@@ -504,14 +504,14 @@ VM_MAD = [
 #    type       = "xen" ]
 #
 # Driver for Xen 4.x
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 VM_MAD = [
     name       = "xen",
     executable = "one_vmm_exec",
     arguments  = "-t 15 -r 0 xen4",
     default    = "vmm_exec/vmm_exec_xen4.conf",
     type       = "xen" ]
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
 #VM_MAD = [
 #    name       = "xen",
 #    executable = "one_vmm_exec",
@@ -526,7 +526,7 @@ VM_MAD = [
 #  VMware Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
@@ -545,7 +545,7 @@ VM_MAD = [
 #  vCenter Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    -p more than one action per host in parallel, needs support from hypervisor
 #    -s <shell> to execute commands, bash by default
 #    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
@@ -556,7 +556,7 @@ VM_MAD = [
 #    name       = "vcenter",
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #    default    = "vmm_exec/vmm_exec_vcenter.conf",
 <% end -%>
 #    type       = "xml" ]
@@ -670,7 +670,7 @@ DATASTORE_MAD = [
 #               - SHUTDOWN, after the VM is shutdown
 #               - STOP, after the VM is stopped (including VM image transfers)
 #               - DONE, after the VM is deleted or shutdown
-<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #               - FAILED, when the VM enters the failed state
 <% end -%>
 #               - CUSTOM, user defined specific STATE and LCM_STATE combination
@@ -784,7 +784,7 @@ HOST_HOOK = [
   <% end -%>
 <%- end -%>
 #-------------------------------------------------------------------------------
-<% if scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 # These two hooks can be used to automatically delete or resubmit VMs that reach
 # the "failed" state. This way, the administrator doesn't have to interact
 # manually to release its resources or retry the deployment.
@@ -850,7 +850,7 @@ HOST_HOOK = [
 #               defined all the modules available will be enabled
 #   authz     : list of authentication modules separated by commas
 #
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 # DEFAULT_AUTH: The default authentication driver to use when OpenNebula does
 # not know the user and needs to authenticate it externally.  If you want to
 # use "default" (not recommended, but supported for backwards compatibility
@@ -874,15 +874,15 @@ HOST_HOOK = [
 
 AUTH_MAD = [
     executable = "one_auth_mad",
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
     authn = "ssh,x509,ldap,server_cipher,server_x509"
-<% elsif scope.function_versioncmp([@one_version,'4.14']) < 0 -%>
+<% else -%>
     authn = "ssh,x509,ldap,server_cipher,server_x509,default"
 <% end -%>
 ]
 <% if scope.lookupvar('one::oned_default_auth') != 'undef' -%>
 DEFAULT_AUTH = "<%= scope.lookupvar('one::oned_default_auth') %>"
-<% elsif scope.function_versioncmp([@one_version,'4.14']) >= 0 and @ldap -%>
+<% elsif scope.lookupvar('one::version_gte_4_14') and @ldap -%>
 DEFAULT_AUTH = "ldap"
 <% end -%>
 
@@ -924,7 +924,7 @@ VM_RESTRICTED_ATTR = "DISK/WRITE_BYTES_SEC"
 VM_RESTRICTED_ATTR = "DISK/TOTAL_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/READ_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/WRITE_IOPS_SEC"
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 #VM_RESTRICTED_ATTR = "DISK/SIZE"
 VM_RESTRICTED_ATTR = "DISK/ORIGINAL_SIZE"
 VM_RESTRICTED_ATTR = "CPU_COST"
@@ -979,7 +979,7 @@ VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
 INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
 INHERIT_DATASTORE_ATTR  = "CEPH_USER"
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 INHERIT_DATASTORE_ATTR  = "CEPH_CONF"
 <% end -%>
 
@@ -996,7 +996,7 @@ INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
 INHERIT_VNET_ATTR       = "BRIDGE_OVS"
 INHERIT_VNET_ATTR       = "FILTER_IP_SPOOFING"
 INHERIT_VNET_ATTR       = "FILTER_MAC_SPOOFING"
-<% if scope.function_versioncmp([@one_version,'4.14']) >= 0 -%>
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 INHERIT_VNET_ATTR       = "MTU"
 <% end -%>
 
