@@ -4,6 +4,7 @@ small_logo: images/custom_logo_small.png
 small_logo: images/opennebula-sunstone-v4.14-small.png
 <% end -%>
 provision_logo: images/one_small_logo.png
+<% if scope.lookupvar('one::version_gte_4_14') -%>
 enabled_tabs:
     - dashboard-tab
     #- system-tab
@@ -31,6 +32,35 @@ enabled_tabs:
     - oneflow-templates-tab
     - settings-tab
     #- support-tab
+<% else -%>
+enabled_tabs:
+    dashboard-tab: true
+    system-tab: false
+    users-tab: false
+    groups-tab: false
+    vdcs-tab: false
+    acls-tab: false
+    vresources-tab: true
+    vms-tab: true
+    templates-tab: true
+    images-tab: true
+    files-tab: true
+    infra-tab: true
+    clusters-tab: false
+    hosts-tab: false
+    datastores-tab: true
+    vnets-tab: true
+    secgroups-tab: true
+    marketplace-tab: true
+    oneflow-dashboard: true
+    oneflow-services: true
+    oneflow-templates: true
+    support-tab: false
+    doc-tab: false
+    community-tab: false
+    enterprise-tab: false
+    zones-tab: false
+<% end -%>
 autorefresh: true
 features:
     showback: true
