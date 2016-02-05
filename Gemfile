@@ -3,6 +3,7 @@ source ENV['GEM_SOURCE'] || "https://rubygems.org"
 group :development, :test do
   gem 'rake',                    :require => false
   gem 'rspec-puppet',            :require => false
+  gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint', :git => 'https://github.com/rodjek/puppet-lint.git', :require => false
   gem 'simplecov',               :require => false

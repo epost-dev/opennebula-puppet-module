@@ -52,34 +52,53 @@ describe 'one::oned::sunstone::config', :type => :class do
 
         it { should_not contain_file('/etc/one/sunstone-server.conf').with_content(/#{unexpected_routes}/m) }
       end
-      context 'with marketplace enabled on 4.14' do
-        let (:params) { {:enable_marketplace => 'yes', :one_version => '4.14'} }
-        it { should contain_file('/etc/one/sunstone-views/admin.yaml') \
-        .with_group('oneadmin') \
-        .with_content(/- marketplace-tab/m)
-        }
-      end
-      context 'with marketplace enabled on 4.12' do
-        let (:params) { {:enable_marketplace => 'yes', :one_version => '4.12'} }
-        it { should contain_file('/etc/one/sunstone-views.yaml') \
-        .with_group('oneadmin') \
-        .with_content(/- marketplace-tab/m)
-        }
-      end
-      context 'with marketplace disabled on 4.14' do
-        let (:params) { {:enable_marketplace => 'no', :one_version => '4.14'} }
-        it { should_not contain_file('/etc/one/sunstone-views/admin.yaml') \
-        .with_group('oneadmin') \
-        .with_content(/- marketplace-tab/m)
-        }
-      end
-      context 'with marketplace disabled on 4.12' do
-        let (:params) { {:enable_marketplace => 'no', :one_version => '4.12'} }
-        it { should_not contain_file('/etc/one/sunstone-views.yaml') \
-        .with_group('oneadmin') \
-        .with_content(/- marketplace-tab/m)
-        }
-      end
     end
+  end
+end
+
+
+describe 'sunstone_views template on 4.12' do
+
+  let(:scope) { PuppetlabsSpec::PuppetInternals.scope }
+  before(:each) do
+    scope.stubs(:lookupvar).with('one::sunstone_logo_png').returns('undef')
+    scope.stubs(:lookupvar).with('one::version_gte_4_14').returns(false)
+  end
+
+  it 'with marketplace enabled' do
+    harness = TemplateHarness.new('spec/../templates/sunstone-views.yaml.erb', scope)
+    harness.set('@enable_marketplace', 'yes')
+    result = harness.run
+    expect(result).to include("- marketplace-tab")
+  end
+
+  it 'with marketplace disabled' do
+    harness = TemplateHarness.new('spec/../templates/sunstone-views.yaml.erb', scope)
+    harness.set('@enable_marketplace', 'no')
+    result = harness.run
+    expect(result).to_not include("- marketplace-tab")
+  end
+end
+
+describe 'sunstone_views template on 4.14' do
+
+  let(:scope) { PuppetlabsSpec::PuppetInternals.scope }
+  before(:each) do
+    scope.stubs(:lookupvar).with('one::sunstone_logo_small_png').returns('undef')
+    scope.stubs(:lookupvar).with('one::version_gte_4_14').returns(true)
+  end
+
+  it 'with marketplace enabled' do
+    harness = TemplateHarness.new('spec/../templates/sunstone-views-admin.yaml.erb', scope)
+    harness.set('@enable_marketplace', 'yes')
+    result = harness.run
+    expect(result).to include("- marketplace-tab")
+  end
+
+  it 'with marketplace disabled' do
+    harness = TemplateHarness.new('spec/../templates/sunstone-views-admin.yaml.erb', scope)
+    harness.set('@enable_marketplace', 'no')
+    result = harness.run
+    expect(result).to_not include("- marketplace-tab")
   end
 end
