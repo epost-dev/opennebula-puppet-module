@@ -74,12 +74,19 @@ tabs:
         widgets_two_per_row:
             - network
             - storage
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+            - user_quotas
+            - group_quotas
+            <%- end -%>
             #- vms
         widgets_one_per_row:
             - vms
             #- hosts
             #- users
         widgets_one_footer:
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+            - accounting
+            <%- end -%>
     system-tab:
         panel_tabs:
         actions:
@@ -211,6 +218,9 @@ tabs:
             VM.resume: true
             VM.stop: true
             VM.recover: false
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+            VM.boot: true
+            <%- end -%>
             VM.reboot: true
             VM.reboot_hard: true
             VM.poweroff: true
@@ -224,6 +234,9 @@ tabs:
             VM.resize: true
             VM.attachdisk: true
             VM.detachdisk: true
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+            VM.saveas: true
+            <%- end -%>
             VM.disk_saveas: true
             VM.attachnic: true
             VM.detachnic: true
@@ -495,6 +508,9 @@ tabs:
                 Role.suspend: true
                 Role.resume: true
                 Role.stop: true
+                <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+                Role.boot: true
+                <%- end -%>
                 Role.reboot: true
                 Role.reboot_hard: true
                 Role.poweroff: true
@@ -508,6 +524,9 @@ tabs:
                 RoleVM.suspend: true
                 RoleVM.resume: true
                 RoleVM.stop: true
+                <%- if not scope.lookupvar('one::version_gte_4_14') -%>
+                RoleVM.boot: true
+                <%- end -%>
                 RoleVM.reboot: true
                 RoleVM.reboot_hard: true
                 RoleVM.poweroff: true
