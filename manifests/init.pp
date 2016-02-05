@@ -446,6 +446,15 @@ class one (
   $default_cdrom_device_prefix    = $one::params::default_cdrom_device_prefix,
   $one_version                    = $one::params::one_version,
 ) inherits one::params {
+
+  # check if version greater than or equal to 4.14 (used in templates)
+  if ( versioncmp($one_version, '4.14') >= 0 ) {
+    $version_gte_4_14 = true
+  }
+  else {
+    $version_gte_4_14 = false
+  }
+
   include one::prerequisites
   include one::install
   include one::config

@@ -200,14 +200,6 @@ class one::params {
     }
   }
 
-  # check if version greater than or equal to 4.14 (used in templates)
-  if ( versioncmp($one_version, '4.14') >= 0 ) {
-    $version_gte_4_14 = true
-  }
-  else {
-    $version_gte_4_14 = false
-  }
-
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
