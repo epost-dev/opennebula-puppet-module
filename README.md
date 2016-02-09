@@ -26,6 +26,13 @@ The one (short for OpenNebula) module allows to install and manage your OpenNebu
 We support Puppet 3.1.1 on CentOS 6.7 with OpenNebula 4.12.1. 
 You need to add the EPEL repository because the module needs some packages from there.
 
+Note, there is a required package on the oned controller node that is not managed by this module, the gem nokogiri (or the yum package rubygem-nokori).  This can be installed elsewhere in that node's puppet catalog like this:
+
+    package {'rubygem-nokogiri':
+      ensure => installed,
+    } ->
+    class {'::one':}
+
 ### Puppet Module Dependencies
 The ONe-Module needs the following other modules:
 
