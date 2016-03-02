@@ -37,6 +37,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
         xml.GATEWAY resource[:gateway] if resource[:gateway]
         xml.NETWORK_MASK resource[:netmask] if resource[:netmask]
         xml.NETWORK_ADDRESS resource[:network_address] if resource[:network_address]
+        xml.MTU resource[:mtu] if resource[:mtu]
         xml.CONTEXT resource[:context].each { |k, v| xml.send(k.upcase, v) } if resource[:context]
       end
     end
@@ -75,6 +76,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
           :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
           :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
+          :mtu             => (vnet.xpath('./TEMPLATE/MTU').text unless vnet.xpath('./TEMPLATE/MTU').nil?),
           :model           => (vnet.xpath('./TEMPLATE/MODEL').text unless vnet.xpath('./TEMPLATE/MODEL').nil?)
       )
     end

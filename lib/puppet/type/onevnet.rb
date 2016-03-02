@@ -57,6 +57,10 @@ Puppet::Type.newtype(:onevnet) do
       desc "Gateway for network"
   end
 
+  newproperty(:mtu) do
+      desc "MTU for network"
+  end
+
   newproperty(:context) do
     desc "A hash of context information to also store in the template."
   end
