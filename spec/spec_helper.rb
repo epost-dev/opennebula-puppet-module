@@ -1,5 +1,6 @@
 require 'mocha/setup'
 require 'rspec-puppet'
+require 'rspec-puppet-utils'
 require 'hiera'
 require 'facter'
 require 'puppetlabs_spec_helper/module_spec_helper'

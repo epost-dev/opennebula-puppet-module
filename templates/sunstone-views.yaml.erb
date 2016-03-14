@@ -4,6 +4,7 @@ logo: images/custom_logo.png
 <% else -%>
 logo: images/opennebula-sunstone-v4.0.png
 <% end -%>
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 available_tabs:
     - dashboard-tab
     - system-tab
@@ -33,6 +34,7 @@ available_tabs:
 <% if @enable_support == 'yes' -%>
     - support-tab
 <% end -%>
+<%- end -%>
 groups:
     oneadmin:
         - admin

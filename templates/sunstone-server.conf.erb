@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------- #
-# Copyright 2002-2014, OpenNebula Project (OpenNebula.org), C12G Labs        #
+# Copyright 2002-2015, OpenNebula Project, OpenNebula Systems                #
 #                                                                            #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may    #
 # not use this file except in compliance with the License. You may obtain    #
@@ -31,7 +31,11 @@
 :host: <%= @listen_ip %>
 :port: 9869
 
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# Place where to store sessions, this value can be memory, memcache or memcache-dalli
+<% else -%>
 # Place where to store sessions, this value can be memory or memcache
+<% end -%>
 # Use memcache when starting multiple server processes, for example,
 # with passenger
 #
@@ -43,6 +47,15 @@
 :memcache_host: localhost
 :memcache_port: 11211
 :memcache_namespace: opennebula.sunstone
+
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# Excution environment for Sunstone
+#   dev, Instead of pulling the minified js all the files will be pulled (app/main.js)
+#     Check the Building from Source guide in the docs, for details on how to run
+#     Sunstone in development
+#   prod, the minified js will be used (dist/main.js)
+:env: 'prod'
+<% end -%>
 
 ################################################################################
 # Log
@@ -114,8 +127,10 @@
 #:marketplace_password:
 
 # Marketplace endpoint
+# The url should not include the /appliance path since it will be automatically
+# included
 #
-:marketplace_url: http://marketplace.opennebula.systems/appliance
+:marketplace_url: http://marketplace.opennebula.systems/
 
 ################################################################################
 # OneFlow

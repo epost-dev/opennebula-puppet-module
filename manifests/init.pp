@@ -351,6 +351,7 @@ class one (
   $oned_db_password               = $one::params::oned_db_password,
   $oned_db_host                   = $one::params::oned_db_host,
   $oned_vm_submit_on_hold         = $one::params::oned_vm_submit_on_hold,
+  $oned_default_auth              = $one::params::oned_default_auth,
   $oned_ldap_host                 = $one::params::oned_ldap_host,
   $oned_ldap_port                 = $one::params::oned_ldap_port,
   $oned_ldap_base                 = $one::params::oned_ldap_base,
@@ -445,6 +446,15 @@ class one (
   $default_cdrom_device_prefix    = $one::params::default_cdrom_device_prefix,
   $one_version                    = $one::params::one_version,
 ) inherits one::params {
+
+  # check if version greater than or equal to 4.14 (used in templates)
+  if ( versioncmp($one_version, '4.14') >= 0 ) {
+    $version_gte_4_14 = true
+  }
+  else {
+    $version_gte_4_14 = false
+  }
+
   include one::prerequisites
   include one::install
   include one::config

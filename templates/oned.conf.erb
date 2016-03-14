@@ -28,6 +28,9 @@
 #  scripts.
 #
 #  PORT: Port where oned will listen for xmlrpc calls.
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#  LISTEN_ADDRESS: Host IP to listen on for xmlrpc calls (default: all IPs).
+<% end -%>
 #
 #  DB: Configuration attributes for the database backend
 #   backend : can be sqlite or mysql (default is sqlite)
@@ -72,6 +75,10 @@ SCRIPTS_REMOTE_DIR=/var/tmp/one
 
 PORT = <%= scope.lookupvar('one::oned_port') %>
 
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+LISTEN_ADDRESS = "<%= scope.lookupvar('one::oned_listen_address') %>"
+<% end -%>
+
 <% if @backend == 'sqlite' -%>
 DB = [ backend = "sqlite" ]
 <% end -%>
@@ -112,32 +119,47 @@ FEDERATION = [
     MASTER_ONED = ""
 ]
 
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#*******************************************************************************
+# Default showback cost
+#-------------------------------------------------------------------------------
+# The following attributes define the default cost for Virtual Machines that
+# don't have a CPU, MEMORY or DISK cost. This is used by the oneshowback
+# calculate method.
+#*******************************************************************************
+
+DEFAULT_COST = [
+    CPU_COST    = 0,
+    MEMORY_COST = 0,
+    DISK_COST   = 0
+]
+<% end -%>
+
 #*******************************************************************************
 # XML-RPC server configuration
 #-------------------------------------------------------------------------------
 #  These are configuration parameters for oned's xmlrpc-c server
 #
 #  MAX_CONN: Maximum number of simultaneous TCP connections the server
-#  will maintain - default 15
+#  will maintain
 #
 #  MAX_CONN_BACKLOG: Maximum number of TCP connections the operating system
 #  will accept on the server's behalf without the server accepting them from
-#  the operating system - default 15
+#  the operating system
 #
 #  KEEPALIVE_TIMEOUT: Maximum time in seconds that the server allows a
-#  connection to be open between RPCs - default 15
+#  connection to be open between RPCs
 #
 #  KEEPALIVE_MAX_CONN: Maximum number of RPCs that the server will execute on
-#  a single connection - default 30
+#  a single connection
 #
 #  TIMEOUT: Maximum time in seconds the server will wait for the client to
-#  do anything while processing an RPC - default 15
+#  do anything while processing an RPC
 #
 #  RPC_LOG: Create a separated log file for xml-rpc requests, in
 #  "/var/log/one/one_xmlrpc.log".
 #
-#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses. Only relevant for
-#  slave zones.
+#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
 #
 #  LOG_CALL_FORMAT: Format string to log XML-RPC calls. Interpreted strings:
 #     %i -- request id
@@ -251,9 +273,9 @@ DEFAULT_CDROM_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_cdrom_device_pr
 #        not be effective.
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "collectd",
-    executable = "collectd",
-    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
+      name       = "collectd",
+      executable = "collectd",
+      arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -262,9 +284,9 @@ IM_MAD = [
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "kvm",
-    executable = "one_im_ssh",
-    arguments  = "-r 3 -t 15 kvm" ]
+      name       = "kvm",
+      executable = "one_im_ssh",
+      arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -272,10 +294,17 @@ IM_MAD = [
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# IM_MAD = [
+#       name       = "kvm",
+#       executable = "one_im_ssh",
+#       arguments  = "-r 3 -t 15 kvm-probes" ]
+<% else -%>
 IM_MAD = [
     name       = "kvm_pull",
     executable = "one_im_ssh",
     arguments  = "-r 3 -t 15 kvm-probes" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -291,10 +320,17 @@ IM_MAD = [
 #    arguments  = "-r 3 -t 15 xen3" ]
 
 # Driver for Xen 4.x
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+IM_MAD = [
+    name       = "xen",
+    executable = "one_im_ssh",
+    arguments  = "-r 3 -t 15 xen4" ]
+<% else -%>
 #IM_MAD = [
 #    name       = "xen",
 #    executable = "one_im_ssh",
 #    arguments  = "-r 3 -t 15 xen4" ]
+<% end -%>
 
 #-------------------------------------------------------------------------------
 #  XEN SSH-pull Information Driver Manager Configuration
@@ -340,6 +376,10 @@ IM_MAD = [
 
 #-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+<% end -%>
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
@@ -404,6 +444,15 @@ IM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate=migrate_local,save"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute remote commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+#    -i try to do live-snapshot if available. Currently supported only for kvm
+#       with qcow2 as the datastore TM_MAD. If not available, it will fallback
+#       on the default (-d)
+<% end -%>
 #
 #  Note: You can use type = "qemu" to use qemu emulated guests, e.g. if your
 #  CPU does not have virtualization extensions or use nested Qemu-KVM hosts
@@ -411,9 +460,15 @@ IM_MAD = [
 VM_MAD = [
     name       = "kvm",
     executable = "one_vmm_exec",
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+    arguments  = "-t 15 -r 0 -i kvm",
+<% else -%>
     arguments  = "-t 15 -r 5 kvm",
+<% end -%>
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "kvm" ]
+
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "qemu",
@@ -421,8 +476,8 @@ VM_MAD = [
     arguments  = "-t 15 -r 0 kvm",
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "qemu" ]
+<% end -%>
 #-------------------------------------------------------------------------------
-
 
 #-------------------------------------------------------------------------------
 #  XEN Virtualization Driver Manager Configuration
@@ -432,8 +487,14 @@ VM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate,save"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
-
+#
 # Driver for Xen 3.x
 #VM_MAD = [
 #    name       = "xen",
@@ -441,21 +502,36 @@ VM_MAD = [
 #    arguments  = "-t 15 -r 0 xen3",
 #    default    = "vmm_exec/vmm_exec_xen3.conf",
 #    type       = "xen" ]
-
+#
 # Driver for Xen 4.x
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+VM_MAD = [
+    name       = "xen",
+    executable = "one_vmm_exec",
+    arguments  = "-t 15 -r 0 xen4",
+    default    = "vmm_exec/vmm_exec_xen4.conf",
+    type       = "xen" ]
+<% else -%>
 #VM_MAD = [
 #    name       = "xen",
 #    executable = "one_vmm_exec",
 #    arguments  = "-t 15 -r 0 xen4",
 #    default    = "vmm_exec/vmm_exec_xen4.conf",
 #    type       = "xen" ]
-
+<% end -%>
+#
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  VMware Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vmware",
@@ -465,16 +541,24 @@ VM_MAD = [
 #    type       = "vmware" ]
 #-------------------------------------------------------------------------------
 
-
 #-------------------------------------------------------------------------------
 #  vCenter Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    default    = "vmm_exec/vmm_exec_vcenter.conf",
+<% end -%>
 #    type       = "xml" ]
 #-------------------------------------------------------------------------------
 
@@ -586,7 +670,9 @@ DATASTORE_MAD = [
 #               - SHUTDOWN, after the VM is shutdown
 #               - STOP, after the VM is stopped (including VM image transfers)
 #               - DONE, after the VM is deleted or shutdown
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #               - FAILED, when the VM enters the failed state
+<% end -%>
 #               - CUSTOM, user defined specific STATE and LCM_STATE combination
 #                 of states to trigger the hook.
 #   command   : path is relative to $ONE_LOCATION/var/remotes/hook
@@ -698,6 +784,7 @@ HOST_HOOK = [
   <% end -%>
 <%- end -%>
 #-------------------------------------------------------------------------------
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 # These two hooks can be used to automatically delete or resubmit VMs that reach
 # the "failed" state. This way, the administrator doesn't have to interact
 # manually to release its resources or retry the deployment.
@@ -718,6 +805,7 @@ HOST_HOOK = [
 #   command   = "/usr/bin/env onevm delete --recreate",
 #   arguments = "$ID" ]
 #
+<% end -%>
 #-------------------------------------------------------------------------------
 # Examples for DNS and puppet hooks
 #-------------------------------------------------------------------------------
@@ -762,6 +850,15 @@ HOST_HOOK = [
 #               defined all the modules available will be enabled
 #   authz     : list of authentication modules separated by commas
 #
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# DEFAULT_AUTH: The default authentication driver to use when OpenNebula does
+# not know the user and needs to authenticate it externally.  If you want to
+# use "default" (not recommended, but supported for backwards compatibility
+# reasons) make sure you create a symlink pointing to the actual authentication
+# driver in /var/lib/one/remotes/auth, and add "default" to the 'auth'
+# parameter in the 'AUTH_MAD' section.
+#
+<% end -%>
 # SESSION_EXPIRATION_TIME: Time in seconds to keep an authenticated token as
 # valid. During this time, the driver is not used. Use 0 to disable session
 # caching
@@ -777,8 +874,17 @@ HOST_HOOK = [
 
 AUTH_MAD = [
     executable = "one_auth_mad",
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+    authn = "ssh,x509,ldap,server_cipher,server_x509"
+<% else -%>
     authn = "ssh,x509,ldap,server_cipher,server_x509,default"
+<% end -%>
 ]
+<% if scope.lookupvar('one::oned_default_auth') != 'undef' -%>
+DEFAULT_AUTH = "<%= scope.lookupvar('one::oned_default_auth') %>"
+<% elsif scope.lookupvar('one::version_gte_4_14') and scope.lookupvar('one::ldap') -%>
+DEFAULT_AUTH = "ldap"
+<% end -%>
 
 SESSION_EXPIRATION_TIME = 900
 
@@ -818,6 +924,14 @@ VM_RESTRICTED_ATTR = "DISK/WRITE_BYTES_SEC"
 VM_RESTRICTED_ATTR = "DISK/TOTAL_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/READ_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/WRITE_IOPS_SEC"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#VM_RESTRICTED_ATTR = "DISK/SIZE"
+VM_RESTRICTED_ATTR = "DISK/ORIGINAL_SIZE"
+VM_RESTRICTED_ATTR = "CPU_COST"
+VM_RESTRICTED_ATTR = "MEMORY_COST"
+VM_RESTRICTED_ATTR = "DISK_COST"
+VM_RESTRICTED_ATTR = "PCI"
+<% end -%>
 
 #VM_RESTRICTED_ATTR = "RANK"
 #VM_RESTRICTED_ATTR = "SCHED_RANK"
@@ -865,6 +979,9 @@ VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
 INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
 INHERIT_DATASTORE_ATTR  = "CEPH_USER"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+INHERIT_DATASTORE_ATTR  = "CEPH_CONF"
+<% end -%>
 
 INHERIT_DATASTORE_ATTR  = "GLUSTER_HOST"
 INHERIT_DATASTORE_ATTR  = "GLUSTER_VOLUME"
@@ -879,6 +996,9 @@ INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
 INHERIT_VNET_ATTR       = "BRIDGE_OVS"
 INHERIT_VNET_ATTR       = "FILTER_IP_SPOOFING"
 INHERIT_VNET_ATTR       = "FILTER_MAC_SPOOFING"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+INHERIT_VNET_ATTR       = "MTU"
+<% end -%>
 
 #*******************************************************************************
 # Transfer Manager Driver Behavior Configuration

@@ -22,11 +22,16 @@ class one::prerequisites(
   $one_repo_enable  = $one::one_repo_enable,
   $one_version      = $one::one_version,
 ) {
+
+  # we only need major version here, so trim off any minor point release(s)
+  $one_version_array = split($one_version,"[.]")
+  $one_version_short = "${one_version_array[0]}.${one_version_array[1]}"
+
   case $::osfamily {
     'RedHat': {
       if ( $one_repo_enable == 'true' ) { # lint:ignore:quoted_booleans
         yumrepo { 'opennebula':
-          baseurl  => "http://downloads.opennebula.org/repo/${one_version}/CentOS/${::operatingsystemmajrelease}/x86_64/",
+          baseurl  => "http://downloads.opennebula.org/repo/${one_version_short}/CentOS/${::operatingsystemmajrelease}/x86_64/",
           descr    => 'OpenNebula',
           enabled  => 1,
           gpgcheck => 0,
@@ -38,11 +43,11 @@ class one::prerequisites(
         include ::apt
         case $::operatingsystem {
           'Debian': {
-            $apt_location="${one_version}/Debian/${::operatingsystemmajrelease}"
+            $apt_location="${one_version_short}/Debian/${::operatingsystemmajrelease}"
             $apt_pin='-10'
           }
           'Ubuntu': {
-            $apt_location="${one_version}/Ubuntu/${::operatingsystemmajrelease}"
+            $apt_location="${one_version_short}/Ubuntu/${::operatingsystemmajrelease}"
             $apt_pin='500'
           }
           default: { fail("Unrecognized operating system ${::operatingsystem}") }
