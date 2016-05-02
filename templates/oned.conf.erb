@@ -899,8 +899,10 @@ DEFAULT_UMASK = 177
 #   MUST be consistent with the values in onegate-server.conf
 #*******************************************************************************
 
-<% if scope.lookupvar('one::oned_onegate_ip') -%>
-ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::oned_onegate_ip') %>:5030"
+<% if scope.lookupvar('one::oned_onegate_endpoint') -%>
+ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::oned_onegate_endpoint') %>"
+<% elsif scope.lookupvar('one::oned_onegate_ip') -%>
+ONEGATE_ENDPOINT = "http://<%= scope.lookupvar('one::oned_onegate_ip') %>:5030"
 <% else -%>
 #ONEGATE_ENDPOINT = "http://frontend:5030"
 <% end -%>
