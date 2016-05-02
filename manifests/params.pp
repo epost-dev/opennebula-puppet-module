@@ -122,6 +122,8 @@ class one::params {
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
   $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)
+  # Specify full endpoint if needed (such as if using https proxy)
+  $oned_onegate_endpoint = hiera('one::oned::onegate::endpoint', undef)
 
   # E-POST imaginator parameters
   $kickstart_network         = hiera ('one::node::kickstart::network', undef)
