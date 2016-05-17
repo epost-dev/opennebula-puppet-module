@@ -42,6 +42,8 @@ And run the tests and puppet-lint:
 
 Please note: Acceptance tests require vagrant & virtualbox to be installed.
 
+The unit tests uses [Beaker](https://github.com/puppetlabs/beaker).
+
 To run acceptance tests on the default centos 6 vm:
 
      bundle exec rake beaker
