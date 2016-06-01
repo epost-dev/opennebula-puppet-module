@@ -1,7 +1,13 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 group :development, :test do
-  gem 'rake',                    :require => false
+  if RUBY_VERSION < '1.9.3'
+    gem 'rake', '< 11'
+    gem 'retriable', '< 2'
+    gem 'addressable', '< 2.4'
+  else
+    gem 'rake', :require => false
+  end
   gem 'rspec-puppet',            :require => false
   gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
