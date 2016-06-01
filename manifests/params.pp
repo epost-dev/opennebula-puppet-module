@@ -205,11 +205,13 @@ class one::params {
     'RedHat': {
       if $::operatingsystemmajrelease == '7' {
         $node_packages = [
+          'device-mapper-libs',
           'opennebula-node-kvm',
           'ipset',
         ]
       } else {
         $node_packages = [
+          'device-mapper-libs',
           'opennebula-node-kvm',
           'python-virtinst',
           'ipset',
