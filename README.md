@@ -100,9 +100,9 @@ Create onevnet addressrange
         ulaprefix     => 'fd01:a:b::',        # optional
     }
 
-Attention: onevnet_addressrange uses the title to uniqly identify addressranges among all Virtual Networks.
+Attention: onevnet_addressrange uses the title to uniqly identify address ranges among all Virtual Networks.
 The title will be set as common attribute with the name PUPPET_NAME.
-This means: addressranges which are not set by Puppet will not be visible using puppet resource onevnet_addressrange command.
+This means: address ranges which are not set by Puppet will not be visible using puppet resource onevnet_addressrange command.
 
 
 Create a ONE Datastore
