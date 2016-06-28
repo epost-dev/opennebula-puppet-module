@@ -516,6 +516,14 @@ class one (
     $version_gte_4_14 = false
   }
 
+  # check if version greater than or equal to 5.0 (used in templates)
+  if ( versioncmp($one_version, '5.0') >= 0 ) {
+    $version_gte_5_0 = true
+  }
+  else {
+    $version_gte_5_0 = false
+  }
+
   if ($oned_onegate_endpoint != undef) {
     if ($oned_onegate_ip != undef) {
       fail("You can't provide both oned_onegate_ip and oned_onegate_endpoint as parameter.")
