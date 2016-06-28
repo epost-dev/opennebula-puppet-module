@@ -1269,7 +1269,7 @@ TM_MAD_CONF = [
     DS_MIGRATE = "YES"
 <% else -%>
     name = "shared", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
-<% else -%>
+<% end -%>
 ]
 
 TM_MAD_CONF = [
@@ -1286,7 +1286,7 @@ TM_MAD_CONF = [
     DS_MIGRATE = "YES"
 <% else -%>
     name = "ssh", ln_target = "SYSTEM", clone_target = "SYSTEM", shared = "no"
-<% else -%>
+<% end -%>
 ]
 
 <% if not scope.lookupvar('one::version_gte_5_0') -%>
@@ -1301,7 +1301,7 @@ TM_MAD_CONF = [
     DS_MIGRATE = "NO"
 <% else -%>
     name = "ceph", ln_target = "NONE", clone_target = "SELF", shared = "yes"
-<% else -%>
+<% end -%>
 ]
 
 <% if scope.lookupvar('one::version_gte_5_0') -%>
