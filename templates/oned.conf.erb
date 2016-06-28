@@ -346,6 +346,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 IM_MAD = [
       name       = "kvm",
+      SUNSTONE_NAME = "KVM",
       executable = "one_im_ssh",
       arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
@@ -358,6 +359,7 @@ IM_MAD = [
 <% if scope.lookupvar('one::version_gte_4_14') -%>
 # IM_MAD = [
 #       name       = "kvm",
+#       SUNSTONE_NAME = "kvm-ssh",
 #       executable = "one_im_ssh",
 #       arguments  = "-r 3 -t 15 kvm-probes" ]
 <% else -%>
@@ -432,6 +434,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "vcenter",
+#      SUNSTONE_NAME = "VMWare vCenter",
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 15 -r 0 vcenter" ]
 #-------------------------------------------------------------------------------
@@ -445,6 +448,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
+#      SUNSTONE_NAME = "Amazon EC2",
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 ec2" ]
 
@@ -468,6 +472,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "az",
+#      SUNSTONE_NAME = "Microsoft Azure",
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 az" ]
 #-------------------------------------------------------------------------------
@@ -475,7 +480,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #  Dummy Information Driver Manager Configuration
 #-------------------------------------------------------------------------------
-#IM_MAD = [ name="dummy", executable="one_im_dummy"]
+#IM_MAD = [ NAME="dummy", SUNSTONE_NAME="Testing", EXECUTABLE="one_im_dummy"]
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
@@ -557,6 +562,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "kvm",
+    SUNSTONE_NAME  = "KVM",
     executable = "one_vmm_exec",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
     arguments  = "-t 15 -r 0 kvm",
@@ -664,6 +670,7 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
+#    SUNSTONE_NAME  = "VMWare vCenter",
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
 <% if scope.lookupvar('one::version_gte_4_14') -%>
@@ -690,6 +697,7 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "ec2",
+#    SUNSTONE_NAME  = "Amazon EC2",
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 ec2",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
@@ -724,6 +732,7 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "az",
+#    SUNSTONE_NAME  = "Microsoft Azure",
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 az",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
@@ -742,7 +751,8 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #  Dummy Virtualization Driver Configuration
 #-------------------------------------------------------------------------------
-#VM_MAD = [ name="dummy", executable="one_vmm_dummy", type="xml" ]
+#VM_MAD = [ NAME="dummy", SUNSTONE_NAME="Testing", EXECUTABLE="one_vmm_dummy",
+#  TYPE="xml" ]
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
