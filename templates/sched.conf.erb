@@ -7,7 +7,14 @@
 #-------------------------------------------------------------------------------
 #  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
 #
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#  XMLRPC_TIMEOUT: Seconds to timeout XML-RPC calls to oned
+#
+#  ONE_XMLRPC: URL to connect to the OpenNebula daemon (oned)
+<% else -%>
 #  ONED_PORT: Port to connect to the OpenNebula daemon (oned)
+
+<% end -%>
 #
 #  SCHED_INTERVAL: Seconds between two scheduling actions
 #
@@ -69,9 +76,13 @@
 #*******************************************************************************
 
 MESSAGE_SIZE = 1073741824
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+TIMEOUT      = 60
 
+ONE_XMLRPC = "http://localhost:2633/RPC2"
+<% else -%>
 ONED_PORT = <%= scope.lookupvar('one::oned_port') %>
-
+<% end -%>
 SCHED_INTERVAL = <%= scope.lookupvar('one::sched_interval') %>
 
 MAX_VM       = <%= scope.lookupvar('one::sched_max_vm') %>
