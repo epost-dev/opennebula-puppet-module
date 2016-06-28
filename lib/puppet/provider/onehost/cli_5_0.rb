@@ -14,9 +14,17 @@
 require 'rubygems'
 require 'nokogiri' if Puppet.features.nokogiri?
 
-Puppet::Type.type(:onehost).provide(:cli) do
+Puppet::Type.type(:onehost).provide(:cli_5_0) do
   confine :feature => :nokogiri
-  desc "onehost provider"
+  confine :true => begin
+    if File.exists?('/var/lib/one/remotes/VERSION')
+      file = File.open("/var/lib/one/remotes/VERSION", "r")
+      one_version = file.read
+      file.close
+      Gem::Version.new(one_version) > Gem::Version.new('5.0')
+    end
+  end
+  desc "onehost provider for opennebula 5.0 and up"
 
   commands(:onehost => "onehost") do
     environment :HOME => '/root', :ONE_AUTH => '/var/lib/one/.one/one_auth'
@@ -25,7 +33,7 @@ Puppet::Type.type(:onehost).provide(:cli) do
   mk_resource_methods
 
   def create
-    onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad], '--net', resource[:vn_mad])
+    onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad])
     Puppet.debug("Validate Resource State")
     post_validate_change
     @property_hash[:ensure] = :present
@@ -48,8 +56,7 @@ Puppet::Type.type(:onehost).provide(:cli) do
            :name   => host.xpath('./NAME').text,
            :ensure => :present,
            :im_mad => host.xpath('./IM_MAD').text,
-           :vm_mad => host.xpath('./VM_MAD').text,
-           :vn_mad => host.xpath('./VN_MAD').text
+           :vm_mad => host.xpath('./VM_MAD').text
         )
 	 end
   end
@@ -71,7 +78,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     @post_property_hash[:name] = host.xpath('./NAME').text.to_s
     @post_property_hash[:im_mad] = host.xpath('./IM_MAD').text.to_s
     @post_property_hash[:vm_mad] = host.xpath('./VM_MAD').text.to_s
-    @post_property_hash[:vn_mad] = host.xpath('./VN_MAD').text.to_s
     @post_property_hash[:status] = {'0' => 'init', '1' => 'update', '2' => 'enabled','3' => 'error', '4' => 'disabled', '5' => 'enabled', '6' => 'enabled', '7' => 'enabled'}[host.xpath('./STATE').text]
   end
 
@@ -86,7 +92,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
     resource_state[:name] = resource[:name].to_s
     resource_state[:im_mad] = resource[:im_mad].to_s
     resource_state[:vm_mad] = resource[:vm_mad].to_s
-    resource_state[:vn_mad] = resource[:vn_mad].to_s
     resource_state[:status] = 'enabled' # <- Hardcoded since enabled is the only reasonable state
 
     max_attempts = 3
@@ -113,10 +118,6 @@ Puppet::Type.type(:onehost).provide(:cli) do
   end
 
   def vm_mad=(value)
-     raise "onehosts can not be updated. You have to remove and recreate the host"
-  end
-
-  def vn_mad=(value)
      raise "onehosts can not be updated. You have to remove and recreate the host"
   end
 

@@ -44,7 +44,6 @@ EOS
 
   newproperty(:vn_mad) do
     desc "Network Driver"
-    defaultto :dummy
     newvalues(:'802.1Q', :dummy, :ebtables, :fw, :ovswitch, :vmware)
   end
 
