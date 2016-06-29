@@ -33,6 +33,9 @@ Puppet::Type.type(:onehost).provide(:cli_5_0) do
   mk_resource_methods
 
   def create
+    if resource[:vn_mad]
+      Puppet.warning("onehost does not use vn_mad in opennebula 5.0. Please remove that parameter from your onehost declaration")
+    end
     onehost('create', resource[:name], '--im', resource[:im_mad], '--vm', resource[:vm_mad])
     Puppet.debug("Validate Resource State")
     post_validate_change
@@ -119,6 +122,10 @@ Puppet::Type.type(:onehost).provide(:cli_5_0) do
 
   def vm_mad=(value)
      raise "onehosts can not be updated. You have to remove and recreate the host"
+  end
+
+  def vn_mad=(value)
+    Puppet.warning("onehost does not use vn_mad in opennebula 5.0. Please remove that parameter from your onehost declaration")
   end
 
 end
