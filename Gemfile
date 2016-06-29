@@ -48,7 +48,7 @@ end
 gem 'puppet-lint-appends-check',
     :git => 'https://github.com/puppet-community/puppet-lint-appends-check.git',
     :require => false
-gem 'puppet-lint-classes_and_types_beginning_with_digits--check',
+gem 'puppet-lint-classes_and_types_beginning_with_digits-check',
     :git => 'https://github.com/puppet-community/puppet-lint-classes_and_types_beginning_with_digits-check.git',
     :require => false
 gem 'puppet-lint-empty_string-check',
