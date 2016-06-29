@@ -134,6 +134,8 @@ Create a ONE Host
         vn_mad  => 'dummy' | 'firewall' | 'vlan' | 'ebtables' | 'ovswitch' | 'vmware' | 'custom',
     }
 
+Note - in OpenNebula 5.0 vn_mad is no longer specified per host, so do not pass the vn_mad parameter here (it will not fail, but it will generate a warning)
+
 
 Create a ONE Cluster
 
