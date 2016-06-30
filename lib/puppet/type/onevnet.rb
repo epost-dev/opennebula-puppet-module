@@ -25,8 +25,16 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:model) do
-    desc "Network model to use. Can be any of vlan (=8021q), ebtables, ovswitch, vmware"
+    desc "Model of network - deprecated parameter. For opennebula 5.0 use vn_mad, for earlier versions this parameter is unused"
+    validate do |value|
+      Puppet.deprecation_warning("Specifying model on onevnet is deprecated and unused. For opennebula 5.0 use vn_mad, for earlier versions this parameter is unused")
+    end
     newvalues(:vlan, :ebtables, :ovswitch, :vmware, :dummy)
+  end
+
+  newproperty(:vn_mad) do
+    desc "The network driver to implement the network. Can be any of 802.1Q, ebtables, fw, ovswtich, vxlan, vcenter, dummy. Note only used in Opennebula 5.0"
+    newvalues(:'802.1Q', :ebtables, :fw, :ovswtich, :vxlan, :vcenter, :dummy)
   end
 
   newproperty(:vlanid) do
