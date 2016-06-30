@@ -71,6 +71,8 @@ Create a ONE Vnet
 
     onevnet { '<name>':
         ensure          => present | absent,
+        # driver to use (only for OpenNebula 5.0 and above)
+        vn_mad          => '802.1Q | ebtables | fw | ovswtich | vxlan | vcenter | dummy',
         # name of the bridge to use
         bridge          => 'basebr0',
         #  name of the physical interface on which the bridge wiull run
