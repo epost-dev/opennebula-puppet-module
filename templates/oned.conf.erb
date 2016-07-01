@@ -346,7 +346,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 IM_MAD = [
       name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
       SUNSTONE_NAME = "KVM",
+<% end -%>
       executable = "one_im_ssh",
       arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
@@ -359,7 +361,9 @@ IM_MAD = [
 <% if scope.lookupvar('one::version_gte_4_14') -%>
 # IM_MAD = [
 #       name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #       SUNSTONE_NAME = "kvm-ssh",
+<% end -%>
 #       executable = "one_im_ssh",
 #       arguments  = "-r 3 -t 15 kvm-probes" ]
 <% else -%>
@@ -434,7 +438,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "vcenter",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #      SUNSTONE_NAME = "VMWare vCenter",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 15 -r 0 vcenter" ]
 #-------------------------------------------------------------------------------
@@ -448,7 +454,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #      SUNSTONE_NAME = "Amazon EC2",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 ec2" ]
 
@@ -472,7 +480,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "az",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #      SUNSTONE_NAME = "Microsoft Azure",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 az" ]
 #-------------------------------------------------------------------------------
@@ -480,7 +490,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #  Dummy Information Driver Manager Configuration
 #-------------------------------------------------------------------------------
-#IM_MAD = [ NAME="dummy", SUNSTONE_NAME="Testing", EXECUTABLE="one_im_dummy"]
+#IM_MAD = [ NAME="dummy", <% if scope.lookupvar('one::version_gte_5_0') -%>SUNSTONE_NAME="Testing", <% end -%>EXECUTABLE="one_im_dummy"]
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
@@ -562,7 +572,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
     SUNSTONE_NAME  = "KVM",
+<% end -%>
     executable = "one_vmm_exec",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
     arguments  = "-t 15 -r 0 kvm",
@@ -670,7 +682,9 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #    SUNSTONE_NAME  = "VMWare vCenter",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
 <% if scope.lookupvar('one::version_gte_4_14') -%>
@@ -697,7 +711,9 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "ec2",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #    SUNSTONE_NAME  = "Amazon EC2",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 ec2",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
@@ -732,7 +748,9 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "az",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
 #    SUNSTONE_NAME  = "Microsoft Azure",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 az",
 <% if scope.lookupvar('one::version_gte_5_0') -%>
@@ -751,7 +769,7 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #  Dummy Virtualization Driver Configuration
 #-------------------------------------------------------------------------------
-#VM_MAD = [ NAME="dummy", SUNSTONE_NAME="Testing", EXECUTABLE="one_vmm_dummy",
+#VM_MAD = [ NAME="dummy", <% if scope.lookupvar('one::version_gte_5_0') -%>SUNSTONE_NAME="Testing", <% end -%>EXECUTABLE="one_vmm_dummy",
 #  TYPE="xml" ]
 #-------------------------------------------------------------------------------
 
@@ -1388,7 +1406,9 @@ DS_MAD_CONF = [
 
 MARKET_MAD_CONF = [
     NAME = "one",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
     SUNSTONE_NAME  = "OpenNebula.org Marketplace",
+<% end -%>
     REQUIRED_ATTRS = "",
     APP_ACTIONS = "monitor",
     PUBLIC = "yes"
@@ -1396,14 +1416,18 @@ MARKET_MAD_CONF = [
 
 MARKET_MAD_CONF = [
     NAME = "http",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
     SUNSTONE_NAME  = "HTTP server",
+<% end -%>
     REQUIRED_ATTRS = "BASE_URL,PUBLIC_DIR",
     APP_ACTIONS = "create, delete, monitor"
 ]
 
 MARKET_MAD_CONF = [
     NAME = "s3",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
     SUNSTONE_NAME = "Amazon S3",
+<% end -%>
     REQUIRED_ATTRS = "ACCESS_KEY_ID,SECRET_ACCESS_KEY,REGION,BUCKET",
     APP_ACTIONS = "create, delete, monitor"
 ]
