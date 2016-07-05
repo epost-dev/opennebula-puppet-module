@@ -229,4 +229,3 @@ How to contribute: [CONTRIBUTING.md](./CONTRIBUTING.md)
 Copyright © 2013 - 2015 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
 Distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
-
