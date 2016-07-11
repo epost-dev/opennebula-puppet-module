@@ -78,7 +78,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
           :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
           :network_address => (vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').text unless vnet.xpath('./TEMPLATE/NETWORK_ADDRESS').nil?),
-          :mtu             => (vnet.xpath('./TEMPLATE/MTU').text unless vnet.xpath('./TEMPLATE/MTU').nil?),
+          :mtu             => (vnet.xpath('./TEMPLATE/MTU').text unless vnet.xpath('./TEMPLATE/MTU').nil?)
       )
     end
   end
