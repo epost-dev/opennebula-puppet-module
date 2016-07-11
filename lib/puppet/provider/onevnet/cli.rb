@@ -30,7 +30,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.VNET do
         xml.NAME resource[:name]
-        xml.VN_MAD resource[:vn_mad]
+        xml.VN_MAD resource[:vn_mad] if resource[:vn_mad]
         xml.BRIDGE resource[:bridge]
         xml.PHYDEV resource[:phydev] if resource[:phydev]
         xml.VLAN_ID resource[:vlanid] if resource[:vlanid]
@@ -69,7 +69,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
       new(
           :ensure   => :present,
           :name     => vnet.xpath('./NAME').text,
-          :vn_mad   => vnet.xpath('./VN_MAD').text,
+          :vn_mad   => (vnet.xpath('./VN_MAD').text unless vnet.xpath('./VN_MAD').nil?),
           :bridge   => vnet.xpath('./BRIDGE').text,
           :phydev   => vnet.xpath('./PHYDEV').text,
           :vlanid   => vnet.xpath('./VLAN_ID').text,
