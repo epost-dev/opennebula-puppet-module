@@ -33,7 +33,7 @@ Puppet::Type.newtype(:onevnet) do
   end
 
   newproperty(:vn_mad) do
-    desc "The network driver to implement the network. Can be any of 802.1Q, ebtables, fw, ovswtich, vxlan, vcenter, dummy. Note only used in Opennebula 5.0"
+    desc "The network driver to implement the network. Can be any of 802.1Q, ebtables, fw, ovswtich, vxlan, vcenter, dummy. NOTE only used in Opennebula 5.0"
     newvalues(:'802.1Q', :ebtables, :fw, :ovswitch, :vxlan, :vcenter, :dummy)
   end
 
