@@ -79,7 +79,7 @@ MESSAGE_SIZE = 1073741824
 <% if scope.lookupvar('one::version_gte_5_0') -%>
 TIMEOUT      = 60
 
-ONE_XMLRPC = "http://localhost:2633/RPC2"
+ONE_XMLRPC = "http://localhost:<%= scope.lookupvar('one::oned_port') %>/RPC2"
 <% else -%>
 ONED_PORT = <%= scope.lookupvar('one::oned_port') %>
 <% end -%>
