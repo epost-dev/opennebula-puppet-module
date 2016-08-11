@@ -55,7 +55,7 @@
 #*******************************************************************************
 
 LOG = [
-  system      = "file",
+  system      = "<%= scope.lookupvar('one::oned_log_system') %>",
   debug_level = <%= @debug_level %>
 ]
 
