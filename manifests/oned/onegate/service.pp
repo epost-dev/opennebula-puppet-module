@@ -17,9 +17,18 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::onegate::service {
+
+  if ($one::ha_setup) {
+    $onegate_enable = false
+    $onegate_ensure = undef
+  } else {
+    $onegate_enable = true
+    $onegate_ensure = running
+  }
+
   service {'opennebula-gate':
-    ensure  => running,
-    enable  => true,
+    ensure  => $onegate_ensure,
+    enable  => $onegate_enable,
     require => Service['opennebula'],
   }
 }
