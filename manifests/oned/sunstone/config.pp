@@ -30,6 +30,16 @@ class one::oned::sunstone::config (
   $sunstone_logo_png       = $one::sunstone_logo_png,
   $sunstone_logo_small_png = $one::sunstone_logo_small_png,
 ){
+
+  $templated_versions = [ '5.0' ]
+
+  if member($templated_versions, $::one::one_version_short) {
+    $template_path = $::one::one_version_short
+  }
+  else {
+    $template_path = 'unversioned'
+  }
+
   File {
     owner   => 'root',
     group   => 'oneadmin',
@@ -53,12 +63,12 @@ class one::oned::sunstone::config (
   file { '/etc/one/sunstone-views/admin.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template("one/${::one::one_version_short}/sunstone-views-admin.yaml.erb"),
+    content => template("one/${template_path}/sunstone-views-admin.yaml.erb"),
   } ->
   file { '/etc/one/sunstone-views/user.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template("one/${::one::one_version_short}/sunstone-views-user.yaml.erb"),
+    content => template("one/${template_path}/sunstone-views-user.yaml.erb"),
   }
 
   if $sunstone_logo_png != 'undef' or $sunstone_logo_small_png != 'undef' {
