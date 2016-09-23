@@ -291,6 +291,10 @@
 # $libvirtd_cfg 
 # $libvirtd_source 
 # $rubygems 
+# $oneadmin_sudoers_file - default '/etc/sudoers.d/10_oneadmin'
+#   where to place the file with the oneadmin sudoer rules
+# $sudoers_imaginator_file - default '/etc/sudoers.d/20_imaginator'
+#   where to place the file with the imaginator sudoer rules
 #
 # ==== Environment specific configuration
 #
@@ -426,6 +430,8 @@ class one (
   $libvirtd_srv                   = $one::params::libvirtd_srv,
   $libvirtd_cfg                   = $one::params::libvirtd_cfg,
   $libvirtd_source                = $one::params::libvirtd_source,
+  $oneadmin_sudoers_file          = $one::params::oneadmin_sudoers_file,
+  $sudoers_imaginator_file        = $one::params::sudoers_imaginator_file,
   $kvm_driver_emulator            = $one::params::kvm_driver_emulator,
   $kvm_driver_nic_attrs           = $one::params::kvm_driver_nic_attrs,
   $rubygems                       = $one::params::rubygems,

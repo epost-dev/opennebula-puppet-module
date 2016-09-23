@@ -165,6 +165,10 @@ class one::params {
   $default_device_prefix       = hiera ('one::oned::default_device_prefix', 'hd')
   $default_cdrom_device_prefix = hiera ('one::oned::default_cdrom_device_prefix', 'hd')
 
+  # Where to place the sudo rule files
+  $oneadmin_sudoers_file   = '/etc/sudoers.d/10_oneadmin'
+  $sudoers_imaginator_file = '/etc/sudoers.d/20_imaginator'
+
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
