@@ -24,7 +24,7 @@ class one::prerequisites(
 ) {
 
   # we only need major version here, so trim off any minor point release(s)
-  $one_version_array = split($one_version,"[.]")
+  $one_version_array = split($one_version,'[.]')
   $one_version_short = "${one_version_array[0]}.${one_version_array[1]}"
 
   case $::osfamily {
