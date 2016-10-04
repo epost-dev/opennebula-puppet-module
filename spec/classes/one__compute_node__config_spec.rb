@@ -9,7 +9,9 @@ describe 'one::compute_node::config', :type => :class do
       let(:params) { {
           :debian_mirror_url => 'http://ftp.de.debian.org/debian',
           :preseed_data => {'does' => 'not_matter'},
-          :libvirtd_cfg => '/etc/some/libvirt/config'
+          :libvirtd_cfg => '/etc/some/libvirt/config',
+          :oneadmin_sudoers_file => '/etc/sudoers.d/10_oneadmin',
+          :sudoers_imaginator_file => '/etc/sudoers.d/20_imaginator'
       } }
       it { should contain_class('one::compute_node::config') }
       it { should contain_file('/etc/libvirt/libvirtd.conf') }
