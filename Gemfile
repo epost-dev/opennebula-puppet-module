@@ -1,5 +1,9 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
+if RUBY_VERSION < "2.0.0"
+  gem "json_pure", "< 2.0.0" # json_pure 2.x requires ruby 2.x
+end
+
 group :development, :test do
   if RUBY_VERSION < '1.9.3'
     gem 'rake', '< 11'
