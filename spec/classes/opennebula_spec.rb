@@ -135,6 +135,8 @@ describe 'one', :type => :class do
             it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
             it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
             it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
+            it { should contain_file(oned_config).with_content(/^LOG = \[\n\s+system\s+=\s+"file"/m) }
+
             context 'with sqlite backend' do
               it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
             end
