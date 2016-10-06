@@ -1,5 +1,9 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
+if RUBY_VERSION < "2.0.0"
+  gem "json_pure", "< 2.0.0" # json_pure 2.x requires ruby 2.x
+end
+
 group :development, :test do
   if RUBY_VERSION < '1.9.3'
     gem 'rake', '< 11'
@@ -11,7 +15,7 @@ group :development, :test do
   gem 'rspec-puppet',            :require => false
   gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
-  gem 'puppet-lint', :git => 'https://github.com/rodjek/puppet-lint.git', :require => false
+  gem 'puppet-lint', :git => 'https://github.com/rodjek/puppet-lint.git', :tag => "1.1.0", :require => false
   gem 'simplecov',               :require => false
   if RUBY_VERSION =~ /1.8/
       gem 'nokogiri',  '<= 1.5.10'
@@ -48,7 +52,7 @@ end
 gem 'puppet-lint-appends-check',
     :git => 'https://github.com/puppet-community/puppet-lint-appends-check.git',
     :require => false
-gem 'puppet-lint-classes_and_types_beginning_with_digits--check',
+gem 'puppet-lint-classes_and_types_beginning_with_digits-check',
     :git => 'https://github.com/puppet-community/puppet-lint-classes_and_types_beginning_with_digits-check.git',
     :require => false
 gem 'puppet-lint-empty_string-check',
