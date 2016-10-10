@@ -447,6 +447,47 @@ class one (
   $one_version                    = $one::params::one_version,
 ) inherits one::params {
 
+  # Data Validation
+
+  # the priv key is mandatory on the head.
+  if ($ssh_pub_key == undef) {
+    fail('The ssh_pub_key is mandatory for all nodes')
+  }
+  validate_string($ssh_pub_key)
+  if (false == $node) {
+    if ($ssh_priv_key_param == undef) {
+      fail('The ssh_priv_key_param is mandatory for the head')
+    }
+    validate_string($ssh_priv_key_param)
+    $ssh_priv_key = $ssh_priv_key_param
+  }
+
+  # ensure xmlrpctuning is in string
+  validate_string($xmlrpc_maxconn, $xmlrpc_maxconn_backlog, $xmlrpc_keepalive_timeout, $xmlrpc_keepalive_max_conn, $xmlrpc_timeout)
+
+  # ensure INHERIT attrs is array
+  if ($inherit_datastore_attrs) {
+    validate_array($inherit_datastore_attrs)
+  }
+
+  if ($hook_scripts_pkgs) {
+    validate_array($hook_scripts_pkgs)
+  }
+
+  if ($hook_scripts) {
+    validate_hash($hook_scripts)
+    $vm_hook_scripts = $hook_scripts['VM'] # lint:ignore:variable_contains_upcase
+
+    if ($vm_hook_scripts) {
+      validate_hash($vm_hook_scripts)
+    }
+
+    $host_hook_scripts = $hook_scripts['HOST'] # lint:ignore:variable_contains_upcase
+    if ($host_hook_scripts) {
+      validate_hash($host_hook_scripts)
+    }
+  }
+
   # check if version greater than or equal to 4.14 (used in templates)
   if ( versioncmp($one_version, '4.14') >= 0 ) {
     $version_gte_4_14 = true
