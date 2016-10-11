@@ -286,6 +286,18 @@ describe 'one', :type => :class do
                 #it { should contain_package('parse-cron') }
               end
               it { should contain_service('opennebula-gate').with_ensure('running') }
+              context 'with ha-setup' do
+                let(:params) { {
+                    :onegate  => true,
+                    :oneflow  => true,
+                    :ha_setup => true
+                } }
+                it { should contain_class('one::oned::onegate') }
+                it { should contain_service('opennebula-flow').with_enable(false) }
+                it { should contain_service('opennebula-flow').without_ensure }
+                it { should contain_service('opennebula-gate').with_enable(false) }
+                it { should contain_service('opennebula-gate').without_ensure }
+              end 
             end
             context 'with sunstone' do
               let(:params) { {
@@ -338,7 +350,7 @@ describe 'one', :type => :class do
                 let(:params) { {
                     :oned => true,
                     :sunstone => true,
-                    :ha_setup => true,
+                    :ha_setup => true
                 } }
                 it { should contain_service('opennebula').with_enable('false') }
                 it { should contain_service('opennebula-sunstone').with_ensure('running') }
