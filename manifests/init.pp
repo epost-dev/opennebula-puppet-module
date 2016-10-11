@@ -455,6 +455,9 @@ class one (
 
   # Data Validation
 
+  validate_absolute_path($oneadmin_sudoers_file)
+  validate_absolute_path($imaginator_sudoers_file)
+
   # the priv key is mandatory on the head.
   if ($ssh_pub_key == undef) {
     fail('The ssh_pub_key is mandatory for all nodes')
