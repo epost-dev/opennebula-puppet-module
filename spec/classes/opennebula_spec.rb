@@ -223,6 +223,36 @@ describe 'one', :type => :class do
             end
             context 'with onegate endpoint' do
               it { should contain_file(oned_config).with_content(/^#ONEGATE_ENDPOINT = "http:\/\/frontend:5030"/m) }
+              context 'given a onegate ip' do
+                let(:params) do
+                  {
+                    'oned'            => true,
+                    'oned_onegate_ip' => '127.0.0.1'
+                  }
+                end
+                it { should contain_file(oned_config).with_content(/^ONEGATE_ENDPOINT = "http:\/\/127\.0\.0\.1:5030"/m) }
+              end
+              context 'given a onegate endpoint' do
+                let(:params) do
+                  {
+                    'oned'                  => true,
+                    'oned_onegate_endpoint' => 'https://example.org:5030'
+                  }
+                end
+                it { should contain_file(oned_config).with_content(/^ONEGATE_ENDPOINT = "https:\/\/example\.org:5030"/m) }
+              end
+              context 'given both a onegate ip and a onegate endpoint' do
+                let(:params) do
+                  {
+                    'oned'                  => true,
+                    'oned_onegate_ip'       => '127.0.0.1',
+                    'oned_onegate_endpoint' => 'https://example.org:5030'
+                  }
+                end
+                it do
+                  is_expected.to compile.and_raise_error(/You can't provide both oned_onegate_ip and oned_onegate_endpoint as parameter/)
+                end
+              end
             end
             context 'with onegate' do
               let(:params) { {

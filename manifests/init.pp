@@ -248,7 +248,7 @@
 #
 # ===== OpenNebula OneGate configuration
 #
-# $oned_onegate_ip - default $::ipaddress
+# $oned_onegate_ip - default undef
 #   which ip should the onegate daemon listen on
 #
 # ==== Imaginator configuration
@@ -504,6 +504,15 @@ class one (
   }
   else {
     $version_gte_4_14 = false
+  }
+
+  if ($oned_onegate_endpoint != undef) {
+    if ($oned_onegate_ip != undef) {
+      fail("You can't provide both oned_onegate_ip and oned_onegate_endpoint as parameter.")
+    }
+    $resulting_oned_onegate_endpoint = $oned_onegate_endpoint
+  } elsif ($oned_onegate_ip != undef) {
+    $resulting_oned_onegate_endpoint = "http://${oned_onegate_ip}:5030"
   }
 
   include one::prerequisites
