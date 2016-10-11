@@ -33,7 +33,7 @@ class one::compute_node::config (
   $libvirtd_source         = $one::libvirtd_source,
   $libvirtd_srv            = $one::libvirtd_srv,
   $oneadmin_sudoers_file   = $one::oneadmin_sudoers_file,
-  $sudoers_imaginator_file = $one::sudoers_imaginator_file
+  $imaginator_sudoers_file = $one::imaginator_sudoers_file
 ){
 
   validate_string ($debian_mirror_url)
@@ -75,7 +75,7 @@ class one::compute_node::config (
     mode   => '0440',
   } ->
 
-  file { $sudoers_imaginator_file:
+  file { $imaginator_sudoers_file:
     ensure => file,
     source => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',
