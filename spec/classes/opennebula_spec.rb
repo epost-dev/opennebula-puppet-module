@@ -136,7 +136,22 @@ describe 'one', :type => :class do
             it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
             it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
             it { should contain_file(oned_config).with_content(/^LOG = \[\n\s+system\s+=\s+"file"/m) }
-
+            context 'with syslog logging' do
+              let(:params) { {
+                  :oned            => true,
+                  :oned_log_system => 'syslog'
+              } }
+              it { should contain_file(oned_config).with_content(/^LOG = \[\n\s+system\s+=\s+"syslog"/m) }
+            end
+            context 'with invalid logging subsystem' do
+              let(:params) { {
+                  :oned            => true,
+                  :oned_log_system => 'invalid'
+              } }
+              it do
+                is_expected.to compile.and_raise_error(/"invalid" is not a valid logging subsystem. Valid values are \["file", "syslog"\]/)
+              end
+            end
             context 'with sqlite backend' do
               it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
             end
