@@ -221,6 +221,9 @@ describe 'one', :type => :class do
               end
               it { should contain_service('opennebula-flow').with_ensure('running') }
             end
+            context 'with onegate endpoint' do
+              it { should contain_file(oned_config).with_content(/^#ONEGATE_ENDPOINT = "http:\/\/frontend:5030"/m) }
+            end
             context 'with onegate' do
               let(:params) { {
                   :onegate => true
