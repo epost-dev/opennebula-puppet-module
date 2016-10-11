@@ -36,7 +36,7 @@ Note, there is a required package on the oned controller node that is not manage
 ### Puppet Module Dependencies
 The ONe-Module needs the following other modules:
 
-- [puppetlabs/stdlib  > 2.2.0](https://github.com/puppetlabs/puppetlabs-stdlib)
+- [puppetlabs/stdlib  > 2.3.0](https://github.com/puppetlabs/puppetlabs-stdlib)
 - [puppetlabs/apt     < 2.0.0](https://github.com/puppetlabs/puppetlabs-apt)
 - [puppetlabs/inifile > 1.4.0](https://github.com/puppetlabs/puppetlabs-inifile)
 
@@ -226,6 +226,6 @@ How to contribute: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
-Copyright © 2013 - 2015 [Deutsche Post E-Post Development GmbH](http://epost.de)
+Copyright © 2013 - 2016 [Deutsche Post E-Post Development GmbH](http://epost.de)
 
 Distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
