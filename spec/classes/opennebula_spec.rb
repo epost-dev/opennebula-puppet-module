@@ -4,7 +4,10 @@ hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 
 describe 'one', :type => :class do
   context 'with default params as implicit hiera lookup' do
-    let (:facts) { {:osfamily => 'RedHat'} }
+    let (:facts) { {
+            :osfamily => 'RedHat',
+            :operatingsystemmajrelease => '7'
+    } }
     it { should contain_class('one') }
     it { should_not contain_file('/etc/one/oned.conf').with_content(/^DB = \[ backend = \"sqlite\"/) }
     it { should_not contain_class('one::oned') }
