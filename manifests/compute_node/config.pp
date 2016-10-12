@@ -20,18 +20,20 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::config (
-  $networkconfig     = $one::kickstart_network,
-  $partitions        = $one::kickstart_partition,
-  $rootpw            = $one::kickstart_rootpw,
-  $data              = $one::kickstart_data,
-  $kickstart_tmpl    = $one::kickstart_tmpl,
-  $preseed_data      = $one::preseed_data,
-  $ohd_deb_repo      = $one::preseed_ohd_deb_repo,
-  $debian_mirror_url = $one::preseed_debian_mirror_url,
-  $preseed_tmpl      = $one::preseed_tmpl,
-  $libvirtd_cfg      = $one::libvirtd_cfg,
-  $libvirtd_source   = $one::libvirtd_source,
-  $libvirtd_srv      = $one::libvirtd_srv
+  $networkconfig           = $one::kickstart_network,
+  $partitions              = $one::kickstart_partition,
+  $rootpw                  = $one::kickstart_rootpw,
+  $data                    = $one::kickstart_data,
+  $kickstart_tmpl          = $one::kickstart_tmpl,
+  $preseed_data            = $one::preseed_data,
+  $ohd_deb_repo            = $one::preseed_ohd_deb_repo,
+  $debian_mirror_url       = $one::preseed_debian_mirror_url,
+  $preseed_tmpl            = $one::preseed_tmpl,
+  $libvirtd_cfg            = $one::libvirtd_cfg,
+  $libvirtd_source         = $one::libvirtd_source,
+  $libvirtd_srv            = $one::libvirtd_srv,
+  $oneadmin_sudoers_file   = $one::oneadmin_sudoers_file,
+  $imaginator_sudoers_file = $one::imaginator_sudoers_file
 ){
 
   validate_string ($debian_mirror_url)
@@ -65,7 +67,7 @@ class one::compute_node::config (
     source => 'puppet:///modules/one/udev-kvm-rules',
   } ->
 
-  file { '/etc/sudoers.d/10_oneadmin':
+  file { $oneadmin_sudoers_file:
     ensure => file,
     source => 'puppet:///modules/one/oneadmin_sudoers',
     owner  => 'root',
@@ -73,7 +75,7 @@ class one::compute_node::config (
     mode   => '0440',
   } ->
 
-  file { '/etc/sudoers.d/20_imaginator':
+  file { $imaginator_sudoers_file:
     ensure => file,
     source => 'puppet:///modules/one/sudoers_imaginator',
     owner  => 'root',

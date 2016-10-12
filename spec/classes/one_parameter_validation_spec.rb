@@ -81,6 +81,14 @@ describe 'one', :type => :class do
           end
         end
       end
+      %w<oneadmin_sudoers_file imaginator_sudoers_file>.each do |param|
+        context "given a non-absolute path for #{param}" do
+          let(:params) {{ param => "relative/path/to/#{param}" }}
+          it do
+            is_expected.to compile.and_raise_error(/"relative\/path\/to\/#{param}" is not an absolute path/)
+          end
+        end
+      end
       context "validating ssh keys" do
         let(:hiera_config) { nil }
         context "missing the mandatory pubkey" do
