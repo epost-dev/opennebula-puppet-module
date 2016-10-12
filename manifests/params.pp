@@ -165,41 +165,6 @@ class one::params {
   $default_device_prefix       = hiera ('one::oned::default_device_prefix', 'hd')
   $default_cdrom_device_prefix = hiera ('one::oned::default_cdrom_device_prefix', 'hd')
 
-  # Data Validation
-
-  # the priv key is mandatory on the head.
-  validate_string($ssh_pub_key)
-  if (!$one::node) {
-    validate_string($ssh_priv_key_param)
-    $ssh_priv_key = $ssh_priv_key_param
-  }
-
-  # ensure xmlrpctuning is in string
-  validate_string($xmlrpc_maxconn, $xmlrpc_maxconn_backlog, $xmlrpc_keepalive_timeout, $xmlrpc_keepalive_max_conn, $xmlrpc_timeout)
-
-  # ensure INHERIT attrs is array
-  if ($inherit_datastore_attrs) {
-    validate_array($inherit_datastore_attrs)
-  }
-
-  if ($hook_scripts_pkgs) {
-    validate_array($hook_scripts_pkgs)
-  }
-
-  if ($hook_scripts) {
-    validate_hash($hook_scripts)
-    $vm_hook_scripts = $hook_scripts['VM'] # lint:ignore:variable_contains_upcase
-
-    if ($vm_hook_scripts) {
-      validate_hash($vm_hook_scripts)
-    }
-
-    $host_hook_scripts = $hook_scripts['HOST'] # lint:ignore:variable_contains_upcase
-    if ($host_hook_scripts) {
-      validate_hash($host_hook_scripts)
-    }
-  }
-
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
