@@ -3,15 +3,15 @@ require 'spec_helper'
 hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 
 describe 'one', :type => :class do
-  context 'with default params as implicit hiera lookup' do
-    let (:facts) { {:osfamily => 'RedHat'} }
-    it { should contain_class('one') }
-    it { should_not contain_file('/etc/one/oned.conf').with_content(/^DB = \[ backend = \"sqlite\"/) }
-    it { should_not contain_class('one::oned') }
-  end
   let(:hiera_config) { hiera_config }
   OS_FACTS.each do |f|
-    context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
+     context 'with default params as implicit hiera lookup' do
+       let (:facts) { f }
+       it { should contain_class('one') }
+       it { should_not contain_file('/etc/one/oned.conf').with_content(/^DB = \[ backend = \"sqlite\"/) }
+       it { should_not contain_class('one::oned') }
+     end
+     context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
       let(:facts) { f }
       context 'with hiera config' do
         let(:params) { {:oned => true} }
