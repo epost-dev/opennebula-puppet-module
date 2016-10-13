@@ -94,6 +94,9 @@
 #
 # ==== OpenNebula configuration parameters
 #
+# $oned_log_system - default 'file'
+#   the log subsystem to use, valid values are [file, syslog] 
+#
 # ===== OpenNebula Database configuration
 #
 # $oned_db - default oned
@@ -349,6 +352,7 @@ class one (
   $ha_setup           = false,
   $puppetdb           = false,
   $debug_level        = '0',
+  $oned_log_system                = $one::params::oned_log_system,
   $oned_port                      = $one::params::oned_port,
   $oned_db                        = $one::params::oned_db,
   $oned_db_user                   = $one::params::oned_db_user,
@@ -496,6 +500,12 @@ class one (
     if ($host_hook_scripts) {
       validate_hash($host_hook_scripts)
     }
+  }
+
+  # I'd use member() here but the stdlib version we're currently using doesn't know that,
+  # so feel free to change once the stlib was updated to a more recent version
+  if (($oned_log_system != 'file') and ($oned_log_system != 'syslog')) {
+    fail("\"${oned_log_system}\" is not a valid logging subsystem. Valid values are [\"file\", \"syslog\"].")
   }
 
   # check if version greater than or equal to 4.14 (used in templates)
