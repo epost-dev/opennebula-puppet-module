@@ -528,6 +528,16 @@ class one (
   $one_version_array = split($one_version,"[.]")
   $one_version_short = "${one_version_array[0]}.${one_version_array[1]}"
 
+  # build template version string (to be used to select templates)
+  $templated_versions = [ '5.0' ]
+
+  if member($templated_versions, $one_version_short) {
+    $template_path = $one_version_short
+  }
+  else {
+    $template_path = 'unversioned'
+  }
+
   if ($oned_onegate_endpoint != undef) {
     if ($oned_onegate_ip != undef) {
       fail("You can't provide both oned_onegate_ip and oned_onegate_endpoint as parameter.")
