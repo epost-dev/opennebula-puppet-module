@@ -531,8 +531,8 @@ class one (
   # build template version string (to be used to select templates)
   # keys are the one_version_short for which we have templates
   # values are the folder paths to use
-  $templated_versions_mapping = { '5.0' => '5.0',
-                                  '5.2' => '5.0',
+  $templated_versions_mapping = { '5.0' => '5',
+                                  '5.2' => '5',
                                 }
 
   if member(keys($templated_versions_mapping), $one_version_short) {
