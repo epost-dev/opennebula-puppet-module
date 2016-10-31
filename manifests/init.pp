@@ -529,10 +529,14 @@ class one (
   $one_version_short = "${one_version_array[0]}.${one_version_array[1]}"
 
   # build template version string (to be used to select templates)
-  $templated_versions = [ '5.0' ]
+  # keys are the one_version_short for which we have templates
+  # values are the folder paths to use
+  $templated_versions_mapping = { '5.0' => '5.0',
+                                  '5.2' => '5.0',
+                                }
 
-  if member($templated_versions, $one_version_short) {
-    $template_path = $one_version_short
+  if member(keys($templated_versions_mapping), $one_version_short) {
+    $template_path = $templated_versions_mapping[$one_version_short]
   }
   else {
     $template_path = 'unversioned'
