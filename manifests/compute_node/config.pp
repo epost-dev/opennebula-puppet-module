@@ -32,6 +32,7 @@ class one::compute_node::config (
   $libvirtd_cfg            = $one::libvirtd_cfg,
   $libvirtd_source         = $one::libvirtd_source,
   $libvirtd_srv            = $one::libvirtd_srv,
+  $manage_sudoer_config    = $one::manage_sudoer_config,
   $oneadmin_sudoers_file   = $one::oneadmin_sudoers_file,
   $imaginator_sudoers_file = $one::imaginator_sudoers_file
 ){
@@ -65,22 +66,6 @@ class one::compute_node::config (
     owner  => 'root',
     group  => 'root',
     source => 'puppet:///modules/one/udev-kvm-rules',
-  } ->
-
-  file { $oneadmin_sudoers_file:
-    ensure => file,
-    source => 'puppet:///modules/one/oneadmin_sudoers',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0440',
-  } ->
-
-  file { $imaginator_sudoers_file:
-    ensure => file,
-    source => 'puppet:///modules/one/sudoers_imaginator',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0440',
   } ->
 
   file { 'polkit-opennebula':
@@ -135,6 +120,24 @@ class one::compute_node::config (
     group  => 'oneadmin',
     mode   => '0550',
     source => 'puppet:///modules/one/imaginator',
+  }
+
+  if ($manage_sudoer_config == true) {
+    file { $oneadmin_sudoers_file:
+      ensure => file,
+      source => 'puppet:///modules/one/oneadmin_sudoers',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0440',
+    }
+
+    file { $imaginator_sudoers_file:
+      ensure => file,
+      source => 'puppet:///modules/one/sudoers_imaginator',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0440',
+    }
   }
 
   if ($::osfamily == 'Debian') or ($::osfamily == 'RedHat' and versioncmp($::operatingsystemmajrelease, '7') < 0) {
