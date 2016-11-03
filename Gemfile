@@ -4,6 +4,8 @@ if RUBY_VERSION < "2.0.0"
   gem "json_pure", "< 2.0.0" # json_pure 2.x requires ruby 2.x
 end
 
+gem 'rspec', '<3.0.0'
+
 group :development, :test do
   if RUBY_VERSION < '1.9.3'
     gem 'rake', '< 11'
