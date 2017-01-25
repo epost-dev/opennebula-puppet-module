@@ -10,3 +10,9 @@ junit/
 *.swp
 .project
 Gemfile.lock
+# vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+*~
