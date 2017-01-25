@@ -104,6 +104,9 @@ class one::params {
 
   $http_proxy = hiera('one::oned::http_proxy', '')
 
+  # package ensure, default true
+  $package_ensure_latest = true
+
   #
   # hook script installation
   #

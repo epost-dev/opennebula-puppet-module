@@ -18,8 +18,9 @@
 #
 class one::oned::oneflow::install(
   $oned_oneflow_packages = $one::oned_oneflow_packages,
+  $package_ensure        = $one::package_ensure,
 ) {
   package { $oned_oneflow_packages:
-    ensure => latest,
+    ensure => $package_ensure,
   }
 }

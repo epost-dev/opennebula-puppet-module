@@ -18,9 +18,10 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::compute_node::install(
-  $node_packages = $one::node_packages
+  $node_packages = $one::node_packages,
+  $package_ensure = $one::package_ensure,
 ) {
   package { $node_packages:
-    ensure => latest,
+    ensure => $package_ensure,
   }
 }

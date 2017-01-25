@@ -307,6 +307,11 @@
 # $one_repo_enable - default true
 #   should the official opennebula repositories be enabled?
 #
+# $package_ensure_latest - default true
+#   if true then all package declarations will be set latest
+#   if false they will be set present (use if using ha_setup as the service
+#     will not be restarted after installing the package)
+#
 # === Usage
 #
 # install compute node
@@ -432,6 +437,7 @@ class one (
   $oned_sunstone_ldap_pkg         = $one::params::oned_sunstone_ldap_pkg,
   $oned_oneflow_packages          = $one::params::oned_oneflow_packages,
   $oned_onegate_packages          = $one::params::oned_onegate_packages,
+  $package_ensure_latest          = $one::params::package_ensure_latest,
   $libvirtd_srv                   = $one::params::libvirtd_srv,
   $libvirtd_cfg                   = $one::params::libvirtd_cfg,
   $libvirtd_source                = $one::params::libvirtd_source,
@@ -554,6 +560,16 @@ class one (
     $resulting_oned_onegate_endpoint = $oned_onegate_endpoint
   } elsif ($oned_onegate_ip != undef) {
     $resulting_oned_onegate_endpoint = "http://${oned_onegate_ip}:5030"
+  }
+
+  # package version parsing
+  if ($package_ensure_latest) {
+    if ($ha_setup) {
+      warning('using $::one::package_ensure_latest = true with ha_setup = true is risky - can lead to oned service stopping if rpm updated')
+    }
+    $package_ensure = 'latest'
+  } else {
+    $package_ensure = 'present'
   }
 
   include one::prerequisites
