@@ -64,6 +64,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
 
   # Return the full hash of all existing onevnet resources
   def self.instances
+    parameter_names = ['NAME', 'VN_MAD', 'BRIDGE', 'PHYDEV', 'VLAN_ID', 'DNS', 'GATEWAY', 'NETWORK_MASK', 'NETWORK_ADDRESS', 'MTU', 'TEXT']
     vnets = Nokogiri::XML(onevnet('list', '-x')).root.xpath('/VNET_POOL/VNET')
     vnets.collect do |vnet|
       new(
@@ -73,7 +74,9 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           :bridge   => vnet.xpath('./BRIDGE').text,
           :phydev   => vnet.xpath('./PHYDEV').text,
           :vlanid   => vnet.xpath('./VLAN_ID').text,
-          :context  => ( Hash[vnet.xpath('./TEMPLATE').children.collect do |c|  [c.name.to_s.upcase, c.text] unless ['NAME', 'VN_MAD', 'BRIDGE', 'PHYDEV', 'VLAN_ID', 'DNS', 'GATEWAY', 'NETWORK_MASK', 'NETWORK_ADDRESS', 'MTU', 'TEXT'].include?(c.name.upcase)  end.reject{ |c| c.nil?}] unless vnet.xpath('./TEMPLATE').nil? ),
+          :context         => ( Hash[ vnet.xpath('./TEMPLATE').children.collect { |c|
+                                  [c.name.to_s.upcase, c.text] unless parameter_names.include?(c.name.upcase)
+                                }.reject{ |c| c.nil? } ] unless vnet.xpath('./TEMPLATE').nil? ),
           :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(' ') unless vnet.xpath('./TEMPLATE/DNS').nil?),
           :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
           :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
