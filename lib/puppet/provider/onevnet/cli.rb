@@ -105,11 +105,17 @@ Puppet::Type.type(:onevnet).provide(:cli) do
             ['DNS', "\"#{v.join(' ')}\""]
           when :netmask
             ['NETWORK_MASK', v]
+          when :context
           else
             [k.to_s.upcase, v]
         end
       end
     }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    unless @property_hash[:context].nil? or @property_hash[:context].to_s.empty?
+      file << @property_hash[:context].map{ |k,v|
+        [k.to_s.upcase, v]
+      }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    end
     file.close
     self.debug(IO.read file.path)
     onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
