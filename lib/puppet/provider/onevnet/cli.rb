@@ -47,8 +47,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     file.close
     self.debug "Adding new network using template: #{tempfile}"
     onevnet('create', file.path)
-    self.debug "new network temp file path: #{file.path}"
-    #file.delete
+    file.delete
     @property_hash[:ensure] = :present
   end
 
@@ -119,7 +118,6 @@ Puppet::Type.type(:onevnet).provide(:cli) do
     file.close
     self.debug(IO.read file.path)
     onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
-    self.debug "updating network from file path: #{file.path}"
-    #file.delete
+    file.delete
   end
 end
