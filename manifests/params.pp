@@ -164,6 +164,19 @@ class one::params {
   $sched_default_ds_rank     = hiera ('one::oned::sched::default_ds_rank', '')
   $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
   $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
+  
+  # OpenNebula Oneflow parameters
+  $oneflow_one_xmlrpc       = hiera ('one::oned::$oneflow_one_xmlrpc','http://localhost:2633/RPC2')
+  $oneflow_lcm_interval     = hiera ('one::oned::$oneflow_lcm_interval', 30)
+  $oneflow_host             = hiera ('one::oned::$oneflow_host', '127.0.0.1')
+  $oneflow_port             = hiera ('one::oned::$oneflow_port', 2474)
+  $oneflow_default_cooldown = hiera ('one::oned::$oneflow_default_cooldown', 300)
+  $oneflow_shutdown_action  = hiera ('one::oned::$oneflow_shutdown_action', 'terminate')
+  $oneflow_action_number    = hiera ('one::oned::$oneflow_action_number', 1)
+  $oneflow_action_period    = hiera ('one::oned::$oneflow_action_period', 60)
+  $oneflow_vm_name_template = hiera ('one::oned::$oneflow_vm_name_template', '$ROLE_NAME_$VM_NUMBER_(service_$SERVICE_ID)')
+  $oneflow_core_auth        = hiera ('one::oned::$oneflow_core_auth', 'cipher')
+  $oneflow_debug_level      = hiera ('one::oned::$oneflow_debug_level', 2)
 
   # OpenNebula Datastore parameters
   $datastore_capacity_check    = hiera ('one::oned::datastore_capacity_check', 'yes')
@@ -175,6 +188,14 @@ class one::params {
   $oneadmin_sudoers_file   = '/etc/sudoers.d/10_oneadmin'
   $imaginator_sudoers_file = '/etc/sudoers.d/20_imaginator'
 
+  # oneflow config validations
+  validate_integer($oneflow_lcm_interval, $oneflow_port, $oneflow_default_cooldown, $oneflow_action_number, $oneflow_action_period)
+  validate_string($oneflow_one_xmlrpc, $oneflow_vm_name_template)
+  validate_re($oneflow_host, '\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b', 'This needs to be in ipv4 format ###.###.###.###')
+  validate_re($oneflow_debug_level, [ 1, 2, 3, 4 ], 'debug level must be an integer from 1-4.')
+  validate_re($oneflow_shutdown_action, [ 'terminate', 'terminate-hard' ], 'oneflow_shutdown_action must be either terminate or terminate-hard.')
+  validate_re($oneflow_core_auth, [ 'cipher','x509' ], 'Oneflow_core_auth value must be cipher or x509.')
+  
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
