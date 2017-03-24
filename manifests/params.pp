@@ -189,7 +189,7 @@ class one::params {
   $imaginator_sudoers_file = '/etc/sudoers.d/20_imaginator'
 
   # oneflow config validations
-  validate_integer($oneflow_lcm_interval, $oneflow_port, $oneflow_default_cooldown, $oneflow_action_number, $oneflow_action_period)
+  validate_integer([$oneflow_lcm_interval, $oneflow_port, $oneflow_default_cooldown, $oneflow_action_number, $oneflow_action_period])
   validate_string($oneflow_one_xmlrpc, $oneflow_vm_name_template)
   validate_re($oneflow_host, '\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b', 'This needs to be in ipv4 format ###.###.###.###')
   validate_re($oneflow_debug_level, [ 1, 2, 3, 4 ], 'debug level must be an integer from 1-4.')
