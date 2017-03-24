@@ -38,7 +38,7 @@
 :default_cooldown: <%= @oneflow_default_cooldown %>
 
 # Default shutdown action. Values: 'terminate', 'terminate-hard'
-:shutdown_action: <%= @oneflow_shutdown_action %>
+:shutdown_action: '<%= @oneflow_shutdown_action %>'
 
 # Default number of virtual machines (action_number) that will receive the
 #   given call in each interval defined by action_period, when an action
@@ -53,7 +53,7 @@
 #   $ROLE_NAME
 #   $VM_NUMBER
 
-:vm_name_template: <%= @oneflow_vm_name_template %>
+:vm_name_template: '<%= @oneflow_vm_name_template %>'
 
 #############################################################
 # Auth
