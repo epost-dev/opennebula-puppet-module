@@ -34,6 +34,5 @@ class one::oned::oneflow::config (
     ensure  => file,
     mode    => '0640',
     content => template('one/oneflow-server.conf.erb'),
-    notify  => Service['opennebula-flow'],
   }
 }
