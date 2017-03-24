@@ -20,31 +20,31 @@
 
 # OpenNebula daemon contact information
 #
-:one_xmlrpc: <%= @one_xmlrpc %>
+:one_xmlrpc: <%= @oneflow_one_xmlrpc %>
 
 # Time in seconds between Life Cycle Manager steps
 #
-:lcm_interval: <%= @lcm_interval %>
+:lcm_interval: <%= @oneflow_lcm_interval %>
 
 # Host and port where OneFlow server will run
-:host: <%= @host %>
-:port: <%= @port %>
+:host: <%= @oneflow_host %>
+:port: <%= @oneflow_port %>
 
 ################################################################################
 # Defaults
 ################################################################################
 
 # Default cooldown period after a scale operation, in seconds
-:default_cooldown: <%= @default_cooldown %>
+:default_cooldown: <%= @oneflow_default_cooldown %>
 
 # Default shutdown action. Values: 'terminate', 'terminate-hard'
-:shutdown_action: <%= @shutdown_action %>
+:shutdown_action: <%= @oneflow_shutdown_action %>
 
 # Default number of virtual machines (action_number) that will receive the
 #   given call in each interval defined by action_period, when an action
 #   is performed on a role.
-:action_number: <%= @action_number %>
-:action_period: <%= @action_period %>
+:action_number: <%= @oneflow_action_number %>
+:action_period: <%= @oneflow_action_period %>
 
 # Default name for the Virtual Machines created by oneflow. You can use any
 # of the following placeholders:
@@ -53,7 +53,7 @@
 #   $ROLE_NAME
 #   $VM_NUMBER
 
-:vm_name_template: <%= @vm_name_template %>
+:vm_name_template: <%= @oneflow_vm_name_template %>
 
 #############################################################
 # Auth
@@ -62,7 +62,7 @@
 # Authentication driver to communicate with OpenNebula core
 #   - cipher, for symmetric cipher encryption of tokens
 #   - x509, for x509 certificate encryption of tokens
-:core_auth: <%= @core_auth %>
+:core_auth: <%= @oneflow_core_auth %>
 
 ################################################################################
 # Log
@@ -71,4 +71,4 @@
 # Log debug level
 #   0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
 #
-:debug_level: <%= @debug_level %>
+:debug_level: <%= @oneflow_debug_level %>
