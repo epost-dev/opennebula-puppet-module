@@ -171,10 +171,10 @@ class one::params {
   $oneflow_host             = hiera ('one::oned::oneflow_host', '127.0.0.1')
   $oneflow_port             = hiera ('one::oned::oneflow_port', 2474)
   $oneflow_default_cooldown = hiera ('one::oned::oneflow_default_cooldown', 300)
-  $oneflow_shutdown_action  = hiera ('one::oned::oneflow_shutdown_action', '\'terminate\'')
+  $oneflow_shutdown_action  = hiera ('one::oned::oneflow_shutdown_action', 'terminate')
   $oneflow_action_number    = hiera ('one::oned::oneflow_action_number', 1)
   $oneflow_action_period    = hiera ('one::oned::oneflow_action_period', 60)
-  $oneflow_vm_name_template = hiera ('one::oned::oneflow_vm_name_template', '\'$ROLE_NAME_$VM_NUMBER_(service_$SERVICE_ID)\'')
+  $oneflow_vm_name_template = hiera ('one::oned::oneflow_vm_name_template', '$ROLE_NAME_$VM_NUMBER_(service_$SERVICE_ID)')
   $oneflow_core_auth        = hiera ('one::oned::oneflow_core_auth', 'cipher')
   $oneflow_debug_level      = hiera ('one::oned::oneflow_debug_level', 2)
 
