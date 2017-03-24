@@ -164,7 +164,7 @@ class one::params {
   $sched_default_ds_rank     = hiera ('one::oned::sched::default_ds_rank', '')
   $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
   $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
-  
+
   # OpenNebula Oneflow parameters
   $oneflow_one_xmlrpc       = hiera ('one::oned::oneflow_one_xmlrpc','http://localhost:2633/RPC2')
   $oneflow_lcm_interval     = hiera ('one::oned::oneflow_lcm_interval', 30)
@@ -195,7 +195,7 @@ class one::params {
   validate_re($oneflow_debug_level, [ 1, 2, 3, 4 ], 'debug level must be an integer from 1-4.')
   validate_re($oneflow_shutdown_action, [ 'terminate', 'terminate-hard' ], 'oneflow_shutdown_action must be either terminate or terminate-hard.')
   validate_re($oneflow_core_auth, [ 'cipher','x509' ], 'Oneflow_core_auth value must be cipher or x509.')
-  
+
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
