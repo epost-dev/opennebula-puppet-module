@@ -33,7 +33,7 @@ class one::oned::oneflow::config (
   file { '/etc/one/oneflow-server.conf':
     ensure  => file,
     mode    => '0640',
-    owner   => 'oneadmin',
+    owner   => 'root',
     group   => 'oneadmin',
     content => template('one/oneflow-server.conf.erb'),
   }
