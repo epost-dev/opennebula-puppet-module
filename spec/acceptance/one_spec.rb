@@ -1,14 +1,14 @@
 require 'spec_helper_acceptance'
 
 describe 'one class' do
+
   describe 'without parameters' do
     it 'should idempotently run' do
       pp = <<-EOS
         class { one: }
       EOS
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_on_all_hosts(pp)
     end
   end
   describe 'as ONE HEAD' do
@@ -17,27 +17,27 @@ describe 'one class' do
         class { one: oned => true, node => false,}
       EOS
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_on_all_hosts(pp)
     end
+    hosts.each do |host|
+      describe user('oneadmin') do
+        it { should exist }
+      end
+      describe package('opennebula') do
+        it { should be_installed }
+      end
+      describe service('opennebula') do
+        it { should be_enabled }
+        it { should be_running }
+      end
 
-    describe user('oneadmin') do
-      it { should exist }
-    end
-    describe package('opennebula') do
-      it { should be_installed }
-    end
-    describe service('opennebula') do
-      it { should be_enabled }
-      it { should be_running }
-    end
+      describe package('opennebula-sunstone') do
+        it { should_not be_installed }
+      end
 
-    describe package('opennebula-sunstone') do
-      it { should_not be_installed }
-    end
-
-    describe service('opennebula-sunstone') do
-      it { should_not be_running }
+      describe service('opennebula-sunstone') do
+        it { should_not be_running }
+      end
     end
   end
 
@@ -47,21 +47,21 @@ describe 'one class' do
         class { one: oned => true, sunstone => true, node => false}
       EOS
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_on_all_hosts(pp)
     end
+    hosts.each do |host|
+      describe package('opennebula-sunstone') do
+        it { should be_installed }
+      end
 
-    describe package('opennebula-sunstone') do
-      it { should be_installed }
-    end
+      describe service('opennebula-sunstone') do
+        it { should be_enabled }
+        it { should be_running }
+      end
 
-    describe service('opennebula-sunstone') do
-      it { should be_enabled }
-      it { should be_running }
-    end
-
-    describe port(9869) do
-      it { is_expected.to be_listening }
+      describe port(9869) do
+        it { is_expected.to be_listening }
+      end
     end
   end
 
@@ -71,14 +71,15 @@ describe 'one class' do
         class { one: node => true }
       EOS
 
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
+      apply_on_all_hosts(pp)
     end
-
-    if fact('osfamily') == 'RedHat'
-      describe package('opennebula-node-kvm') do
-        it { should be_installed }
+    hosts.each do |host|
+      if fact('osfamily') == 'RedHat'
+        describe package('opennebula-node-kvm') do
+          it { should be_installed }
+        end
       end
     end
   end
+
 end

@@ -3,7 +3,18 @@ require 'pry'
 
 hosts.each do |host|
   # Install Puppet
-  install_puppet
+  # if there is a specific version in the host yml use it - otherwise default to latest < 4.x
+  install_puppet_on(host, {
+    :version => host.host_hash["puppet_version"]
+   })
+end
+
+### helper to use more than 1 host
+def apply_on_all_hosts(pp)
+  hosts.each do |host|
+   apply_manifest_on(host, pp, :catch_failures => true)
+   apply_manifest_on(host, pp, :catch_changes => true)
+  end
 end
 
 RSpec.configure do |c|

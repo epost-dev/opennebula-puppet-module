@@ -1,0 +1,29 @@
+HOSTS:
+  centos-6-x64-puppet-31:
+    roles:
+      - default
+    platform: el-6-x86_64
+    box : puppetlabs/centos-6.6-64-nocm
+    hypervisor : vagrant
+    puppet_version : 3.1.1
+
+  centos-6-x64-puppet-35:
+    platform: el-6-x86_64
+    box : puppetlabs/centos-6.6-64-nocm
+    hypervisor : vagrant
+    puppet_version : 3.5.1
+    
+  centos-6-x64-puppet-36:
+    platform: el-6-x86_64
+    box : puppetlabs/centos-6.6-64-nocm
+    hypervisor : vagrant
+    puppet_version : 3.6.2
+
+  centos-6-x64-puppet-38:
+    platform: el-6-x86_64
+    box : puppetlabs/centos-6.6-64-nocm
+    hypervisor : vagrant
+    puppet_version : 3.8.3
+
+CONFIG:
+  type: foss
