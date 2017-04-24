@@ -10,7 +10,7 @@ ENV FACTER_operatingsystemrelease="7.3"
 ENV FACTER_lsbmajdistrelease="7"
 
 RUN yum -y install https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm epel-release
-RUN yum makecache && yum -y install puppet tar hostname
+RUN yum makecache && yum -y install puppet tar hostname openssh-server
 
 RUN puppet module install puppetlabs-inifile
 RUN puppet module install puppetlabs-stdlib
