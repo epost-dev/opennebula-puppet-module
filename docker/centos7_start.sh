@@ -1,5 +1,6 @@
 #!/bin/bash
 
+START_TIME=$(date)
 date
 echo running puppet apply $1
 time puppet apply $1
@@ -23,7 +24,10 @@ echo adding onehost
 onehost create localhost -i kvm -v kvm
 echo starting sunstone
 su - oneadmin -c "/usr/bin/sunstone-server start"
+echo re-running puppet apply $1
+time puppet apply $1
 echo done
-date
+echo start time was: $START_TIME
+echo now is: $(date)
 cat /var/lib/one/.one/one_auth
 tail -f /var/log/one/oned.log /var/log/one/sunstone.log
