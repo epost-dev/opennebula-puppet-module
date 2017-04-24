@@ -108,6 +108,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           when :netmask
             ['NETWORK_MASK', v]
           when :context
+            # do nothing here, see below
           else
             [k.to_s.upcase, v]
         end
