@@ -84,10 +84,10 @@ Create a ONE Vnet
         netmask         => '255.255.0.0',
         network_address => '10.0.2.0',
         context         => {
-           SEARCH_DOMAIN       => 'your.domain',
-           SECURITY_GROUPS     => '0',
-           FILTER_IP_SPOOFING  => 'YES',
-           FILTER_MAC_SPOOFING => 'YES',
+           search_domain       => 'your.domain',
+           security_groups     => '0',
+           filter_ip_spoofing  => 'YES',
+           filter_mac_spoofing => 'YES',
         },
     }
 

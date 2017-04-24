@@ -75,7 +75,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           :phydev   => vnet.xpath('./PHYDEV').text,
           :vlanid   => vnet.xpath('./VLAN_ID').text,
           :context         => ( Hash[ vnet.xpath('./TEMPLATE').children.collect { |c|
-                                  [c.name.to_s.upcase, c.text] unless parameter_names.include?(c.name.upcase)
+                                  [c.name.to_s.downcase, c.text] unless parameter_names.include?(c.name.upcase)
                                 }.reject{ |c| c.nil? } ] unless vnet.xpath('./TEMPLATE').nil? ),
           :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(' ') unless vnet.xpath('./TEMPLATE/DNS').nil?),
           :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
