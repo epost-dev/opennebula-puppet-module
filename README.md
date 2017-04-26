@@ -83,6 +83,12 @@ Create a ONE Vnet
         vlanid          => '1550',
         netmask         => '255.255.0.0',
         network_address => '10.0.2.0',
+        context         => {
+           search_domain       => 'your.domain',
+           security_groups     => '0',
+           filter_ip_spoofing  => 'YES',
+           filter_mac_spoofing => 'YES',
+        },
     }
 
 

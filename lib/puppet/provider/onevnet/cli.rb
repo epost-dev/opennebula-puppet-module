@@ -64,6 +64,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
 
   # Return the full hash of all existing onevnet resources
   def self.instances
+    parameter_names = ['NAME', 'VN_MAD', 'BRIDGE', 'PHYDEV', 'VLAN_ID', 'DNS', 'GATEWAY', 'NETWORK_MASK', 'NETWORK_ADDRESS', 'MTU', 'TEXT']
     vnets = Nokogiri::XML(onevnet('list', '-x')).root.xpath('/VNET_POOL/VNET')
     vnets.collect do |vnet|
       new(
@@ -73,7 +74,9 @@ Puppet::Type.type(:onevnet).provide(:cli) do
           :bridge   => vnet.xpath('./BRIDGE').text,
           :phydev   => vnet.xpath('./PHYDEV').text,
           :vlanid   => vnet.xpath('./VLAN_ID').text,
-          :context  => nil,
+          :context         => ( Hash[ vnet.xpath('./TEMPLATE').children.collect { |c|
+                                  [c.name.downcase, c.text] unless parameter_names.include?(c.name.upcase)
+                                }.reject{ |c| c.nil? } ] unless vnet.xpath('./TEMPLATE').nil? ),
           :dnsservers      => (vnet.xpath('./TEMPLATE/DNS').text.split(' ') unless vnet.xpath('./TEMPLATE/DNS').nil?),
           :gateway         => (vnet.xpath('./TEMPLATE/GATEWAY').text unless vnet.xpath('./TEMPLATE/GATEWAY').nil?),
           :netmask         => (vnet.xpath('./TEMPLATE/NETWORK_MASK').text unless vnet.xpath('./TEMPLATE/NETWORK_MASK').nil?),
@@ -104,11 +107,19 @@ Puppet::Type.type(:onevnet).provide(:cli) do
             ['DNS', "\"#{v.join(' ')}\""]
           when :netmask
             ['NETWORK_MASK', v]
+          when :context
+            # do nothing here, see below
           else
             [k.to_s.upcase, v]
         end
       end
     }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    unless @property_hash[:context].nil? or @property_hash[:context].to_s.empty?
+      file << "\n"
+      file << @property_hash[:context].map{ |k,v|
+        [k.to_s.upcase, v]
+      }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
+    end
     file.close
     self.debug(IO.read file.path)
     onevnet('update', resource[:name], file.path, '--append') unless @property_hash.empty?
