@@ -30,6 +30,7 @@ class one::oned::sunstone::config (
   $sunstone_logo_png       = $one::sunstone_logo_png,
   $sunstone_logo_small_png = $one::sunstone_logo_small_png,
 ){
+
   File {
     owner   => 'root',
     group   => 'oneadmin',
@@ -53,13 +54,18 @@ class one::oned::sunstone::config (
   file { '/etc/one/sunstone-views/admin.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template('one/sunstone-views-admin.yaml.erb'),
+    content => template("one/${::one::template_path}/sunstone-views-admin.yaml.erb"),
+  } ->
+  file { '/etc/one/sunstone-views/user.yaml':
+    ensure  => file,
+    mode    => '0640',
+    content => template("one/${::one::template_path}/sunstone-views-user.yaml.erb"),
   }
 
   if $sunstone_logo_png != 'undef' or $sunstone_logo_small_png != 'undef' {
     file { '/usr/lib/one/sunstone/public/images':
-      ensure  => directory,
-      mode    => '0755',
+      ensure => directory,
+      mode   => '0755',
     }
   }
 

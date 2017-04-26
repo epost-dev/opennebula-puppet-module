@@ -10,7 +10,7 @@
 #
 # Contributors:
 # - Martin Alfke
-# - Achim Ledermüller (Netways GmbH)
+# - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
 # - Thomas Fricke (Endocode AG)
 #
@@ -20,13 +20,13 @@
 #
 class one::prerequisites(
   $one_repo_enable  = $one::one_repo_enable,
-  $one_version      = $one::one_version,
 ) {
+
   case $::osfamily {
     'RedHat': {
-      if ( $one_repo_enable == 'true' ) {
+      if ( $one_repo_enable == 'true' ) { # lint:ignore:quoted_booleans
         yumrepo { 'opennebula':
-          baseurl  => "http://downloads.opennebula.org/repo/${one_version}/CentOS/${::operatingsystemmajrelease}/x86_64/",
+          baseurl  => "http://downloads.opennebula.org/repo/${::one::one_version_short}/CentOS/${::operatingsystemmajrelease}/x86_64/",
           descr    => 'OpenNebula',
           enabled  => 1,
           gpgcheck => 0,
@@ -34,15 +34,15 @@ class one::prerequisites(
       }
     }
     'Debian' : {
-      if ($one_repo_enable == 'true') {
+      if ($one_repo_enable == 'true') { # lint:ignore:quoted_booleans
         include ::apt
         case $::operatingsystem {
           'Debian': {
-            $apt_location="${one_version}/Debian/${::operatingsystemmajrelease}"
+            $apt_location="${::one::one_version_short}/Debian/${::operatingsystemmajrelease}"
             $apt_pin='-10'
           }
           'Ubuntu': {
-            $apt_location="${one_version}/Ubuntu/${::operatingsystemmajrelease}"
+            $apt_location="${::one::one_version_short}/Ubuntu/${::operatingsystemmajrelease}"
             $apt_pin='500'
           }
           default: { fail("Unrecognized operating system ${::operatingsystem}") }
@@ -53,7 +53,7 @@ class one::prerequisites(
           key_source => 'http://downloads.opennebula.org/repo/Debian/repo.key',
         } ->
 
-        apt::source { 'one-official':
+        apt::source { 'one-official': # lint:ignore:security_apt_no_key
           location          => "http://downloads.opennebula.org/repo/${apt_location}",
           release           => 'stable',
           repos             => 'opennebula',
@@ -77,6 +77,6 @@ class one::prerequisites(
     gid        => $one::onegid,
     home       => '/var/lib/one',
     managehome => true,
-    shell      => '/bin/bash'
+    shell      => '/bin/bash',
   }
 }

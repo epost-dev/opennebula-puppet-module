@@ -28,6 +28,9 @@
 #  scripts.
 #
 #  PORT: Port where oned will listen for xmlrpc calls.
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#  LISTEN_ADDRESS: Host IP to listen on for xmlrpc calls (default: all IPs).
+<% end -%>
 #
 #  DB: Configuration attributes for the database backend
 #   backend : can be sqlite or mysql (default is sqlite)
@@ -38,13 +41,23 @@
 #   passwd  : (mysql) the password for user
 #   db_name : (mysql) the database name
 #
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#  VNC_PORTS: VNC port pool for automatic VNC port assignment, if possible the
+#  port will be set to ``START`` + ``VMID``
+#   start   : first port to assign
+#   reserved: comma separated list of ports
+<% else %>
 #  VNC_BASE_PORT: VNC ports for VMs can be automatically set to VNC_BASE_PORT +
 #  VMID
+<% end %>
 #
 #  LOG: Configuration for the logging system
 #   system: defines the logging system:
 #      file      to log in the oned.log file
 #      syslog    to use the syslog facilities
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#      std       to use the default log stream (stderr) to use with systemd
+<% end -%>
 #   debug_level: 0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
 #
 #  VM_SUBMIT_ON_HOLD: Forces VMs to be created on hold state instead of pending.
@@ -52,7 +65,7 @@
 #*******************************************************************************
 
 LOG = [
-  system      = "file",
+  system      = "<%= scope.lookupvar('one::oned_log_system') %>",
   debug_level = <%= @debug_level %>
 ]
 
@@ -72,6 +85,10 @@ SCRIPTS_REMOTE_DIR=/var/tmp/one
 
 PORT = <%= scope.lookupvar('one::oned_port') %>
 
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+LISTEN_ADDRESS = "<%= scope.lookupvar('one::oned_listen_address') %>"
+<% end -%>
+
 <% if @backend == 'sqlite' -%>
 DB = [ backend = "sqlite" ]
 <% end -%>
@@ -86,7 +103,14 @@ DB = [ backend = "mysql",
     db_name = "<%= scope.lookupvar('one::oned_db') %>" ]
 <% end -%>
 
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+VNC_PORTS = [
+    START    = 5900
+#    RESERVED = "6800, 6801, 9869"
+]
+<% else %>
 VNC_BASE_PORT = 5900
+<% end -%>
 
 VM_SUBMIT_ON_HOLD = "<%= scope.lookupvar('one::oned::config::oned_vm_submit_on_hold') %>"
 
@@ -112,32 +136,48 @@ FEDERATION = [
     MASTER_ONED = ""
 ]
 
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#*******************************************************************************
+# Default showback cost
+#-------------------------------------------------------------------------------
+# The following attributes define the default cost for Virtual Machines that
+# don't have a CPU, MEMORY or DISK cost. This is used by the oneshowback
+# calculate method.
+#*******************************************************************************
+
+DEFAULT_COST = [
+    CPU_COST    = 0,
+    MEMORY_COST = 0,
+    DISK_COST   = 0
+]
+<% end -%>
+
 #*******************************************************************************
 # XML-RPC server configuration
 #-------------------------------------------------------------------------------
 #  These are configuration parameters for oned's xmlrpc-c server
 #
 #  MAX_CONN: Maximum number of simultaneous TCP connections the server
-#  will maintain - default 15
+#  will maintain
 #
 #  MAX_CONN_BACKLOG: Maximum number of TCP connections the operating system
 #  will accept on the server's behalf without the server accepting them from
-#  the operating system - default 15
+#  the operating system
 #
 #  KEEPALIVE_TIMEOUT: Maximum time in seconds that the server allows a
-#  connection to be open between RPCs - default 15
+#  connection to be open between RPCs
 #
 #  KEEPALIVE_MAX_CONN: Maximum number of RPCs that the server will execute on
-#  a single connection - default 30
+#  a single connection
 #
 #  TIMEOUT: Maximum time in seconds the server will wait for the client to
-#  do anything while processing an RPC - default 15
+#  do anything while processing an RPC. This timeout will be also used when
+#  proxy calls to the master in a federation.
 #
 #  RPC_LOG: Create a separated log file for xml-rpc requests, in
 #  "/var/log/one/one_xmlrpc.log".
 #
-#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses. Only relevant for
-#  slave zones.
+#  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
 #
 #  LOG_CALL_FORMAT: Format string to log XML-RPC calls. Interpreted strings:
 #     %i -- request id
@@ -167,17 +207,50 @@ TIMEOUT            = <%= scope.lookupvar('one::xmlrpc_timeout') %>
 #  NETWORK_SIZE: Here you can define the default size for the virtual networks
 #
 #  MAC_PREFIX: Default MAC prefix to be used to create the auto-generated MAC
-#  addresses is defined here (this can be overrided by the Virtual Network
+#  addresses is defined here (this can be overwritten by the Virtual Network
 #  template)
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#
+#  VLAN_IDS: VLAN ID pool for the automatic VLAN_ID assignment. This pool
+#  is for 802.1Q networks (Open vSwitch and 802.1Q drivers). The driver
+#  will try first to allocate VLAN_IDS[START] + VNET_ID
+#     start: First VLAN_ID to use
+#     reserved: Comma separated list of VLAN_IDs
+#
+# VXLAN_IDS: Automatic VXLAN Network ID (VNI) assignment. This is used
+# for vxlan networks.
+#     start: First VNI to use
+#     NOTE: reserved is not supported by this pool
+<% end -%>
 #*******************************************************************************
 
 NETWORK_SIZE = 254
 
 MAC_PREFIX   = "02:00"
 
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+
+VLAN_IDS = [
+    START    = "2",
+    RESERVED = "0, 1, 4095"
+]
+
+VXLAN_IDS = [
+    START = "2"
+]
+<% end -%>
+
 #*******************************************************************************
 # DataStore Configuration
 #*******************************************************************************
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#  DATASTORE_LOCATION: Path for Datastores. It IS the same for all the hosts
+#  and front-end. It defaults to /var/lib/one/datastores (in self-contained mode
+#  defaults to $ONE_LOCATION/var/datastores). Each datastore has its own
+#  directory (called BASE_PATH) in the form: $DATASTORE_LOCATION/<datastore_id>
+#  You can symlink this directory to any other path if needed. BASE_PATH is
+#  generated from this attribute each time oned is started.
+<% else %>
 #  DATASTORE_LOCATION: *Default* Path for Datastores in the hosts. It IS the
 #  same for all the hosts in the cluster. DATASTORE_LOCATION IS ONLY FOR THE
 #  HOSTS AND *NOT* THE FRONT-END. It defaults to /var/lib/one/datastores (or
@@ -189,20 +262,22 @@ MAC_PREFIX   = "02:00"
 #  DATASTORE_BASE_PATH: This is the base path for the SOURCE attribute of
 #  the images registered in a Datastore. This is a default value, that can be
 #  changed when the datastore is created.
+<% end -%>
 #
 #  DATASTORE_CAPACITY_CHECK: Checks that there is enough capacity before
-#  creating a new imag. Defaults to Yes
+#  creating a new image. Defaults to Yes
 #
 #  DEFAULT_IMAGE_TYPE: This can take values
 #       OS        Image file holding an operating system
 #       CDROM     Image file holding a CDROM
-#       DATABLOCK Image file holding a datablock,
-#                 always created as an empty block
+#       DATABLOCK Image file holding a datablock, created as an empty block
 #
 #  DEFAULT_DEVICE_PREFIX: This can be set to
 #       hd        IDE prefix
 #       sd        SCSI
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #       xvd       XEN Virtual Disk
+<% end -%>
 #       vd        KVM virtual disk
 #
 #  DEFAULT_CDROM_DEVICE_PREFIX: Same as above but for CDROM devices.
@@ -210,14 +285,16 @@ MAC_PREFIX   = "02:00"
 
 #DATASTORE_LOCATION  = /var/lib/one/datastores
 
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #DATASTORE_BASE_PATH = /var/lib/one/datastores
+<% end -%>
 
-DATASTORE_CAPACITY_CHECK = "yes"
+DATASTORE_CAPACITY_CHECK = "<%= scope.lookupvar('one::datastore_capacity_check') %>"
 
-DEFAULT_IMAGE_TYPE    = "OS"
-DEFAULT_DEVICE_PREFIX = "hd"
+DEFAULT_IMAGE_TYPE    = "<%= scope.lookupvar('one::default_image_type') %>"
+DEFAULT_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_device_prefix') %>"
 
-DEFAULT_CDROM_DEVICE_PREFIX = "hd"
+DEFAULT_CDROM_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_cdrom_device_prefix') %>"
 
 #*******************************************************************************
 # Information Driver Configuration
@@ -237,23 +314,29 @@ DEFAULT_CDROM_DEVICE_PREFIX = "hd"
 #*******************************************************************************
 
 #-------------------------------------------------------------------------------
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#  Information Collector for KVM IM's.
+#-------------------------------------------------------------------------------
+#  This driver CANNOT BE ASSIGNED TO A HOST, and needs to be used with KVM
+<% else -%>
 #  Information Collector for KVM and Xen IM's.
 #-------------------------------------------------------------------------------
 #  This driver CANNOT BE ASSIGNED TO A HOST, and needs to be used with KVM or
 #  Xen drivers
+<% end -%>
 #    -h  prints this help.
-#    -a  Address to bind the collectd sockect (defults 0.0.0.0)
+#    -a  Address to bind the collectd socket (default 0.0.0.0)
 #    -p  UDP port to listen for monitor information (default 4124)
 #    -f  Interval in seconds to flush collected information (default 5)
-#    -t  Number of threads for the server (defult 50)
+#    -t  Number of threads for the server (default 50)
 #    -i  Time in seconds of the monitorization push cycle. This parameter must
 #        be smaller than MONITORING_INTERVAL, otherwise push monitorization will
 #        not be effective.
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "collectd",
-    executable = "collectd",
-    arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
+      name       = "collectd",
+      executable = "collectd",
+      arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -262,9 +345,12 @@ IM_MAD = [
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
 IM_MAD = [
-    name       = "kvm",
-    executable = "one_im_ssh",
-    arguments  = "-r 3 -t 15 kvm" ]
+      name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+      SUNSTONE_NAME = "KVM",
+<% end -%>
+      executable = "one_im_ssh",
+      arguments  = "-r 3 -t 15 kvm" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -272,12 +358,22 @@ IM_MAD = [
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
 #-------------------------------------------------------------------------------
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# IM_MAD = [
+#       name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#       SUNSTONE_NAME = "kvm-ssh",
+<% end -%>
+#       executable = "one_im_ssh",
+#       arguments  = "-r 3 -t 15 kvm-probes" ]
+<% else -%>
 IM_MAD = [
     name       = "kvm_pull",
     executable = "one_im_ssh",
     arguments  = "-r 3 -t 15 kvm-probes" ]
+<% end -%>
 #-------------------------------------------------------------------------------
-
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #-------------------------------------------------------------------------------
 #  XEN UDP-push Information Driver Manager Configuration
 #    -r number of retries when monitoring a host
@@ -291,10 +387,17 @@ IM_MAD = [
 #    arguments  = "-r 3 -t 15 xen3" ]
 
 # Driver for Xen 4.x
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+IM_MAD = [
+    name       = "xen",
+    executable = "one_im_ssh",
+    arguments  = "-r 3 -t 15 xen4" ]
+<% else -%>
 #IM_MAD = [
 #    name       = "xen",
 #    executable = "one_im_ssh",
 #    arguments  = "-r 3 -t 15 xen4" ]
+<% end -%>
 
 #-------------------------------------------------------------------------------
 #  XEN SSH-pull Information Driver Manager Configuration
@@ -325,6 +428,7 @@ IM_MAD = [
 #      name       = "vmware",
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 15 -r 0 vmware" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -334,19 +438,29 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "vcenter",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#      SUNSTONE_NAME = "VMWare vCenter",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 15 -r 0 vcenter" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  EC2 Information Driver Manager Configuration
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -r number of retries when monitoring a host
+#    -t number of threads, i.e. number of hosts monitored at the same time
+<% end -%>
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "ec2",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#      SUNSTONE_NAME = "Amazon EC2",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 ec2" ]
-#-------------------------------------------------------------------------------
 
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #-------------------------------------------------------------------------------
 #  SoftLayer Information Driver Manager Configuration
 #    -r number of retries when monitoring a host
@@ -356,6 +470,7 @@ IM_MAD = [
 #      name       = "sl",
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 sl" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -365,6 +480,9 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #IM_MAD = [
 #      name       = "az",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#      SUNSTONE_NAME = "Microsoft Azure",
+<% end -%>
 #      executable = "one_im_sh",
 #      arguments  = "-c -t 1 -r 0 az" ]
 #-------------------------------------------------------------------------------
@@ -372,7 +490,7 @@ IM_MAD = [
 #-------------------------------------------------------------------------------
 #  Dummy Information Driver Manager Configuration
 #-------------------------------------------------------------------------------
-#IM_MAD = [ name="dummy", executable="one_im_dummy"]
+#IM_MAD = [ NAME="dummy", <% if scope.lookupvar('one::version_gte_5_0') -%>SUNSTONE_NAME="Testing", <% end -%>EXECUTABLE="one_im_dummy"]
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
@@ -394,6 +512,39 @@ IM_MAD = [
 #               /etc/one/ if OpenNebula was installed in /)
 #
 #   type      : driver type, supported drivers: xen, kvm, xml
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#
+#   keep_snapshots: do not remove snapshots on power on/off cycles and live 
+#   migrations if the hypervisor supports that.
+#
+#   imported_vms_actions : comma-separated list of actions supported
+#                          for imported vms. The available actions are:
+#                              migrate
+#                              live-migrate
+#                              terminate
+#                              terminate-hard
+#                              undeploy
+#                              undeploy-hard
+#                              hold
+#                              release
+#                              stop
+#                              suspend
+#                              resume
+#                              delete
+#                              delete-recreate
+#                              reboot
+#                              reboot-hard
+#                              resched
+#                              unresched
+#                              poweroff
+#                              poweroff-hard
+#                              disk-attach
+#                              disk-detach
+#                              nic-attach
+#                              nic-detach
+#                              snap-create
+#                              snap-delete
+<% end -%>
 #*******************************************************************************
 
 #-------------------------------------------------------------------------------
@@ -404,16 +555,47 @@ IM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate=migrate_local,save"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute remote commands, bash by default
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+#    -i try to do live-snapshot if available. Currently supported only for kvm
+#       with qcow2 as the datastore TM_MAD. If not available, it will fallback
+#       on the default (-d)
+<% end -%>
+<% end -%>
 #
 #  Note: You can use type = "qemu" to use qemu emulated guests, e.g. if your
 #  CPU does not have virtualization extensions or use nested Qemu-KVM hosts
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "kvm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    SUNSTONE_NAME  = "KVM",
+<% end -%>
     executable = "one_vmm_exec",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    arguments  = "-t 15 -r 0 kvm",
+<% elsif scope.lookupvar('one::version_gte_4_14') -%>
+    arguments  = "-t 15 -r 0 -i kvm",
+<% else -%>
     arguments  = "-t 15 -r 5 kvm",
+<% end -%>
     default    = "vmm_exec/vmm_exec_kvm.conf",
-    type       = "kvm" ]
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    type       = "kvm",
+    KEEP_SNAPSHOTS = "no",
+    IMPORTED_VMS_ACTIONS = "terminate, terminate-hard, hold, release, suspend,
+        resume, delete, reboot, reboot-hard, resched, unresched, disk-attach,
+        disk-detach, nic-attach, nic-detach, snap-create, snap-delete"
+<% else -%>
+    type       = "kvm"
+<% end -%>
+]
+
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #-------------------------------------------------------------------------------
 VM_MAD = [
     name       = "qemu",
@@ -421,9 +603,9 @@ VM_MAD = [
     arguments  = "-t 15 -r 0 kvm",
     default    = "vmm_exec/vmm_exec_kvm.conf",
     type       = "qemu" ]
+<% end -%>
 #-------------------------------------------------------------------------------
-
-
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #-------------------------------------------------------------------------------
 #  XEN Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
@@ -432,8 +614,14 @@ VM_MAD = [
 #        overridden for each action.
 #        Valid actions: deploy, shutdown, cancel, save, restore, migrate, poll
 #        An example: "-l migrate,save"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
-
+#
 # Driver for Xen 3.x
 #VM_MAD = [
 #    name       = "xen",
@@ -441,21 +629,36 @@ VM_MAD = [
 #    arguments  = "-t 15 -r 0 xen3",
 #    default    = "vmm_exec/vmm_exec_xen3.conf",
 #    type       = "xen" ]
-
+#
 # Driver for Xen 4.x
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+VM_MAD = [
+    name       = "xen",
+    executable = "one_vmm_exec",
+    arguments  = "-t 15 -r 0 xen4",
+    default    = "vmm_exec/vmm_exec_xen4.conf",
+    type       = "xen" ]
+<% else -%>
 #VM_MAD = [
 #    name       = "xen",
 #    executable = "one_vmm_exec",
 #    arguments  = "-t 15 -r 0 xen4",
 #    default    = "vmm_exec/vmm_exec_xen4.conf",
 #    type       = "xen" ]
-
+<% end -%>
+#
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  VMware Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vmware",
@@ -464,18 +667,41 @@ VM_MAD = [
 #    default    = "vmm_exec/vmm_exec_vmware.conf",
 #    type       = "vmware" ]
 #-------------------------------------------------------------------------------
-
-
+<% end -%>
 #-------------------------------------------------------------------------------
+
 #  vCenter Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
 #    -t number of threads, i.e. number of hosts monitored at the same time
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    -p more than one action per host in parallel, needs support from hypervisor
+#    -s <shell> to execute commands, bash by default
+#    -d default snapshot strategy. It can be either 'detach' or 'suspend'. It
+#       defaults to 'suspend'.
+<% end -%>
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "vcenter",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    SUNSTONE_NAME  = "VMWare vCenter",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-p -t 15 -r 0 vcenter -s sh",
-#    type       = "xml" ]
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    default    = "vmm_exec/vmm_exec_vcenter.conf",
+<% end -%>
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    type           = "xml",
+#    KEEP_SNAPSHOTS = "yes",
+#    IMPORTED_VMS_ACTIONS = "terminate, terminate-hard, hold, release, suspend,
+#        resume, delete, reboot, reboot-hard, resched, unresched, poweroff,
+#        poweroff-hard, disk-attach, disk-detach, nic-attach, nic-detach,
+#        snap-create, snap-delete"
+#
+<% else -%>
+#    type       = "xml"
+<% end -%>
+#]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -485,11 +711,24 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "ec2",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    SUNSTONE_NAME  = "Amazon EC2",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 ec2",
-#    type       = "xml" ]
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    TYPE           = "xml",
+#    KEEP_SNAPSHOTS = "no",
+#    IMPORTED_VMS_ACTIONS = "terminate, terminate-hard, hold, release, suspend,
+#        resume, delete, reboot, reboot-hard, resched, unresched, poweroff,
+#        poweroff-hard, disk-attach, disk-detach, nic-attach, nic-detach,
+#        snap-create, snap-delete"
+<% else -%>
+#    type       = "xml"
+<% end -%>
+#]
 #-------------------------------------------------------------------------------
-
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 #-------------------------------------------------------------------------------
 #  SoftLayer Virtualization Driver Manager Configuration
 #    -r number of retries when monitoring a host
@@ -500,6 +739,7 @@ VM_MAD = [
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 sl",
 #    type       = "xml" ]
+<% end -%>
 #-------------------------------------------------------------------------------
 
 #  Azure Virtualization Driver Manager Configuration
@@ -508,15 +748,29 @@ VM_MAD = [
 #-------------------------------------------------------------------------------
 #VM_MAD = [
 #    name       = "az",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    SUNSTONE_NAME  = "Microsoft Azure",
+<% end -%>
 #    executable = "one_vmm_sh",
 #    arguments  = "-t 15 -r 0 az",
-#    type       = "xml" ]
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#    TYPE           = "xml",
+#    KEEP_SNAPSHOTS = "no",
+#    IMPORTED_VMS_ACTIONS = "terminate, terminate-hard, hold, release, suspend,
+#        resume, delete, reboot, reboot-hard, resched, unresched, poweroff,
+#        poweroff-hard, disk-attach, disk-detach, nic-attach, nic-detach,
+#        snap-create, snap-delete"
+<% else -%>
+#    type       = "xml"
+<% end -%>
+#]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #  Dummy Virtualization Driver Configuration
 #-------------------------------------------------------------------------------
-#VM_MAD = [ name="dummy", executable="one_vmm_dummy", type="xml" ]
+#VM_MAD = [ NAME="dummy", <% if scope.lookupvar('one::version_gte_5_0') -%>SUNSTONE_NAME="Testing", <% end -%>EXECUTABLE="one_vmm_dummy",
+#  TYPE="xml" ]
 #-------------------------------------------------------------------------------
 
 #*******************************************************************************
@@ -537,7 +791,11 @@ VM_MAD = [
 
 TM_MAD = [
     executable = "one_tm",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    ARGUMENTS = "-t 15 -d dummy,lvm,shared,fs_lvm,qcow2,ssh,ceph,dev,vcenter,iscsi_libvirt"
+<% else -%>
     arguments = "-t 15 -d dummy,lvm,shared,fs_lvm,qcow2,ssh,vmfs,ceph,dev"
+<% end -%>
 ]
 
 #*******************************************************************************
@@ -551,12 +809,39 @@ TM_MAD = [
 #   arguments : for the driver executable
 #       -t number of threads, i.e. number of repo operations at the same time
 #       -d datastore mads separated by commas
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#       -s system datastore tm drivers, used to monitor shared system ds.
+<% end -%>
 #*******************************************************************************
 
 DATASTORE_MAD = [
     executable = "one_datastore",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    ARGUMENTS  = "-t 15 -d dummy,fs,lvm,ceph,dev,iscsi_libvirt,vcenter -s shared,ssh,ceph,fs_lvm,qcow2"
+<% else %>
     arguments  = "-t 15 -d dummy,fs,vmfs,lvm,ceph,dev"
+<% end -%>
 ]
+
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#*******************************************************************************
+# Marketplace Driver Configuration
+#*******************************************************************************
+# Drivers to manage different marketplaces, specialized for the storage backend
+#   executable: path of the transfer driver executable, can be an
+#               absolute path or relative to $ONE_LOCATION/lib/mads (or
+#               /usr/lib/one/mads/ if OpenNebula was installed in /)
+#
+#   arguments : for the driver executable
+#       -t number of threads, i.e. number of repo operations at the same time
+#       -m marketplace mads separated by commas
+#*******************************************************************************
+
+MARKET_MAD = [
+    EXECUTABLE = "one_market",
+    ARGUMENTS  = "-t 15 -m http,s3,one"
+]
+<% end -%>
 
 #*******************************************************************************
 # Hook Manager Configuration
@@ -586,7 +871,9 @@ DATASTORE_MAD = [
 #               - SHUTDOWN, after the VM is shutdown
 #               - STOP, after the VM is stopped (including VM image transfers)
 #               - DONE, after the VM is deleted or shutdown
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 #               - FAILED, when the VM enters the failed state
+<% end -%>
 #               - CUSTOM, user defined specific STATE and LCM_STATE combination
 #                 of states to trigger the hook.
 #   command   : path is relative to $ONE_LOCATION/var/remotes/hook
@@ -637,6 +924,10 @@ DATASTORE_MAD = [
 #               - NO, The hook is executed in the OpenNebula server (default)
 #
 # Virtual Network (VNET_HOOK)
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+# Virtual Router (VROUTER_HOOK)
+<% end -%>
+
 # User (USER_HOOK)
 # Group (GROUP_HOOK)
 # Image (IMAGE_HOOK)
@@ -698,6 +989,7 @@ HOST_HOOK = [
   <% end -%>
 <%- end -%>
 #-------------------------------------------------------------------------------
+<% if not scope.lookupvar('one::version_gte_4_14') -%>
 # These two hooks can be used to automatically delete or resubmit VMs that reach
 # the "failed" state. This way, the administrator doesn't have to interact
 # manually to release its resources or retry the deployment.
@@ -718,6 +1010,7 @@ HOST_HOOK = [
 #   command   = "/usr/bin/env onevm delete --recreate",
 #   arguments = "$ID" ]
 #
+<% end -%>
 #-------------------------------------------------------------------------------
 # Examples for DNS and puppet hooks
 #-------------------------------------------------------------------------------
@@ -762,6 +1055,15 @@ HOST_HOOK = [
 #               defined all the modules available will be enabled
 #   authz     : list of authentication modules separated by commas
 #
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# DEFAULT_AUTH: The default authentication driver to use when OpenNebula does
+# not know the user and needs to authenticate it externally.  If you want to
+# use "default" (not recommended, but supported for backwards compatibility
+# reasons) make sure you create a symlink pointing to the actual authentication
+# driver in /var/lib/one/remotes/auth, and add "default" to the 'auth'
+# parameter in the 'AUTH_MAD' section.
+#
+<% end -%>
 # SESSION_EXPIRATION_TIME: Time in seconds to keep an authenticated token as
 # valid. During this time, the driver is not used. Use 0 to disable session
 # caching
@@ -777,8 +1079,17 @@ HOST_HOOK = [
 
 AUTH_MAD = [
     executable = "one_auth_mad",
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+    authn = "ssh,x509,ldap,server_cipher,server_x509"
+<% else -%>
     authn = "ssh,x509,ldap,server_cipher,server_x509,default"
+<% end -%>
 ]
+<% if scope.lookupvar('one::oned_default_auth') != 'undef' -%>
+DEFAULT_AUTH = "<%= scope.lookupvar('one::oned_default_auth') %>"
+<% elsif scope.lookupvar('one::version_gte_4_14') and scope.lookupvar('one::ldap') -%>
+DEFAULT_AUTH = "ldap"
+<% end -%>
 
 SESSION_EXPIRATION_TIME = 900
 
@@ -793,8 +1104,8 @@ DEFAULT_UMASK = 177
 #   MUST be consistent with the values in onegate-server.conf
 #*******************************************************************************
 
-<% if scope.lookupvar('one::oned_onedgate_ip') -%>
-ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::oned_onedgate_ip') %>:5030"
+<% if scope.lookupvar('one::resulting_oned_onegate_endpoint') -%>
+ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::resulting_oned_onegate_endpoint') %>"
 <% else -%>
 #ONEGATE_ENDPOINT = "http://frontend:5030"
 <% end -%>
@@ -818,6 +1129,17 @@ VM_RESTRICTED_ATTR = "DISK/WRITE_BYTES_SEC"
 VM_RESTRICTED_ATTR = "DISK/TOTAL_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/READ_IOPS_SEC"
 VM_RESTRICTED_ATTR = "DISK/WRITE_IOPS_SEC"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#VM_RESTRICTED_ATTR = "DISK/SIZE"
+VM_RESTRICTED_ATTR = "DISK/ORIGINAL_SIZE"
+VM_RESTRICTED_ATTR = "CPU_COST"
+VM_RESTRICTED_ATTR = "MEMORY_COST"
+VM_RESTRICTED_ATTR = "DISK_COST"
+VM_RESTRICTED_ATTR = "PCI"
+<% end -%>
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+VM_RESTRICTED_ATTR = "USER_INPUTS"
+<% end -%>
 
 #VM_RESTRICTED_ATTR = "RANK"
 #VM_RESTRICTED_ATTR = "SCHED_RANK"
@@ -831,14 +1153,24 @@ IMAGE_RESTRICTED_ATTR = "SOURCE"
 # Normal VNets do not have restricted attributes.
 #*******************************************************************************
 
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+VNET_RESTRICTED_ATTR = "VN_MAD"
+<% end -%>
 VNET_RESTRICTED_ATTR = "PHYDEV"
 VNET_RESTRICTED_ATTR = "VLAN_ID"
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 VNET_RESTRICTED_ATTR = "VLAN"
+<% end -%>
 VNET_RESTRICTED_ATTR = "BRIDGE"
 
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+VNET_RESTRICTED_ATTR = "AR/VN_MAD"
+<% end -%>
 VNET_RESTRICTED_ATTR = "AR/PHYDEV"
 VNET_RESTRICTED_ATTR = "AR/VLAN_ID"
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 VNET_RESTRICTED_ATTR = "AR/VLAN"
+<% end -%>
 VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 
 #*******************************************************************************
@@ -865,20 +1197,50 @@ VNET_RESTRICTED_ATTR = "AR/BRIDGE"
 INHERIT_DATASTORE_ATTR  = "CEPH_HOST"
 INHERIT_DATASTORE_ATTR  = "CEPH_SECRET"
 INHERIT_DATASTORE_ATTR  = "CEPH_USER"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+INHERIT_DATASTORE_ATTR  = "CEPH_CONF"
+<% end -%>
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+INHERIT_DATASTORE_ATTR  = "POOL_NAME"
+
+INHERIT_DATASTORE_ATTR  = "ISCSI_USER"
+INHERIT_DATASTORE_ATTR  = "ISCSI_USAGE"
+INHERIT_DATASTORE_ATTR  = "ISCSI_HOST"
+
+INHERIT_IMAGE_ATTR      = "ISCSI_USER"
+INHERIT_IMAGE_ATTR      = "ISCSI_USAGE"
+INHERIT_IMAGE_ATTR      = "ISCSI_HOST"
+INHERIT_IMAGE_ATTR      = "ISCSI_IQN"
+<% end -%>
 
 INHERIT_DATASTORE_ATTR  = "GLUSTER_HOST"
 INHERIT_DATASTORE_ATTR  = "GLUSTER_VOLUME"
+
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+INHERIT_DATASTORE_ATTR  = "DISK_TYPE"
+INHERIT_DATASTORE_ATTR  = "ADAPTER_TYPE"
+<% end -%>
 
 <%- if @inherit_datastore_attrs != nil -%>
   <%- @inherit_datastore_attrs.each do |attr| -%>
 INHERIT_DATASTORE_ATTR  = "<%= attr %>"
   <%- end -%>
+
 <%- end -%>
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+INHERIT_IMAGE_ATTR      = "DISK_TYPE"
+INHERIT_IMAGE_ATTR      = "ADAPTER_TYPE"
+<% end -%>
 
 INHERIT_VNET_ATTR       = "VLAN_TAGGED_ID"
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 INHERIT_VNET_ATTR       = "BRIDGE_OVS"
+<% end -%>
 INHERIT_VNET_ATTR       = "FILTER_IP_SPOOFING"
 INHERIT_VNET_ATTR       = "FILTER_MAC_SPOOFING"
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+INHERIT_VNET_ATTR       = "MTU"
+<% end -%>
 
 #*******************************************************************************
 # Transfer Manager Driver Behavior Configuration
@@ -900,10 +1262,19 @@ INHERIT_VNET_ATTR       = "FILTER_MAC_SPOOFING"
 #       SYSTEM: The image will be cloned in the System datastore
 #   shared : determines if the storage holding the system datastore is shared
 #            among the different hosts or not. Valid values: "yes" or "no"
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#   ds_migrate : The driver allows migrations across datastores. Valid values:
+#               "yes" or "no". Note: THIS ONLY APPLIES TO SYSTEM DS.
+<% end -%>
 #*******************************************************************************
 
 TM_MAD_CONF = [
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    name = "dummy", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes",
+    DS_MIGRATE = "YES"
+<% else -%>
     name = "dummy", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+<% end -%>
 ]
 
 TM_MAD_CONF = [
@@ -911,7 +1282,12 @@ TM_MAD_CONF = [
 ]
 
 TM_MAD_CONF = [
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    name = "shared", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes",
+    DS_MIGRATE = "YES"
+<% else -%>
     name = "shared", ln_target = "NONE", clone_target = "SYSTEM", shared = "yes"
+<% end -%>
 ]
 
 TM_MAD_CONF = [
@@ -923,18 +1299,136 @@ TM_MAD_CONF = [
 ]
 
 TM_MAD_CONF = [
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    name = "ssh", ln_target = "SYSTEM", clone_target = "SYSTEM", shared = "no",
+    DS_MIGRATE = "YES"
+<% else -%>
     name = "ssh", ln_target = "SYSTEM", clone_target = "SYSTEM", shared = "no"
+<% end -%>
 ]
 
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
 TM_MAD_CONF = [
     name = "vmfs", ln_target = "NONE", clone_target= "SYSTEM", shared = "yes"
 ]
+<% end -%>
 
 TM_MAD_CONF = [
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    name = "ceph", ln_target = "NONE", clone_target = "SELF", shared = "yes",
+    DS_MIGRATE = "NO"
+<% else -%>
     name = "ceph", ln_target = "NONE", clone_target = "SELF", shared = "yes"
+<% end -%>
 ]
+
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+TM_MAD_CONF = [
+    NAME = "iscsi_libvirt", LN_TARGET = "NONE", CLONE_TARGET = "SELF", SHARED = "YES",
+    DS_MIGRATE = "NO"
+]
+<% end -%>
 
 TM_MAD_CONF = [
     name = "dev", ln_target = "NONE", clone_target = "NONE", shared = "yes"
 ]
 
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+TM_MAD_CONF = [
+    NAME = "vcenter", LN_TARGET = "NONE", CLONE_TARGET = "NONE", SHARED = "YES"
+]
+
+#*******************************************************************************
+# Datastore Manager Driver Behavior Configuration
+#*******************************************************************************
+# The  configuration for each driver is defined in DS_MAD_CONF. These
+# values are used when creating a new datastore and should not be modified
+# since they define the datastore behavior.
+#   name      : name of the transfer driver, listed in the -d option of the
+#               DS_MAD section
+#   required_attrs : comma separated list of required attributes in the DS
+#                    template
+#   persistent_only: specifies whether the datastore can only manage persistent
+#                    images
+#*******************************************************************************
+
+DS_MAD_CONF = [
+    NAME = "ceph",
+    REQUIRED_ATTRS = "DISK_TYPE,BRIDGE_LIST",
+    PERSISTENT_ONLY = "NO",
+    MARKETPLACE_ACTIONS = "export"
+]
+
+DS_MAD_CONF = [
+    NAME = "dev", REQUIRED_ATTRS = "DISK_TYPE", PERSISTENT_ONLY = "YES"
+]
+
+DS_MAD_CONF = [
+    NAME = "iscsi_libvirt", REQUIRED_ATTRS = "DISK_TYPE,ISCSI_HOST",
+    PERSISTENT_ONLY = "YES"
+]
+
+DS_MAD_CONF = [
+    NAME = "dummy", REQUIRED_ATTRS = "", PERSISTENT_ONLY = "NO"
+]
+
+DS_MAD_CONF = [
+    NAME = "fs", REQUIRED_ATTRS = "", PERSISTENT_ONLY = "NO",
+    MARKETPLACE_ACTIONS = "export"
+]
+
+DS_MAD_CONF = [
+    NAME = "lvm", REQUIRED_ATTRS = "DISK_TYPE,BRIDGE_LIST",
+    PERSISTENT_ONLY = "NO"
+]
+
+DS_MAD_CONF = [
+    NAME = "vcenter", REQUIRED_ATTRS = "VCENTER_CLUSTER", PERSISTENT_ONLY = "YES",
+    MARKETPLACE_ACTIONS = "export"
+]
+
+#*******************************************************************************
+# MarketPlace Driver Behavior Configuration
+#*******************************************************************************
+# The  configuration for each driver is defined in MARKET_MAD_CONF. These
+# values are used when creating a new marketplaces and should not be modified
+# since they define the marketplace behavior.
+#   name      : name of the market driver
+#   required_attrs : comma separated list of required attributes in the Market
+#                    template
+#   app_actions: List of actions allowed for a MarketPlaceApp
+#     - monitor The apps of the marketplace will be monitored
+#     - create, the app in the marketplace
+#     - delete, the app from the marketplace
+#   public: set to yes for external marketplaces. A public marketplace can be
+#   removed even if it has registered apps.
+#*******************************************************************************
+
+MARKET_MAD_CONF = [
+    NAME = "one",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    SUNSTONE_NAME  = "OpenNebula.org Marketplace",
+<% end -%>
+    REQUIRED_ATTRS = "",
+    APP_ACTIONS = "monitor",
+    PUBLIC = "yes"
+]
+
+MARKET_MAD_CONF = [
+    NAME = "http",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    SUNSTONE_NAME  = "HTTP server",
+<% end -%>
+    REQUIRED_ATTRS = "BASE_URL,PUBLIC_DIR",
+    APP_ACTIONS = "create, delete, monitor"
+]
+
+MARKET_MAD_CONF = [
+    NAME = "s3",
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+    SUNSTONE_NAME = "Amazon S3",
+<% end -%>
+    REQUIRED_ATTRS = "ACCESS_KEY_ID,SECRET_ACCESS_KEY,REGION,BUCKET",
+    APP_ACTIONS = "create, delete, monitor"
+]
+<% end -%>

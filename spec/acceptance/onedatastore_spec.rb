@@ -16,7 +16,7 @@ describe 'onedatastore type' do
     after(:each) do
       pp = <<-EOS
       onedatastore { 'nfs_ds':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -28,8 +28,8 @@ describe 'onedatastore type' do
       it 'should idempotently run' do
         pp = <<-EOS
         onedatastore { 'nfs_ds':
-          tm_mad   => 'shared',
-          type     => 'system_ds',
+          tm_mad    => 'shared',
+          type      => 'system_ds',
         }
         EOS
 
@@ -93,8 +93,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'production':
-        ds_mad => 'fs',
-        tm_mad => 'shared',
+        ds_mad    => 'fs',
+        tm_mad    => 'shared',
       }
       EOS
 
@@ -107,8 +107,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'vmfs_ds':
-        ds_mad => 'vmfs',
-        tm_mad => 'vmfs',
+        ds_mad    => 'vmfs',
+        tm_mad    => 'vmfs',
       }
       EOS
 
@@ -121,8 +121,8 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp = <<-EOS
       onedatastore { 'lvm_ds':
-        ds_mad => 'fs_lvm',
-        tm_mad => 'fs_lvm',
+        ds_mad    => 'fs_lvm',
+        tm_mad    => 'fs_lvm',
       }
       EOS
 
@@ -143,7 +143,7 @@ describe 'onedatastore type' do
         ceph_secret => 'cephsecret',
         pool_name   => 'cephpoolname',
         disk_type   => 'rbd',
-        bridge_list => 'host1 host2 host3'
+        bridge_list => 'host1 host2 host3',
       }
       EOS
 
@@ -156,7 +156,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'nfs_ds':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -169,7 +169,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'kernels':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -182,7 +182,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'production':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -195,7 +195,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'vmfs_ds':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -208,7 +208,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'lvm_ds':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 
@@ -221,7 +221,7 @@ describe 'onedatastore type' do
     it 'should idempotently run' do
       pp =<<-EOS
       onedatastore { 'ceph_ds':
-        ensure => absent,
+        ensure    => absent,
       }
       EOS
 

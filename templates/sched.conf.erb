@@ -7,7 +7,14 @@
 #-------------------------------------------------------------------------------
 #  MESSAGE_SIZE: Buffer size in bytes for XML-RPC responses.
 #
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#  XMLRPC_TIMEOUT: Seconds to timeout XML-RPC calls to oned
+#
+#  ONE_XMLRPC: URL to connect to the OpenNebula daemon (oned)
+<% else -%>
 #  ONED_PORT: Port to connect to the OpenNebula daemon (oned)
+
+<% end -%>
 #
 #  SCHED_INTERVAL: Seconds between two scheduling actions
 #
@@ -53,13 +60,29 @@
 #    - system: defines the logging system:
 #          file      to log in the sched.log file
 #          syslog    to use the syslog facilities
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+#    - debug_level:
+#           0 = ERROR
+#           1 = WARNING
+#           2 = INFO
+#           3 = DEBUG   Includes general scheduling information (default)
+#           4 = DDEBUG  Includes time taken for each step
+#           5 = DDDEBUG Includes detailed information about the scheduling
+#                       decision, such as VM requirements, Host ranking for
+#                       each VM, etc. This will impact the performance
+<% else -%>
 #    - debug_level: 0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
+<% end -%>
 #*******************************************************************************
 
 MESSAGE_SIZE = 1073741824
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+TIMEOUT      = 60
 
+ONE_XMLRPC = "http://localhost:<%= scope.lookupvar('one::oned_port') %>/RPC2"
+<% else -%>
 ONED_PORT = <%= scope.lookupvar('one::oned_port') %>
-
+<% end -%>
 SCHED_INTERVAL = <%= scope.lookupvar('one::sched_interval') %>
 
 MAX_VM       = <%= scope.lookupvar('one::sched_max_vm') %>

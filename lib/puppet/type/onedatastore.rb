@@ -22,6 +22,13 @@ Puppet::Type.newtype(:onedatastore) do
     end
   end
 
+  newparam(
+    :self_test,
+    :boolean => true
+  ) do
+    desc 'Param to activate self-test: defaults to false'
+  end
+
   newproperty(:type) do
     desc 'Choose type of datastore. Valid values: images, system, files'
     defaultto :IMAGE_DS
@@ -86,5 +93,6 @@ Puppet::Type.newtype(:onedatastore) do
   newproperty(:safe_dirs, :array_matching => :all) do
     desc 'Array of safe directories'
   end
+
 
 end

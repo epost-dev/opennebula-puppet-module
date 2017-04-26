@@ -19,11 +19,15 @@ class one::oned::sunstone::service (
   $sunstone_novnc     = $one::sunstone_novnc
 ) {
   if $sunstone_passenger {
-      $srv_ensure = stopped
-      $srv_enable = false
+    $srv_ensure = stopped
+    $srv_enable = false
   } else {
-      $srv_ensure = running
-      $srv_enable = true
+    $srv_ensure = running
+    $srv_enable = true
+  }
+  $_sunstone_novnc_ensure = $sunstone_novnc ? {
+    true    => running,
+    default => stopped,
   }
   service { 'opennebula-sunstone':
     ensure  => $srv_ensure,
@@ -31,7 +35,7 @@ class one::oned::sunstone::service (
     require => Service['opennebula'],
   }
   service { 'opennebula-novnc':
-    ensure  => $sunstone_novnc ? { true => running, default => stopped},
-    enable  => $sunstone_novnc,
+    ensure => $_sunstone_novnc_ensure,
+    enable => $sunstone_novnc,
   }
 }

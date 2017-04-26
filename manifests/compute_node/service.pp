@@ -25,20 +25,20 @@ class one::compute_node::service(
     enable    => true,
   }
   case $::osfamily {
-      'RedHat': {
-          service { 'ksmtuned':
-            ensure    => stopped,
-            enable    => false,
-            hasstatus => true,
-          }
-          service { 'ksm':
-            ensure    => running,
-            enable    => true,
-            hasstatus => true,
-          }
+    'RedHat': {
+      service { 'ksmtuned':
+        ensure    => stopped,
+        enable    => false,
+        hasstatus => true,
       }
-      default: {
-          notice('we need to check how to enable ksm.')
+      service { 'ksm':
+        ensure    => running,
+        enable    => true,
+        hasstatus => true,
       }
+    }
+    default: {
+      notice('we need to check how to enable ksm.')
+    }
   }
 }

@@ -45,7 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder '.', '/etc/puppet/modules/one/'
 
-  config.vm.define 'centos' do |centos|
+  config.vm.define 'centos-head' do |centos|
     centos.vm.box = 'puppetlabs/centos-6.6-64-puppet'
     config.vm.box_version = '1.0.1'
     centos.vm.provision 'shell', inline: '/usr/bin/yum -y install epel-release'
@@ -61,7 +61,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.define 'debian' do |debian|
+  config.vm.define 'centos-node' do |centos|
+    centos.vm.box = 'puppetlabs/centos-6.6-64-puppet'
+    config.vm.box_version = '1.0.1'
+    centos.vm.provision 'shell', inline: '/usr/bin/yum -y install epel-release'
+    centos.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
+    centos.vm.provision 'shell', inline: 'puppet module install puppetlabs-inifile'
+    centos.vm.provision 'puppet' do |puppet|
+      puppet.manifests_path = 'manifests'
+      puppet.manifest_file = 'init.pp'
+      puppet.options = [
+          '--verbose',
+          "-e 'class { one: }'"
+      ]
+    end
+  end
+
+  config.vm.define 'debian-head' do |debian|
     debian.vm.box = 'puppetlabs/debian-7.8-64-puppet'
     debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
     debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-inifile'
@@ -72,6 +88,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.options = [
           '--verbose',
           "-e 'class { one: oned => true, sunstone => true, }'"
+      ]
+    end
+  end
+
+  config.vm.define 'debian-node' do |debian|
+    debian.vm.box = 'puppetlabs/debian-7.8-64-puppet'
+    debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-stdlib'
+    debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-inifile'
+    debian.vm.provision 'shell', inline: 'puppet module install puppetlabs-apt'
+    debian.vm.provision 'puppet' do |puppet|
+      puppet.manifests_path = 'manifests'
+      puppet.manifest_file = 'init.pp'
+      puppet.options = [
+          '--verbose',
+          "-e 'class { one: }'"
       ]
     end
   end

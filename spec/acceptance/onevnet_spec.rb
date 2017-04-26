@@ -85,6 +85,55 @@ describe 'onevnet type' do
     end
   end
 
+  describe 'when creating a vnet with context variables' do
+    it 'should idempotently run' do
+      pp =<<-eos
+      onevnet { 'vnet4':
+          ensure          => present,
+          bridge          => 'basebr0',
+          phydev          => 'br0',
+          dnsservers      => ['8.8.8.8', '4.4.4.4'],
+          gateway         => '10.0.2.1',
+          vlanid          => '1550',
+          netmask         => '255.255.0.0',
+          network_address => '10.0.2.0',
+          context         => {
+              security_groups    => '0',
+              search_domain      => 'my.domain',
+              filter_ip_spoofing => 'yes',
+          },
+      }
+      eos
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+  end
+
+  describe 'when updating a vnet with context variables' do
+    it 'should idempotently run' do
+      pp =<<-eos
+      onevnet { 'vnet4':
+          ensure          => present,
+          bridge          => 'basebr0',
+          phydev          => 'br0',
+          dnsservers      => ['8.8.8.8', '4.4.4.4'],
+          gateway         => '10.0.2.1',
+          vlanid          => '1550',
+          netmask         => '255.255.0.0',
+          network_address => '10.0.2.0',
+          context         => {
+              security_groups     => '0',
+              search_domain       => 'my.domain',
+              filter_ip_spoofing  => 'yes',
+              filter_mac_spoofing => 'yes',
+          },
+      }
+      eos
+
+      apply_manifest(pp, :catch_failures => true)
+    end
+  end
+
   describe 'when updating a fixed vnet' do
     it 'should idempotently run' do
       pp =<<-EOS
@@ -114,6 +163,9 @@ describe 'onevnet type' do
           ensure => absent,
         }
         onevnet { 'vnet3':
+          ensure => absent,
+        }
+        onevnet { 'vnet4':
           ensure => absent,
         }
       EOS

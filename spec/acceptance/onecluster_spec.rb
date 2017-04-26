@@ -10,14 +10,12 @@ describe 'onecluster type' do
       im_mad => 'dummy',
       vm_mad => 'dummy',
       vn_mad => 'dummy',
-      status => 'disabled',
     }
 
     onehost { 'host02':
       im_mad => 'dummy',
       vm_mad => 'dummy',
       vn_mad => 'dummy',
-      status => 'disabled',
     }
 
     onevnet { 'vnet1':

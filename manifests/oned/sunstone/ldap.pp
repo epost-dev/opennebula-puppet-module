@@ -20,9 +20,10 @@ class one::oned::sunstone::ldap (
   $oned_sunstone_ldap_pkg = $one::oned_sunstone_ldap_pkg,
   $oned_ldap_mappings = $one::oned_ldap_mappings,
   $oned_ldap_mapping_filename = $one::oned_ldap_mapping_filename,
+  $package_ensure             = $one::package_ensure,
 ) {
   package { $oned_sunstone_ldap_pkg:
-    ensure => 'latest',
+    ensure => $package_ensure,
   } ->
   file { '/var/lib/one/remotes/auth/default':
     ensure => link,

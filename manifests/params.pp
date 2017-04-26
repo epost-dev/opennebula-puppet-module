@@ -12,7 +12,7 @@
 #
 # Contributors:
 # - Martin Alfke
-# - Achim Ledermüller (Netways GmbH)
+# - Achim Ledermueller (Netways GmbH)
 # - Sebastian Saemann (Netways GmbH)
 #
 # === License
@@ -21,11 +21,15 @@
 #
 class one::params {
   # OpenNebula parameters
+  $oned_log_system  = hiera('one::oned::oned_log_system', 'file')
   $oned_port        = hiera('one::oned::port', '2633')
+  $oned_listen_address = hiera('one::oned_listen_address', '0.0.0.0')
   $oned_db          = hiera('one::oned::db', 'oned')
   $oned_db_user     = hiera('one::oned::db_user', 'oned')
   $oned_db_password = hiera('one::oned::db_password', 'oned')
   $oned_db_host     = hiera('one::oned::db_host', 'localhost')
+  # default auth parameter - if needed for override
+  $oned_default_auth = hiera('one::oned_default_auth','undef')
   # ldap stuff (optional needs one::oned::ldap in hiera set to true)
   $oned_ldap_host = hiera('one::oned::ldap_host','ldap')
   $oned_ldap_port = hiera('one::oned::ldap_port','636')
@@ -49,7 +53,7 @@ class one::params {
   $oned_ldap_mapping_default = hiera('one::oned::ldap_mapping_default','undef')
   $oned_ldap_mappings = hiera('one::oned::ldap_mappings',undef)
   # should we enable opennebula repos?
-  $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' )
+  $one_repo_enable = hiera('one::enable_opennebula_repo', 'true' ) # lint:ignore:quoted_booleans
   # Which version
   $one_version = hiera('one::one_version', '4.12' )
   # should VM_SUBMIT_ON_HOLD be enabled in oned.conf?
@@ -87,7 +91,7 @@ class one::params {
   $vnc_proxy_support_wss     = hiera('one::oned::vnc_proxy_support_wss', 'no')
   $vnc_proxy_cert            = hiera('one::oned::vnc_proxy_cert', '')
   $vnc_proxy_key             = hiera('one::oned::vnc_proxy_key', '')
-  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false')
+  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false') # lint:ignore:quoted_booleans
 
   # generic params for nodes and oned
   $oneuid = '9869'
@@ -99,6 +103,9 @@ class one::params {
   $information_collector_interval = hiera('one::oned::information_collector_interval', '20')
 
   $http_proxy = hiera('one::oned::http_proxy', '')
+
+  # package ensure, default true
+  $package_ensure_latest = true
 
   #
   # hook script installation
@@ -118,7 +125,9 @@ class one::params {
   $hook_scripts = hiera('one::head::hook_scripts', undef)
 
   # Todo: Use Serviceip from HA-Setup if ha enabled.
-  $oned_onegate_ip = hiera('one::oned::onegate::ip', $::ipaddress)
+  $oned_onegate_ip = hiera('one::oned::onegate::ip', undef)
+  # Specify full endpoint if needed (such as if using https proxy)
+  $oned_onegate_endpoint = hiera('one::oned::onegate::endpoint', undef)
 
   # E-POST imaginator parameters
   $kickstart_network         = hiera ('one::node::kickstart::network', undef)
@@ -128,8 +137,7 @@ class one::params {
   $kickstart_tmpl            = hiera ('one::node::kickstart::kickstart_tmpl', 'one/kickstart.ks.erb')
 
   $preseed_data              = hiera ('one::node::preseed::data', {})
-  $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url',
-                                      'http://ftp.debian.org/debian')
+  $preseed_debian_mirror_url = hiera ('one::node::preseed::debian_mirror_url', 'http://ftp.debian.org/debian')
   $preseed_ohd_deb_repo      = hiera ('one::node::preseed::ohd_deb_repo', undef)
   $preseed_tmpl              = hiera ('one::node::preseed::preseed_tmpl', 'one/preseed.cfg.erb')
 
@@ -157,55 +165,53 @@ class one::params {
   $sched_log_system          = hiera ('one::oned::sched::log_system', 'file')
   $sched_log_debug_level     = hiera ('one::oned::sched::log_debug_level', 3)
 
-  # Data Validation
+  # OpenNebula Oneflow parameters
+  $oneflow_one_xmlrpc       = hiera ('one::oned::oneflow_one_xmlrpc','http://localhost:2633/RPC2')
+  $oneflow_lcm_interval     = hiera ('one::oned::oneflow_lcm_interval', 30)
+  $oneflow_host             = hiera ('one::oned::oneflow_host', '127.0.0.1')
+  $oneflow_port             = hiera ('one::oned::oneflow_port', 2474)
+  $oneflow_default_cooldown = hiera ('one::oned::oneflow_default_cooldown', 300)
+  $oneflow_shutdown_action  = hiera ('one::oned::oneflow_shutdown_action', 'terminate')
+  $oneflow_action_number    = hiera ('one::oned::oneflow_action_number', 1)
+  $oneflow_action_period    = hiera ('one::oned::oneflow_action_period', 60)
+  $oneflow_vm_name_template = hiera ('one::oned::oneflow_vm_name_template', '$ROLE_NAME_$VM_NUMBER_(service_$SERVICE_ID)')
+  $oneflow_core_auth        = hiera ('one::oned::oneflow_core_auth', 'cipher')
+  $oneflow_debug_level      = hiera ('one::oned::oneflow_debug_level', 2)
 
-  # the priv key is mandatory on the head.
-  validate_string($ssh_pub_key)
-  if (!$one::node) {
-    validate_string($ssh_priv_key_param)
-    $ssh_priv_key = $ssh_priv_key_param
-  }
+  # OpenNebula Datastore parameters
+  $datastore_capacity_check    = hiera ('one::oned::datastore_capacity_check', 'yes')
+  $default_image_type          = hiera ('one::oned::default_image_type', 'OS')
+  $default_device_prefix       = hiera ('one::oned::default_device_prefix', 'hd')
+  $default_cdrom_device_prefix = hiera ('one::oned::default_cdrom_device_prefix', 'hd')
 
-  # ensure xmlrpctuning is in string
-  validate_string($xmlrpc_maxconn, $xmlrpc_maxconn_backlog, $xmlrpc_keepalive_timeout, $xmlrpc_keepalive_max_conn, $xmlrpc_timeout)
+  # Where to place the sudo rule files
+  $oneadmin_sudoers_file   = '/etc/sudoers.d/10_oneadmin'
+  $imaginator_sudoers_file = '/etc/sudoers.d/20_imaginator'
 
-  # ensure INHERIT attrs is array
-  if ($inherit_datastore_attrs) {
-    validate_array($inherit_datastore_attrs)
-  }
-
-  if ($hook_scripts_pkgs) {
-    validate_array($hook_scripts_pkgs)
-  }
-
-  if ($hook_scripts) {
-    validate_hash($hook_scripts)
-    $vm_hook_scripts=$hook_scripts['VM']
-
-    if ($vm_hook_scripts) {
-      validate_hash($vm_hook_scripts)
-    }
-
-    $host_hook_scripts=$hook_scripts['HOST']
-    if ($host_hook_scripts) {
-      validate_hash($host_hook_scripts)
-    }
-  }
+  # oneflow config validations
+  validate_integer([$oneflow_lcm_interval, $oneflow_port, $oneflow_default_cooldown, $oneflow_action_number, $oneflow_action_period])
+  validate_string($oneflow_one_xmlrpc, $oneflow_vm_name_template)
+  validate_re($oneflow_host, '\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b', 'This needs to be in ipv4 format ###.###.###.###')
+  validate_re($oneflow_debug_level, [ 1, 2, 3, 4 ], 'debug level must be an integer from 1-4.')
+  validate_re($oneflow_shutdown_action, [ 'terminate', 'terminate-hard' ], 'oneflow_shutdown_action must be either terminate or terminate-hard.')
+  validate_re($oneflow_core_auth, [ 'cipher','x509' ], 'Oneflow_core_auth value must be cipher or x509.')
 
   # OS specific params for nodes
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '7' {
-        $node_packages = ['opennebula-node-kvm',
-                          'sudo',
-                          'ipset'
-                          ]
+        $node_packages = [
+          'device-mapper-libs',
+          'opennebula-node-kvm',
+          'ipset',
+        ]
       } else {
-        $node_packages = ['opennebula-node-kvm',
-                          'sudo',
-                          'python-virtinst',
-                          'ipset'
-                          ]
+        $node_packages = [
+          'device-mapper-libs',
+          'opennebula-node-kvm',
+          'python-virtinst',
+          'ipset',
+        ]
       }
       $oned_packages   = ['opennebula', 'opennebula-server', 'opennebula-ruby']
       $dbus_srv        = 'messagebus'
@@ -213,36 +219,38 @@ class one::params {
       $oned_sunstone_packages = 'opennebula-sunstone'
       $oned_sunstone_ldap_pkg = ['ruby-ldap','rubygem-net-ldap']
       # params for oneflow (optional, needs one::oneflow set to true)
-      $oned_oneflow_packages = ['opennebula-flow',
-                                'rubygem-treetop',
-                                'rubygem-polyglot'
-                                ]
+      $oned_oneflow_packages = [
+        'opennebula-flow',
+        'rubygem-treetop',
+        'rubygem-polyglot',
+      ]
       # params for onegate (optional, needs one::onegate set to true)
       $oned_onegate_packages = ['opennebula-gate', 'rubygem-parse-cron']
       $libvirtd_srv = 'libvirtd'
       $libvirtd_cfg = '/etc/sysconfig/libvirtd'
       $libvirtd_source = 'puppet:///modules/one/libvirtd.sysconfig'
-      $use_gems           = str2bool(hiera('one::oned::install::use_gems', 'true'))
+      $use_gems           = str2bool(hiera('one::oned::install::use_gems', 'true')) # lint:ignore:quoted_booleans
       $rubygems           = ['builder', 'sinatra']
       $rubygems_rpm       = ['rubygem-builder', 'rubygem-sinatra']
     }
     'Debian': {
       $use_gems        = true
-      $node_packages   = ['opennebula-node',
-                          'sudo',
-                          'virtinst',
-                          'ipset'
-                          ]
+      $node_packages   = [
+        'opennebula-node',
+        'virtinst',
+        'ipset',
+      ]
       $rubygems       = ['parse-cron', 'builder', 'sinatra']
       $oned_packages   = ['opennebula', 'opennebula-tools', 'ruby-opennebula']
       $dbus_srv        = 'dbus'
       $dbus_pkg        = 'dbus'
       $oned_sunstone_packages = 'opennebula-sunstone'
       $oned_sunstone_ldap_pkg = ['ruby-ldap','ruby-net-ldap']
-      $oned_oneflow_packages = ['opennebula-flow',
-                                'ruby-treetop',
-                                'ruby-polyglot'
-                                ]
+      $oned_oneflow_packages = [
+        'opennebula-flow',
+        'ruby-treetop',
+        'ruby-polyglot',
+      ]
       $oned_onegate_packages = ['opennebula-gate']
       $libvirtd_srv = 'libvirt-bin'
       $libvirtd_cfg = '/etc/default/libvirt-bin'
@@ -250,7 +258,7 @@ class one::params {
     }
     default: {
       fail("Your OS - ${::osfamily} - is not yet supported.
-            Please add required functionality to params.pp")
+        Please add required functionality to params.pp")
     }
   }
 }

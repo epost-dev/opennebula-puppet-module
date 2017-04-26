@@ -12,9 +12,10 @@
 #
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 
 Puppet::Type.type(:oneimage).provide(:cli) do
+  confine :feature => :nokogiri
   desc "oneimage provider"
 
   has_command(:oneimage, "oneimage") do

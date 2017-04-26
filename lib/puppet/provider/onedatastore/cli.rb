@@ -6,6 +6,8 @@
 # Based upon initial work from Ken Barber
 # Modified by Martin Alfke
 # Modified by Robert Waffen <robert.waffen@epost-dev.de>
+# Modified by Arne Hilmann
+# Modified by Gerald Schmidt
 #
 # Copyright
 # initial provider had no copyright
@@ -13,9 +15,10 @@
 #
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 
 Puppet::Type.type(:onedatastore).provide(:cli) do
+  confine :feature => :nokogiri
   desc 'onedatastore provider'
 
   has_command(:onedatastore, 'onedatastore') do
@@ -25,10 +28,14 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
   mk_resource_methods
 
   def self.get_attributes
-    [:name, :tm_mad, :type, :safe_dirs, :ds_mad, :disk_type, :driver, :bridge_list,
+    get_checked_attributes + [:safe_dirs, :driver, :bridge_list,
      :ceph_host, :ceph_user, :ceph_secret, :pool_name, :staging_dir, :base_path,
      :ensure, :cluster, :cluster_id]
   end
+
+  def self.get_checked_attributes
+    [:name, :ds_mad, :tm_mad, :disk_type, :type]
+  end  
 
   def create
     file = Tempfile.new("onedatastore-#{resource[:name]}")
@@ -36,6 +43,10 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
       xml.DATASTORE do
         self.class.get_attributes.each do |node|
           xml.send node.to_s.upcase, resource[node] unless resource[node].nil?
+
+          if node.to_s == "cluster_id" and not resource[node].nil?
+            self.warning "#{node} specified but datastore will not be added to the cluster; the only change is that the parameter is added to the onedatastore template; call `onecluster adddatastore` to add the datastore to the cluster"
+          end
         end
       end
     end
@@ -44,8 +55,35 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     file.close
     self.debug "Adding new datastore using: #{tempfile}"
     onedatastore('create', file.path)
+    post_validate_change
     file.delete
+    
     @property_hash[:ensure] = :present
+  end
+
+  def post_validate_change
+    unless resource[:self_test]
+      self.debug ":self_test not defined"
+      return
+    end
+
+    self.debug ":self_test defined: running post validation"
+
+    [1..3].each do
+      if is_status_success?
+        break
+      end
+      sleep 30 
+    end
+
+    unless is_status_success?
+      Puppet.debug("#{__method__}: attempts_max exceeded")
+      raise "Failed to apply resource: status not 'ready'"
+    end
+
+    unless is_obj_valid?
+      raise "Failed to apply resources; object doesn't match parameters"
+    end
   end
 
   def destroy
@@ -87,6 +125,34 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
     datastore_hash
   end
 
+  def is_status_success?
+    # see https://github.com/OpenNebula/one/blob/master/include/Datastore.h
+    # ll. 68ff.
+    #
+    # enum DatastoreState
+    # {
+    #     READY     = 0, /** < Datastore ready to use */
+    #     DISABLED  = 1  /** < System Datastore can not be used */
+    # };
+    status_ready = 0
+    datastore = Nokogiri::XML(onedatastore('show', resource[:name], '-x')).root.xpath('DATASTORE')
+    (datastore.xpath('STATE').text.to_i == status_ready)
+  end
+
+  def is_obj_valid?
+    datastore = self.class.get_datastore(Nokogiri::XML(onedatastore('show', resource[:name], '-x')).xpath('DATASTORE'))
+
+    self.class.get_checked_attributes.each do |item|
+      val = datastore[item]
+      res_val = resource[item].to_s
+      if val != res_val
+        Puppet.debug("Value mismatch: '#{val}' != '#{res_val}' for item '#{item}'")
+        return false
+      end
+    end
+    true
+  end
+
   def self.instances
     datastores = Nokogiri::XML(onedatastore('list', '-x')).xpath('/DATASTORE_POOL/DATASTORE')
     datastores.collect do |datastore|
@@ -114,7 +180,7 @@ Puppet::Type.type(:onedatastore).provide(:cli) do
 
     file.write(tempfile)
     file.close
-    self.debug "Updating datastore using:\n#{tempfile}"
+    Puppet.debug("Updating datastore using:\n#{tempfile}")
     onedatastore('update', resource[:name], file.path, '--append') unless @property_hash.empty?
     file.delete
   end

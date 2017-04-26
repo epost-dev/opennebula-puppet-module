@@ -30,10 +30,10 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned (
-    $backend    = $one::backend,
-    $ldap       = $one::ldap,
-    $puppetdb   = $one::puppetdb,
-    $oneid      = $one::oneid,
+  $backend  = $one::backend,
+  $ldap     = $one::ldap,
+  $puppetdb = $one::puppetdb,
+  $oneid    = $one::oneid,
 ) {
   include one::prerequisites
   include one::install
@@ -51,14 +51,16 @@ class one::oned (
   Class['one::oned::service'] ~>
   Class['one::service']
 
+  # lint:ignore:strict_indent
   if ( $backend != 'mysql' and $backend != 'sqlite') {
     fail ( "Class one::oned need to get called with proper DB backend
-            (sqlite or mysql). ${backend} is not supported.")
+      (sqlite or mysql). ${backend} is not supported.")
   }
   if ( $ldap != true and $ldap != false) {
       fail( "Class one::oned need to get called with proper ldap value
-            (true or false). ${ldap} is not supported.")
+        (true or false). ${ldap} is not supported.")
   }
+  # lint:endignore
 
   if ($puppetdb == true) {
     # Realize all the known nodes

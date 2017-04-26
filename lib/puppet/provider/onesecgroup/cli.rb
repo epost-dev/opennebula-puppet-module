@@ -12,9 +12,10 @@
 #
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 
 Puppet::Type.type(:onesecgroup).provide(:cli) do
+  confine :feature => :nokogiri
   desc "onesecgroup provider"
 
   has_command(:onesecgroup, "onesecgroup") do

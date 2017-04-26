@@ -1,9 +1,40 @@
 <% if scope.lookupvar('one::sunstone_logo_small_png') != 'undef' -%>
 small_logo: images/custom_logo_small.png
 <% else -%>
-small_logo: images/opennebula-sunstone-v4.0-small.png
+small_logo: images/opennebula-sunstone-v4.14-small.png
 <% end -%>
 provision_logo: images/one_small_logo.png
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+enabled_tabs:
+    - dashboard-tab
+    - system-tab
+    - users-tab
+    - groups-tab
+    - vdcs-tab
+    - acls-tab
+    - vresources-tab
+    - vms-tab
+    - templates-tab
+    - images-tab
+    - files-tab
+    - infra-tab
+    - clusters-tab
+    - hosts-tab
+    - datastores-tab
+    - vnets-tab
+    - secgroups-tab
+    - zones-tab
+<% if @enable_marketplace == 'yes' -%>
+    - marketplace-tab
+<% end -%>
+    - oneflow-dashboard
+    - oneflow-services-tab
+    - oneflow-templates-tab
+    - settings-tab
+<% if @enable_support == 'yes' -%>
+    - support-tab
+<% end -%>
+<% else -%>
 enabled_tabs:
     dashboard-tab: true
     system-tab: true
@@ -31,6 +62,7 @@ enabled_tabs:
     community-tab: true
     enterprise-tab: true
     zones-tab: true
+<%- end -%>
 autorefresh: true
 features:
     showback: true
@@ -44,14 +76,11 @@ tabs:
         widgets_two_per_row:
             - storage
             - network
-#            - user_quotas
-#            - group_quotas
         widgets_one_per_row:
             - vms
             - hosts
             - users
         widgets_one_footer:
-#            - accounting
     system-tab:
         panel_tabs:
         actions:
@@ -85,10 +114,10 @@ tabs:
     groups-tab:
         panel_tabs:
             group_info_tab: true
+            group_users_tab: true
             group_quotas_tab: true
-            group_providers_tab: true
             group_accounting_tab: true
-            group_shoback_tab: true
+            group_showback_tab: true
         table_columns:
             - 0         # Checkbox
             - 1         # ID
@@ -121,6 +150,7 @@ tabs:
             Vdc.refresh: true
             Vdc.create_dialog: true
             Vdc.update_dialog: true
+            Vdc.rename: true
             Vdc.delete: true
 
     acls-tab:
@@ -169,7 +199,10 @@ tabs:
         actions:
             VM.refresh: true
             VM.create_dialog: true
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
             VM.import_dialog: false
+            <%- end -%>
+            VM.rename: true
             VM.chown: true
             VM.chgrp: true
             VM.chmod: true
@@ -182,7 +215,9 @@ tabs:
             VM.resume: true
             VM.stop: true
             VM.recover: true
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
             VM.boot: true
+            <%- end -%>
             VM.reboot: true
             VM.reboot_hard: true
             VM.poweroff: true
@@ -196,12 +231,18 @@ tabs:
             VM.resize: true
             VM.attachdisk: true
             VM.detachdisk: true
+            <%- if not scope.lookupvar('one::version_gte_4_14') -%>
             VM.saveas: true
+            <%- end -%>
+            VM.disk_saveas: true
             VM.attachnic: true
             VM.detachnic: true
             VM.snapshot_create: true
             VM.snapshot_revert: true
             VM.snapshot_delete: true
+            VM.disk_snapshot_create: true
+            VM.disk_snapshot_revert: true
+            VM.disk_snapshot_delete: true
             VM.resched: true
             VM.unresched: true
     templates-tab:
@@ -221,6 +262,7 @@ tabs:
             Template.import_dialog: false
             Template.update_dialog: true
             Template.instantiate_vms: true
+            Template.rename: true
             Template.chown: true
             Template.chgrp: true
             Template.chmod: true
@@ -241,6 +283,7 @@ tabs:
         panel_tabs:
             image_info_tab: true
             image_vms_tab: true
+            image_snapshots_tab: true
         table_columns:
             - 0         # Checkbox
             - 1         # ID
@@ -258,6 +301,7 @@ tabs:
         actions:
             Image.refresh: true
             Image.create_dialog: true
+            Image.rename: true
             Image.chown: true
             Image.chgrp: true
             Image.chmod: true
@@ -267,6 +311,9 @@ tabs:
             Image.nonpersistent: true
             Image.clone_dialog: true
             Image.delete: true
+            Image.snapshot_flatten: true
+            Image.snapshot_revert: true
+            Image.snapshot_delete: true
     files-tab:
         panel_tabs:
             file_info_tab: true
@@ -287,6 +334,7 @@ tabs:
         actions:
             File.refresh: true
             File.create_dialog: true
+            File.rename: true
             File.chown: true
             File.chgrp: true
             File.chmod: true
@@ -314,10 +362,15 @@ tabs:
             Cluster.create_dialog: true
             Cluster.update_dialog: true
             Cluster.delete: true
+            Cluster.rename: true
     hosts-tab:
         panel_tabs:
             host_info_tab: true
             host_monitoring_tab: true
+            host_vms_tab: true
+            host_wilds_tab: true
+            host_esx_tab: true
+            host_pci_tab: true
         table_columns:
             - 0         # Checkbox
             - 1         # ID
@@ -336,6 +389,7 @@ tabs:
             Host.refresh: true
             Host.create_dialog: true
             Host.addtocluster: true
+            Host.rename: true
             Host.enable: true
             Host.disable: true
             Host.delete: true
@@ -360,6 +414,7 @@ tabs:
             Datastore.refresh: true
             Datastore.create_dialog: true
             Datastore.addtocluster: true
+            Datastore.rename: true
             Datastore.chown: true
             Datastore.chgrp: true
             Datastore.chmod: true
@@ -371,6 +426,7 @@ tabs:
             vnet_info_tab: true
             vnet_ar_list_tab: true
             vnet_leases_tab: true
+            vnet_sg_list_tab: true
         table_columns:
             - 0         # Checkbox
             - 1         # ID
@@ -388,6 +444,7 @@ tabs:
             Network.import_dialog: false
             Network.update_dialog: true
             Network.addtocluster: true
+            Network.rename: true
             Network.chown: true
             Network.chgrp: true
             Network.chmod: true
@@ -410,6 +467,7 @@ tabs:
             SecurityGroup.refresh: true
             SecurityGroup.create_dialog: true
             SecurityGroup.update_dialog: true
+            SecurityGroup.rename: true
             SecurityGroup.chown: true
             SecurityGroup.chgrp: true
             SecurityGroup.chmod: true
@@ -447,7 +505,9 @@ tabs:
                 Role.suspend: true
                 Role.resume: true
                 Role.stop: true
+                <%- if not scope.lookupvar('one::version_gte_4_14') -%>
                 Role.boot: true
+                <%- end -%>
                 Role.reboot: true
                 Role.reboot_hard: true
                 Role.poweroff: true
@@ -461,7 +521,9 @@ tabs:
                 RoleVM.suspend: true
                 RoleVM.resume: true
                 RoleVM.stop: true
+                <%- if not scope.lookupvar('one::version_gte_4_14') -%>
                 RoleVM.boot: true
+                <%- end -%>
                 RoleVM.reboot: true
                 RoleVM.reboot_hard: true
                 RoleVM.poweroff: true
@@ -519,6 +581,7 @@ tabs:
         actions:
             Zone.refresh: true
             Zone.create_dialog: true
+            Zone.rename: true
             Zone.delete: true
     support-tab:
         panel_tabs:
@@ -532,3 +595,12 @@ tabs:
         actions:
             Support.refresh: true
             Support.create_dialog: true
+    settings-tab:
+        panel_tabs:
+            user_info_tab: true
+            user_quotas_tab: true
+            group_quotas_tab: true
+            user_accounting_tab: true
+            user_showback_tab: true
+        actions:
+            User.quotas_dialog: false

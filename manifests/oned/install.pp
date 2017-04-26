@@ -21,7 +21,8 @@ class one::oned::install(
   $rubygems           = $one::rubygems,
   $rubygems_rpm       = $one::rubygems_rpm,
   $oned_packages      = $one::oned_packages,
-  $hook_scripts_pkgs  = $one::hook_scripts_pkgs
+  $hook_scripts_pkgs  = $one::hook_scripts_pkgs,
+  $package_ensure     = $one::package_ensure,
 ) {
 
   validate_bool($use_gems)
@@ -31,21 +32,21 @@ class one::oned::install(
 
   if $use_gems {
     package { $rubygems :
-      ensure   => latest,
+      ensure   => $package_ensure,
       provider => 'gem',
     }
   } else {
     package { $rubygems_rpm :
-      ensure  => latest,
+      ensure  => $package_ensure,
     }
   }
   package { $oned_packages :
-    ensure  => latest,
+    ensure  => $package_ensure,
   }
 
   if ($hook_scripts_pkgs) {
     package { $hook_scripts_pkgs :
-      ensure  => latest,
+      ensure  => $package_ensure,
     }
   }
 }

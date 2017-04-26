@@ -3,15 +3,15 @@ require 'spec_helper'
 hiera_config = 'spec/fixtures/hiera/hiera.yaml'
 
 describe 'one', :type => :class do
-  context 'with default params as implicit hiera lookup' do
-    let (:facts) { {:osfamily => 'RedHat'} }
-    it { should contain_class('one') }
-    it { should_not contain_file('/etc/one/oned.conf').with_content(/^DB = \[ backend = \"sqlite\"/) }
-    it { should_not contain_class('one::oned') }
-  end
   let(:hiera_config) { hiera_config }
   OS_FACTS.each do |f|
-    context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
+     context 'with default params as implicit hiera lookup' do
+       let (:facts) { f }
+       it { should contain_class('one') }
+       it { should_not contain_file('/etc/one/oned.conf').with_content(/^DB = \[ backend = \"sqlite\"/) }
+       it { should_not contain_class('one::oned') }
+     end
+     context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
       let(:facts) { f }
       context 'with hiera config' do
         let(:params) { {:oned => true} }
@@ -60,7 +60,7 @@ describe 'one', :type => :class do
             elsif f[:osfamily] == 'Debian'
               it { should contain_package('opennebula-node') }
             end
-            it { should contain_package('sudo') }
+
             if f[:osfamily] == 'RedHat' and f[:operatingsystemmajrelease].to_i < 7
               it { should contain_package('python-virtinst') }
             elsif f[:osfamily] == 'Debian'
@@ -135,6 +135,23 @@ describe 'one', :type => :class do
             it { should contain_file("#{onehome}/.ssh/id_dsa").with_content(sshprivkey) }
             it { should contain_file("#{onehome}/.ssh/id_dsa.pub").with_content(sshpubkey) }
             it { should contain_file("#{onehome}/.ssh/authorized_keys").with_content(sshpubkey) }
+            it { should contain_file(oned_config).with_content(/^LOG = \[\n\s+system\s+=\s+"file"/m) }
+            context 'with syslog logging' do
+              let(:params) { {
+                  :oned            => true,
+                  :oned_log_system => 'syslog'
+              } }
+              it { should contain_file(oned_config).with_content(/^LOG = \[\n\s+system\s+=\s+"syslog"/m) }
+            end
+            context 'with invalid logging subsystem' do
+              let(:params) { {
+                  :oned            => true,
+                  :oned_log_system => 'invalid'
+              } }
+              it do
+                is_expected.to compile.and_raise_error(/"invalid" is not a valid logging subsystem. Valid values are \["file", "syslog"\]/)
+              end
+            end
             context 'with sqlite backend' do
               it { should contain_file(oned_config).with_content(/^DB = \[ backend = \"sqlite\"/) }
             end
@@ -219,7 +236,40 @@ describe 'one', :type => :class do
                 it { should contain_package('ruby-treetop') }
                 it { should contain_package('ruby-polyglot') }
               end
-              it { should contain_service('oneflow-server').with_ensure('running') }
+              it { should contain_service('opennebula-flow').with_ensure('running') }
+            end
+            context 'with onegate endpoint' do
+              it { should contain_file(oned_config).with_content(/^#ONEGATE_ENDPOINT = "http:\/\/frontend:5030"/m) }
+              context 'given a onegate ip' do
+                let(:params) do
+                  {
+                    'oned'            => true,
+                    'oned_onegate_ip' => '127.0.0.1'
+                  }
+                end
+                it { should contain_file(oned_config).with_content(/^ONEGATE_ENDPOINT = "http:\/\/127\.0\.0\.1:5030"/m) }
+              end
+              context 'given a onegate endpoint' do
+                let(:params) do
+                  {
+                    'oned'                  => true,
+                    'oned_onegate_endpoint' => 'https://example.org:5030'
+                  }
+                end
+                it { should contain_file(oned_config).with_content(/^ONEGATE_ENDPOINT = "https:\/\/example\.org:5030"/m) }
+              end
+              context 'given both a onegate ip and a onegate endpoint' do
+                let(:params) do
+                  {
+                    'oned'                  => true,
+                    'oned_onegate_ip'       => '127.0.0.1',
+                    'oned_onegate_endpoint' => 'https://example.org:5030'
+                  }
+                end
+                it do
+                  is_expected.to compile.and_raise_error(/You can't provide both oned_onegate_ip and oned_onegate_endpoint as parameter/)
+                end
+              end
             end
             context 'with onegate' do
               let(:params) { {
@@ -235,7 +285,19 @@ describe 'one', :type => :class do
               elsif f[:osfamily] == 'Debian'
                 #it { should contain_package('parse-cron') }
               end
-              it { should contain_service('onegate-server').with_ensure('running') }
+              it { should contain_service('opennebula-gate').with_ensure('running') }
+              context 'with ha-setup' do
+                let(:params) { {
+                    :onegate  => true,
+                    :oneflow  => true,
+                    :ha_setup => true
+                } }
+                it { should contain_class('one::oned::onegate') }
+                it { should contain_service('opennebula-flow').with_enable(false) }
+                it { should contain_service('opennebula-flow').without_ensure }
+                it { should contain_service('opennebula-gate').with_enable(false) }
+                it { should contain_service('opennebula-gate').without_ensure }
+              end 
             end
             context 'with sunstone' do
               let(:params) { {
@@ -288,7 +350,7 @@ describe 'one', :type => :class do
                 let(:params) { {
                     :oned => true,
                     :sunstone => true,
-                    :ha_setup => true,
+                    :ha_setup => true
                 } }
                 it { should contain_service('opennebula').with_enable('false') }
                 it { should contain_service('opennebula-sunstone').with_ensure('running') }

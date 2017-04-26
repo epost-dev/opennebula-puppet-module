@@ -14,9 +14,10 @@
 #require 'pry'
 
 require 'rubygems'
-require 'nokogiri'
+require 'nokogiri' if Puppet.features.nokogiri?
 
 Puppet::Type.type(:onevnet_addressrange).provide(:cli) do
+  confine :feature => :nokogiri
   desc "onevnet provider for addressranges"
 
   has_command(:onevnet, "onevnet") do
