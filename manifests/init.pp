@@ -294,6 +294,9 @@
 # $libvirtd_cfg 
 # $libvirtd_source 
 # $rubygems 
+#
+# $manage_sudoer_config - default true, set false to disable management of the sudoer
+#                         config. you'll have to manage the config yourself then
 # $oneadmin_sudoers_file - default '/etc/sudoers.d/10_oneadmin'
 #   where to place the file with the oneadmin sudoer rules
 # $imaginator_sudoers_file - default '/etc/sudoers.d/20_imaginator'
@@ -441,6 +444,7 @@ class one (
   $libvirtd_srv                   = $one::params::libvirtd_srv,
   $libvirtd_cfg                   = $one::params::libvirtd_cfg,
   $libvirtd_source                = $one::params::libvirtd_source,
+  $manage_sudoer_config           = true,
   $oneadmin_sudoers_file          = $one::params::oneadmin_sudoers_file,
   $imaginator_sudoers_file        = $one::params::imaginator_sudoers_file,
   $kvm_driver_emulator            = $one::params::kvm_driver_emulator,
