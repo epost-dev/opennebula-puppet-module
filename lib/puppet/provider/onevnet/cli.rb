@@ -115,6 +115,7 @@ Puppet::Type.type(:onevnet).provide(:cli) do
       end
     }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
     unless @property_hash[:context].nil? or @property_hash[:context].to_s.empty?
+      file << "\n"
       file << @property_hash[:context].map{ |k,v|
         [k.to_s.upcase, v]
       }.map { |a| "#{a[0]} = #{a[1]}" unless a.nil? }.join("\n")
