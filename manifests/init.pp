@@ -535,15 +535,16 @@ class one (
   }
 
   # for some things we only need X.Y not X.Y.Z so trim off any extra points
-  $one_version_array = split($one_version,"[.]")
+  $one_version_array = split($one_version,'[.]')
   $one_version_short = "${one_version_array[0]}.${one_version_array[1]}"
 
   # build template version string (to be used to select templates)
   # keys are the one_version_short for which we have templates
   # values are the folder paths to use
-  $templated_versions_mapping = { '5.0' => '5.0',
-                                  '5.2' => '5.2',
-                                }
+  $templated_versions_mapping = {
+    '5.0' => '5.0',
+    '5.2' => '5.2',
+  }
 
   if member(keys($templated_versions_mapping), $one_version_short) {
     $template_path = $templated_versions_mapping[$one_version_short]
