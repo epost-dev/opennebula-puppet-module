@@ -27,7 +27,7 @@ PuppetLint::RakeTask.new(:lint) do |config|
   #config.ignore_paths = ['vendor/**/*.pp']
 
   # List of checks to disable
-  config.disable_checks = ['80chars', 'class_inherits_from_params_class', 'pinning']
+  config.disable_checks = ['80chars', 'class_inherits_from_params_class', 'security_package_pinned_version']
 
   # Should the task fail if there were any warnings, defaults to false
   #config.fail_on_warnings = true
