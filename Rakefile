@@ -3,6 +3,8 @@ require 'rubygems'
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint'
 
+PuppetLint.configuration.send('disable_security_package_pinned_version')
+
 desc 'Run the tests'
 RSpec::Core::RakeTask.new(:do_test) do |t|
   t.rspec_opts = ['--color', '-f d']
@@ -27,10 +29,10 @@ PuppetLint::RakeTask.new(:lint) do |config|
   #config.ignore_paths = ['vendor/**/*.pp']
 
   # List of checks to disable
-  config.disable_checks = ['80chars', 'class_inherits_from_params_class', 'security_package_pinned_version']
+  config.disable_checks = ['80chars', 'class_inherits_from_params_class']
 
   # Should the task fail if there were any warnings, defaults to false
-  config.fail_on_warnings = false
+  config.fail_on_warnings = true
 
   # Print out the context for the problem, defaults to false
   # config.with_context = true
