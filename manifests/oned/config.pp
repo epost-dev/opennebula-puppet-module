@@ -52,6 +52,7 @@ class one::oned::config(
   $sched_log_debug_level       = $one::sched_log_debug_level,
   $kvm_driver_emulator         = $one::kvm_driver_emulator,
   $kvm_driver_nic_attrs        = $one::kvm_driver_nic_attrs,
+  $kvm_driver_raw_attrs        = $one::kvm_driver_raw_attrs,
   $datastore_capacity_check    = $one::datastore_capacity_check,
   $default_image_type          = $one::default_image_type,
   $default_device_prefix       = $one::default_device_prefix,
@@ -143,6 +144,16 @@ class one::oned::config(
       path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
       setting => 'NIC',
       value   => $kvm_driver_nic_attrs,
+    }
+  }
+
+  if $kvm_driver_raw_attrs != 'undef' {
+    ini_setting{ 'set_kvm_driver_raw':
+      ensure  => present,
+      section => '',
+      path    => '/etc/one/vmm_exec/vmm_exec_kvm.conf',
+      setting => 'RAW',
+      value   => $kvm_driver_raw_attrs,
     }
   }
 

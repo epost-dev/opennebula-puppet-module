@@ -78,6 +78,7 @@ class one::params {
   # OpenNebula KVM driver parameters
   $kvm_driver_emulator       = hiera ('one::oned::kvm_driver_emulator', 'undef')
   $kvm_driver_nic_attrs      = hiera ('one::oned::kvm_driver_nic_attrs', 'undef')
+  $kvm_driver_raw_attrs      = hiera ('one::oned::kvm_driver_raw_attrs', 'undef')
 
   # Sunstone configuration parameters
   $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')

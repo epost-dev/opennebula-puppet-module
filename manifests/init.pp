@@ -443,6 +443,7 @@ class one (
   $imaginator_sudoers_file        = $one::params::imaginator_sudoers_file,
   $kvm_driver_emulator            = $one::params::kvm_driver_emulator,
   $kvm_driver_nic_attrs           = $one::params::kvm_driver_nic_attrs,
+  $kvm_driver_raw_attrs           = $one::params::kvm_driver_raw_attrs,
   $rubygems                       = $one::params::rubygems,
   $sched_interval                 = $one::params::sched_interval,
   $sched_max_vm                   = $one::params::sched_max_vm,
