@@ -1,16 +1,16 @@
-FROM centos:6
-MAINTAINER Robert Waffen "robert.waffen@epost-dev.de"
+FROM centos:7
+MAINTAINER John Noss "noss@harvard.edu"
 
 ENV HOSTNAME localhost
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
-ENV FACTER_operatingsystemmajrelease="6"
-ENV FACTER_operatingsystemrelease="6.7"
-ENV FACTER_lsbmajdistrelease="6"
+ENV FACTER_operatingsystemmajrelease="7"
+ENV FACTER_operatingsystemrelease="7.3"
+ENV FACTER_lsbmajdistrelease="7"
 
-RUN yum -y install https://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm epel-release
-RUN yum makecache && yum -y install puppet tar hostname
+RUN yum -y install https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm epel-release
+RUN yum makecache && yum -y install puppet tar hostname openssh-server
 
 RUN puppet module install puppetlabs-inifile
 RUN puppet module install puppetlabs-stdlib
