@@ -543,6 +543,7 @@ class one (
   # values are the folder paths to use
   $templated_versions_mapping = { '5.0' => '5.0',
                                   '5.2' => '5.2',
+                                  '5.4' => '5.4',
                                 }
 
   if member(keys($templated_versions_mapping), $one_version_short) {
