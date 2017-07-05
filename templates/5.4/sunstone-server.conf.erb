@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------- #
-# Copyright 2002-2016, OpenNebula Project, OpenNebula Systems                #
+# Copyright 2002-2017, OpenNebula Project, OpenNebula Systems                #
 #                                                                            #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may    #
 # not use this file except in compliance with the License. You may obtain    #
@@ -31,11 +31,7 @@
 :host: <%= @listen_ip %>
 :port: 9869
 
-<% if scope.lookupvar('one::version_gte_4_14') -%>
 # Place where to store sessions, this value can be memory, memcache or memcache-dalli
-<% else -%>
-# Place where to store sessions, this value can be memory or memcache
-<% end -%>
 # Use memcache when starting multiple server processes, for example,
 # with passenger
 #
@@ -48,14 +44,16 @@
 :memcache_port: 11211
 :memcache_namespace: opennebula.sunstone
 
-<% if scope.lookupvar('one::version_gte_4_14') -%>
 # Excution environment for Sunstone
 #   dev, Instead of pulling the minified js all the files will be pulled (app/main.js)
 #     Check the Building from Source guide in the docs, for details on how to run
 #     Sunstone in development
 #   prod, the minified js will be used (dist/main.js)
 :env: 'prod'
-<% end -%>
+
+# Maximum allowed size of uploaded images (in bytes). Leave commented for
+# unlimited size
+# :max_upload_file_size: 10737418240 # 10 GiB
 
 ################################################################################
 # Log
@@ -66,7 +64,7 @@
 #
 :debug_level: <%= @debug_level %>
 
-<% if scope.lookupvar('one::version_gte_5_0') -%>
+
 ################################################################################
 # Proxy
 ################################################################################
@@ -74,20 +72,17 @@
 # Enable an http proxy for the support portal and to download MarketPlaceApps
 # from the MarketPlace to the user's desktop.
 # :proxy: http://<hostname>:<port>
-<% end -%>
 
 ################################################################################
 # Auth
 ################################################################################
 
-# Authentication driver for incomming requests
-#   sunstone, for OpenNebula's user-password scheme
-#   x509, for x509 certificates based authentication
-#   opennebula, the authentication will be done by the opennebula core using the
-#   driver defined for the user
-<% if scope.lookupvar('one::version_gte_5_0') -%>
+# Authentication driver for incoming requests
+#   sunstone: for OpenNebula's user-password scheme
+#   x509: for x509 certificates based authentication
+#   opennebula: the authentication will be done by the opennebula core using the
+#     driver defined for the user
 #   remote: performs the login based on a Kerberos REMOTE_USER
-<% end -%>
 #
 :auth: opennebula
 
@@ -97,16 +92,6 @@
 #
 :core_auth: cipher
 
-# For external authentication drivers, such as LDAP. Performs a URL encoding
-# on the credentials sent to OpenNebula, e.g. secret%20password
-# This only works with "opennebula" auth.
-#
-# :encode_user_password: true
-<% if scope.lookupvar('one::ldap') -%>
-:encode_user_password: true
-<% end -%>
-
-<% if scope.lookupvar('one::version_gte_5_0') -%>
 ################################################################################
 # Check Upgrades
 ################################################################################
@@ -114,7 +99,6 @@
 # To check for the latest release. Comment this value if you don't want to check
 # this.
 :remote_version: http://downloads.opennebula.org/latest
-<% end -%>
 
 ################################################################################
 # UI Settings
@@ -127,22 +111,19 @@
 #   vnc_proxy_cert: Certificate to encrypt wss connections.
 #   vnc_proxy_key:  Key for wss connections. Only necessary if not included in cert.
 #   vnc_proxy_ipv6: Enable ipv6 support for novnc-server
-<% if scope.lookupvar('one::version_gte_5_0') -%>
 #
 # :vnc_request_password: true | false
 #   Request VNC password for external windows, by default it will not be requested
 #
-<% end -%>
 :vnc_proxy_port: <%= @vnc_proxy_port %>
 :vnc_proxy_support_wss: <%= @vnc_proxy_support_wss %>
 :vnc_proxy_cert: <%= @vnc_proxy_cert %>
 :vnc_proxy_key: <%= @vnc_proxy_key %>
 :vnc_proxy_ipv6: <%= @vnc_proxy_ipv6 %>
-<% if scope.lookupvar('one::version_gte_5_0') -%>
 :vnc_request_password: false
-<% end -%>
 
-
+# Login Session Length in seconds, defaults to 1 hour.
+#:session_expire_time: 3600
 
 # Default language setting
 :lang: en_US
@@ -174,50 +155,6 @@
 #
 :oneflow_server: http://localhost:2474/
 
-<% if not scope.lookupvar('one::version_gte_5_0') -%>
-################################################################################
-# Default instance types for the cloud view
-################################################################################
-#
-# These types are presented in the cloud view to customize VM Templates. Each
-# type is defined by:
-#   name: the name of the type
-#   cpu: capacity allocated to the VM for scheduling purposes
-#   vcpu: number of cores
-#   memory: in MB for the VM
-#   description: to help the user pick one, it may include purpose or price.
-:instance_types:
-    - :name: small-x1
-      :cpu: 1
-      :vcpu: 1
-      :memory: 128
-      :description: Very small instance for testing purposes
-    - :name: small-x2
-      :cpu: 2
-      :vcpu: 2
-      :memory: 512
-      :description: Small instance for testing multi-core applications
-    - :name: medium-x2
-      :cpu: 2
-      :vcpu: 2
-      :memory: 1024
-      :description: General purpose instance for low-load servers
-    - :name: medium-x4
-      :cpu: 4
-      :vcpu: 4
-      :memory: 2048
-      :description: General purpose instance for medium-load servers
-    - :name: large-x4
-      :cpu: 4
-      :vcpu: 4
-      :memory: 4096
-      :description: General purpose instance for servers
-    - :name: large-x8
-      :cpu: 8
-      :vcpu: 8
-      :memory: 8192
-      :description: General purpose instance for high-load servers
-<% end -%>
 ################################################################################
 # Routes
 ################################################################################
