@@ -22,7 +22,7 @@ class { 'one':
   node                => false,
   sunstone            => true,
   sunstone_passenger  => true,
-  one_version         => '5.2',
+  one_version         => $one_version,
 } ->
 
 class { 'httpd': }

@@ -2,5 +2,5 @@ class { 'one':
   oned => true,
   node => false,
   sunstone => true,
-  one_version => '5.2',
+  one_version => $one_version,
 }
