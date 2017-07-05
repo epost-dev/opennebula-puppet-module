@@ -1,0 +1,247 @@
+# -------------------------------------------------------------------------- #
+# Copyright 2002-2016, OpenNebula Project, OpenNebula Systems                #
+#                                                                            #
+# Licensed under the Apache License, Version 2.0 (the "License"); you may    #
+# not use this file except in compliance with the License. You may obtain    #
+# a copy of the License at                                                   #
+#                                                                            #
+# http://www.apache.org/licenses/LICENSE-2.0                                 #
+#                                                                            #
+# Unless required by applicable law or agreed to in writing, software        #
+# distributed under the License is distributed on an "AS IS" BASIS,          #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   #
+# See the License for the specific language governing permissions and        #
+# limitations under the License.                                             #
+#--------------------------------------------------------------------------- #
+
+################################################################################
+# Server Configuration
+################################################################################
+
+# Directory to store temp files when uploading images
+#
+:tmpdir: <%= @tmpdir %>
+
+# OpenNebula sever contact information
+#
+:one_xmlrpc: http://localhost:<%= scope.lookupvar('one::oned_port') %>/RPC2
+
+# Server Configuration
+#
+:host: <%= @listen_ip %>
+:port: 9869
+
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# Place where to store sessions, this value can be memory, memcache or memcache-dalli
+<% else -%>
+# Place where to store sessions, this value can be memory or memcache
+<% end -%>
+# Use memcache when starting multiple server processes, for example,
+# with passenger
+#
+# NOTE. memcache needs a separate memcached server to be configured. Refer
+# to memcached documentation to configure the server.
+:sessions: <%= @sessions %>
+
+# Memcache configuration
+:memcache_host: localhost
+:memcache_port: 11211
+:memcache_namespace: opennebula.sunstone
+
+<% if scope.lookupvar('one::version_gte_4_14') -%>
+# Excution environment for Sunstone
+#   dev, Instead of pulling the minified js all the files will be pulled (app/main.js)
+#     Check the Building from Source guide in the docs, for details on how to run
+#     Sunstone in development
+#   prod, the minified js will be used (dist/main.js)
+:env: 'prod'
+<% end -%>
+
+################################################################################
+# Log
+################################################################################
+
+# Log debug level
+#   0 = ERROR, 1 = WARNING, 2 = INFO, 3 = DEBUG
+#
+:debug_level: <%= @debug_level %>
+
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+################################################################################
+# Proxy
+################################################################################
+
+# Enable an http proxy for the support portal and to download MarketPlaceApps
+# from the MarketPlace to the user's desktop.
+# :proxy: http://<hostname>:<port>
+<% end -%>
+
+################################################################################
+# Auth
+################################################################################
+
+# Authentication driver for incomming requests
+#   sunstone, for OpenNebula's user-password scheme
+#   x509, for x509 certificates based authentication
+#   opennebula, the authentication will be done by the opennebula core using the
+#   driver defined for the user
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#   remote: performs the login based on a Kerberos REMOTE_USER
+<% end -%>
+#
+:auth: opennebula
+
+# Authentication driver to communicate with OpenNebula core
+#   cipher, for symmetric cipher encryption of tokens
+#   x509, for x509 certificate encryption of tokens
+#
+:core_auth: cipher
+
+# For external authentication drivers, such as LDAP. Performs a URL encoding
+# on the credentials sent to OpenNebula, e.g. secret%20password
+# This only works with "opennebula" auth.
+#
+# :encode_user_password: true
+<% if scope.lookupvar('one::ldap') -%>
+:encode_user_password: true
+<% end -%>
+
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+################################################################################
+# Check Upgrades
+################################################################################
+
+# To check for the latest release. Comment this value if you don't want to check
+# this.
+:remote_version: http://downloads.opennebula.org/latest
+<% end -%>
+
+################################################################################
+# UI Settings
+################################################################################
+# :vnc_proxy_
+#   port:           port where the vnc proxy will listen
+#   support_wss:    no | yes | only. For yes and only, provide path to
+#                   cert and key. "yes" means both ws and wss connections will be
+#                   supported.
+#   vnc_proxy_cert: Certificate to encrypt wss connections.
+#   vnc_proxy_key:  Key for wss connections. Only necessary if not included in cert.
+#   vnc_proxy_ipv6: Enable ipv6 support for novnc-server
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+#
+# :vnc_request_password: true | false
+#   Request VNC password for external windows, by default it will not be requested
+#
+<% end -%>
+:vnc_proxy_port: <%= @vnc_proxy_port %>
+:vnc_proxy_support_wss: <%= @vnc_proxy_support_wss %>
+:vnc_proxy_cert: <%= @vnc_proxy_cert %>
+:vnc_proxy_key: <%= @vnc_proxy_key %>
+:vnc_proxy_ipv6: <%= @vnc_proxy_ipv6 %>
+<% if scope.lookupvar('one::version_gte_5_0') -%>
+:vnc_request_password: false
+<% end -%>
+
+
+
+# Default language setting
+:lang: en_US
+
+# Default table order
+:table_order: desc
+
+################################################################################
+# Marketplace
+################################################################################
+
+# Marketplace username and password
+# If no credentials are provided, an anonymous client will be used
+#
+#:marketplace_username:
+#:marketplace_password:
+
+# Marketplace endpoint
+# The url should not include the /appliance path since it will be automatically
+# included
+#
+:marketplace_url: http://marketplace.opennebula.systems/
+
+################################################################################
+# OneFlow
+################################################################################
+
+# OneFlow endpoint
+#
+:oneflow_server: http://localhost:2474/
+
+<% if not scope.lookupvar('one::version_gte_5_0') -%>
+################################################################################
+# Default instance types for the cloud view
+################################################################################
+#
+# These types are presented in the cloud view to customize VM Templates. Each
+# type is defined by:
+#   name: the name of the type
+#   cpu: capacity allocated to the VM for scheduling purposes
+#   vcpu: number of cores
+#   memory: in MB for the VM
+#   description: to help the user pick one, it may include purpose or price.
+:instance_types:
+    - :name: small-x1
+      :cpu: 1
+      :vcpu: 1
+      :memory: 128
+      :description: Very small instance for testing purposes
+    - :name: small-x2
+      :cpu: 2
+      :vcpu: 2
+      :memory: 512
+      :description: Small instance for testing multi-core applications
+    - :name: medium-x2
+      :cpu: 2
+      :vcpu: 2
+      :memory: 1024
+      :description: General purpose instance for low-load servers
+    - :name: medium-x4
+      :cpu: 4
+      :vcpu: 4
+      :memory: 2048
+      :description: General purpose instance for medium-load servers
+    - :name: large-x4
+      :cpu: 4
+      :vcpu: 4
+      :memory: 4096
+      :description: General purpose instance for servers
+    - :name: large-x8
+      :cpu: 8
+      :vcpu: 8
+      :memory: 8192
+      :description: General purpose instance for high-load servers
+<% end -%>
+################################################################################
+# Routes
+################################################################################
+
+# Array of files containing ruby code to extend the default sunstone-server
+#   routes. These files must be placed inside the custom_routes directory
+#   in the sunstone root dir (/usr/lib/one/sunstone/routes)
+#
+# Example:
+#   $ ls /usr/lib/one/sunstone/routes
+#   custom.rb  other.rb
+#
+#   $ cat /usr/lib/one/sunstone/routes/example.rb
+#   get '/custom' do
+#       body "It works"
+#   end
+#
+#:routes:
+#    - custom
+#    - other
+
+:routes:
+    - oneflow
+<% if @enable_support == 'yes' -%>
+    - vcenter
+    - support
+<% end -%>
