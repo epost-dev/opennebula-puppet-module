@@ -80,17 +80,17 @@ PORT = <%= scope.lookupvar('one::oned_port') %>
 LISTEN_ADDRESS = "<%= scope.lookupvar('one::oned_listen_address') %>"
 
 <% if @backend == 'sqlite' -%>
-DB = [ backend = "sqlite" ]
+DB = [ BACKEND = "sqlite" ]
 <% end -%>
 
 <% if @backend == 'mysql' -%>
 # Sample configuration for MySQL
-DB = [ backend = "mysql",
-    server  = "<%= scope.lookupvar('one::oned_db_host') %>",
-    port    = 3306,
-    user    = "<%= scope.lookupvar('one::oned_db_user') %>",
-    passwd  = "<%= scope.lookupvar('one::oned_db_password') %>",
-    db_name = "<%= scope.lookupvar('one::oned_db') %>" ]
+DB = [ BACKEND = "mysql",
+    SERVER  = "<%= scope.lookupvar('one::oned_db_host') %>",
+    PORT    = 3306,
+    USER    = "<%= scope.lookupvar('one::oned_db_user') %>",
+    PASSWD  = "<%= scope.lookupvar('one::oned_db_password') %>",
+    DB_NAME = "<%= scope.lookupvar('one::oned_db') %>" ]
 <% end -%>
 
 
@@ -319,10 +319,10 @@ VXLAN_IDS = [
 
 DATASTORE_CAPACITY_CHECK = "<%= scope.lookupvar('one::datastore_capacity_check') %>"
 
-DEFAULT_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_device_prefix') %>"
+DEFAULT_DEVICE_PREFIX       = "<%= scope.lookupvar('one::default_device_prefix') %>"
 DEFAULT_CDROM_DEVICE_PREFIX = "<%= scope.lookupvar('one::default_cdrom_device_prefix') %>"
 
-DEFAULT_IMAGE_TYPE    = "<%= scope.lookupvar('one::default_image_type') %>"
+DEFAULT_IMAGE_TYPE           = "<%= scope.lookupvar('one::default_image_type') %>"
 #DEFAULT_IMAGE_PERSISTENT     = ""
 #DEFAULT_IMAGE_PERSISTENT_NEW = ""
 
@@ -358,9 +358,9 @@ DEFAULT_IMAGE_TYPE    = "<%= scope.lookupvar('one::default_image_type') %>"
 #    -w  Timeout in seconds to execute external commands (default unlimited)
 #-------------------------------------------------------------------------------
 IM_MAD = [
-      name       = "collectd",
-      executable = "collectd",
-      arguments  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
+      NAME       = "collectd",
+      EXECUTABLE = "collectd",
+      ARGUMENTS  = "-p 4124 -f 5 -t 50 -i <%= scope.lookupvar('one::information_collector_interval') %>" ]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -921,6 +921,7 @@ ONEGATE_ENDPOINT = "<%= scope.lookupvar('one::resulting_oned_onegate_endpoint') 
 <% else -%>
 #ONEGATE_ENDPOINT = "http://frontend:5030"
 <% end -%>
+
 #*******************************************************************************
 # VM Operations Permissions
 #******************************************************************************
@@ -1065,7 +1066,6 @@ INHERIT_DATASTORE_ATTR  = "VCENTER_DS_REF"
 INHERIT_DATASTORE_ATTR  = "VCENTER_DS_IMAGE_DIR"
 INHERIT_DATASTORE_ATTR  = "VCENTER_DS_VOLATILE_DIR"
 INHERIT_DATASTORE_ATTR  = "VCENTER_INSTANCE_ID"
-
 <%- if @inherit_datastore_attrs != nil -%>
   <%- @inherit_datastore_attrs.each do |attr| -%>
 INHERIT_DATASTORE_ATTR  = "<%= attr %>"
