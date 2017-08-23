@@ -43,13 +43,13 @@ class one::oned::sunstone::config (
   } ->
   file { '/etc/one/sunstone-server.conf':
     ensure  => file,
-    content => template('one/sunstone-server.conf.erb'),
+    content => template("one/${::one::template_path}/sunstone-server.conf.erb"),
     notify  => Service['opennebula-sunstone'],
   } ->
   file { '/etc/one/sunstone-views.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template('one/sunstone-views.yaml.erb'),
+    content => template("one/${::one::template_path}/sunstone-views.yaml.erb"),
   } ->
   file { '/etc/one/sunstone-views/admin.yaml':
     ensure  => file,

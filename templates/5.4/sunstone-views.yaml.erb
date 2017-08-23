@@ -1,0 +1,22 @@
+---
+<% if scope.lookupvar('one::sunstone_logo_png') != 'undef' -%>
+logo: images/custom_logo.png
+<% else -%>
+logo: images/opennebula-5.0.png
+<% end -%>
+groups:
+    oneadmin:
+        - admin
+        - admin_vcenter
+        - groupadmin
+        - groupadmin_vcenter
+        - user
+        - cloud
+        - cloud_vcenter
+default:
+    - cloud
+default_groupadmin:
+    - groupadmin
+    - cloud
+labels_groups:
+    default:

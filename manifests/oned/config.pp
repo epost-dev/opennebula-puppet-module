@@ -101,7 +101,7 @@ class one::oned::config(
     ensure  => file,
     owner   => 'root',
     mode    => '0640',
-    content => template('one/oned.conf.erb'),
+    content => template("one/${::one::template_path}/oned.conf.erb"),
   }
 
   file { '/etc/one/sched.conf':
