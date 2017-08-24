@@ -75,6 +75,12 @@ class one::params {
   # template for ruby 1.9.x)
   $inherit_datastore_attrs   = hiera('one::oned::inherit_datastore_attrs', [])
 
+  # VLAN_IDS and VXLAN_IDS for OpenNebula Physical Networks
+  # see oned.conf for more information
+  $vlan_ids_start            = hiera('one::vlan_ids_start', '2')
+  $vlan_ids_reserved         = hiera('one::vlan_ids_reserved', '0, 1, 4095')
+  $vxlan_ids_start           = hiera('one::vxlan_ids_start', '2')
+
   # OpenNebula KVM driver parameters
   $kvm_driver_emulator       = hiera ('one::oned::kvm_driver_emulator', 'undef')
   $kvm_driver_nic_attrs      = hiera ('one::oned::kvm_driver_nic_attrs', 'undef')

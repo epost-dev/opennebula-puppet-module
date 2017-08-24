@@ -231,12 +231,12 @@ MAC_PREFIX   = "02:00"
 <% if scope.lookupvar('one::version_gte_5_0') -%>
 
 VLAN_IDS = [
-    START    = "2",
-    RESERVED = "0, 1, 4095"
+    START    = <%= scope.lookupvar('one::vlan_ids_start') %>,
+    RESERVED = <%= scope.lookupvar('one::vlan_ids_reserved') %>
 ]
 
 VXLAN_IDS = [
-    START = "2"
+    START = <%= scope.lookupvar('one::vxlan_ids_start') %>
 ]
 <% end -%>
 
