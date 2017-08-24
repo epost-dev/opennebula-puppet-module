@@ -4,6 +4,8 @@ START_TIME=$(date)
 date
 echo using version $2
 export FACTER_ONE_VERSION=$2
+echo workaround sinatra
+yum install -y rubygem-sinatra
 echo running puppet apply $1
 time puppet apply $1
 echo making ssh host keys

@@ -3,4 +3,5 @@ class { 'one':
   node => false,
   sunstone => true,
   one_version => $one_version,
+  package_ensure_latest => false,
 }
