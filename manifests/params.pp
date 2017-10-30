@@ -141,6 +141,7 @@ class one::params {
 
   # OpenNebula DB backup parameters
   $backup_script_path        = hiera ('one::oned::backup::script_path', '/var/lib/one/bin/one_db_backup.sh')
+  $create_backup_dir         = hiera ('one::oned::create_backup_dir', 'YES' )
   $backup_dir                = hiera ('one::oned::backup::dir', '/srv/backup')
   $backup_opts               = hiera ('one::oned::backup::opts', '-C -q -e')
   $backup_db                 = hiera ('one::oned::backup::db', 'oned')
