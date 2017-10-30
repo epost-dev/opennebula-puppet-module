@@ -28,6 +28,7 @@ class one::oned::config(
   $oned_db_password            = $one::oned_db_password,
   $oned_db_host                = $one::oned_db_host,
   $oned_vm_submit_on_hold      = $one::oned_vm_submit_on_hold,
+  $create_backup_dir           = $one::create_backup_dir,
   $backup_script_path          = $one::backup_script_path,
   $backup_opts                 = $one::backup_opts,
   $backup_dir                  = $one::backup_dir,
@@ -61,6 +62,10 @@ class one::oned::config(
 
   if ! member(['YES', 'NO'], $oned_vm_submit_on_hold) {
     fail("oned_vm_submit_on_hold must be one of 'YES' or 'NO'. Actual value: ${oned_vm_submit_on_hold}")
+  }
+
+  if ! member(['YES', 'NO'], $create_backup_dir) {
+    fail("create_backup_dir must be one of 'YES' or 'NO'. Actual value: ${create_backup_dir}")
   }
 
   if ! is_integer($sched_interval) {
@@ -158,11 +163,12 @@ class one::oned::config(
   }
 
   if ($backend == 'mysql') {
-
-    file { $backup_dir:
-      ensure => directory,
-      mode   => '0700',
-    } ->
+    if $create_backup_dir == 'YES' {
+      file { $backup_dir:
+        ensure => directory,
+        mode   => '0700',
+      }
+    }
 
     file { $backup_script_path:
       ensure  => file,

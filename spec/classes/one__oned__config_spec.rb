@@ -6,8 +6,8 @@ describe 'one::oned::config' do
   OS_FACTS.each do |f|
     context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
       let(:facts) { f }
-      let (:hiera_config) { hiera_config }
-      let (:pre_condition) { 'include one' }
+      let(:hiera_config) { hiera_config }
+      let(:pre_condition) { 'include one' }
 
       context 'general' do
         it { should contain_class('one::oned::config') }
@@ -28,13 +28,25 @@ describe 'one::oned::config' do
         it { should contain_file('/usr/share/one').with_ensure('directory') }
       end
 
-      context 'with mysql backend' do
-        let (:params) { {
+      context 'with mysql backend and create_backup_dir default' do
+        let(:params) { {
             :backend => 'mysql',
             :backup_script_path => '/var/lib/one/bin/one_db_backup.sh',
             :backup_dir => '/srv/backup'
         } }
         it { should contain_file('/srv/backup') }
+        it { should contain_file('/var/lib/one/bin/one_db_backup.sh') }
+        it { should contain_cron('one_db_backup') }
+      end
+
+      context 'with mysql backend and create_backup_dir eq NO' do
+        let(:params) { {
+            :backend => 'mysql',
+            :backup_script_path => '/var/lib/one/bin/one_db_backup.sh',
+            :backup_dir => '/srv/backup',
+            :create_backup_dir => 'NO'
+        } }
+        it { should not_contain_file('/srv/backup') }
         it { should contain_file('/var/lib/one/bin/one_db_backup.sh') }
         it { should contain_cron('one_db_backup') }
       end
