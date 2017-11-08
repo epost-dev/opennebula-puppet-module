@@ -15,6 +15,7 @@ class one::config (
 
   file { '/var/lib/one':
     ensure => directory,
+    mode   => '0750',
   } ->
 
   file { '/var/lib/one/.ssh':
