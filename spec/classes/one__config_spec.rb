@@ -12,7 +12,8 @@ describe 'one::config', :type => :class do
         it { should contain_file('/var/lib/one') \
                     .with_ensure('directory') \
                     .with_owner('oneadmin') \
-                    .with_group('oneadmin')
+                    .with_group('oneadmin') \
+                    .with_mode('0750')
         }
       end
     end
