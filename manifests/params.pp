@@ -81,18 +81,21 @@ class one::params {
   $kvm_driver_raw_attrs      = hiera ('one::oned::kvm_driver_raw_attrs', 'undef')
 
   # Sunstone configuration parameters
-  $sunstone_listen_ip        = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
-  $sunstone_logo_png         = hiera('one::oned::sunstone_logo_png', 'undef')
-  $sunstone_logo_small_png   = hiera('one::oned::sunstone_logo_small_png', 'undef')
-  $enable_support            = hiera('one::oned::enable_support', 'yes')
-  $enable_marketplace        = hiera('one::oned::enable_marketplace', 'yes')
-  $sunstone_tmpdir           = hiera('one::oned::sunstone_tmpdir', '/var/tmp')
-  $sunstone_sessions         = hiera('one::oned::sunstone_sessions', 'memory')
-  $vnc_proxy_port            = hiera('one::oned::vnc_proxy_port', '29876')
-  $vnc_proxy_support_wss     = hiera('one::oned::vnc_proxy_support_wss', 'no')
-  $vnc_proxy_cert            = hiera('one::oned::vnc_proxy_cert', '')
-  $vnc_proxy_key             = hiera('one::oned::vnc_proxy_key', '')
-  $vnc_proxy_ipv6            = hiera('one::oned::vnc_proxy_ipv6', 'false') # lint:ignore:quoted_booleans
+  $sunstone_listen_ip            = hiera('one::oned::sunstone_listen_ip', '127.0.0.1')
+  $sunstone_logo_png             = hiera('one::oned::sunstone_logo_png', 'undef')
+  $sunstone_logo_small_png       = hiera('one::oned::sunstone_logo_small_png', 'undef')
+  $enable_support                = hiera('one::oned::enable_support', 'yes')
+  $enable_marketplace            = hiera('one::oned::enable_marketplace', 'yes')
+  $sunstone_tmpdir               = hiera('one::oned::sunstone_tmpdir', '/var/tmp')
+  $sunstone_views_template       = hiera('one::oned::sunstone_views_template', 'one/sunstone-views.yaml.erb')
+  $sunstone_views_admin_template = hiera('one::oned::sunstone_views_admin_template', 'one/sunstone-views-admin.yaml.erb')
+  $sunstone_views_user_template  = hiera('one::oned::sunstone_views_user_template','one/sunstone-views-user.yaml.erb')
+  $sunstone_sessions             = hiera('one::oned::sunstone_sessions', 'memory')
+  $vnc_proxy_port                = hiera('one::oned::vnc_proxy_port', '29876')
+  $vnc_proxy_support_wss         = hiera('one::oned::vnc_proxy_support_wss', 'no')
+  $vnc_proxy_cert                = hiera('one::oned::vnc_proxy_cert', '')
+  $vnc_proxy_key                 = hiera('one::oned::vnc_proxy_key', '')
+  $vnc_proxy_ipv6                = hiera('one::oned::vnc_proxy_ipv6', 'false') # lint:ignore:quoted_booleans
 
   # generic params for nodes and oned
   $oneuid = '9869'
