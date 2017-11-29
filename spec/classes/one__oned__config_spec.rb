@@ -46,7 +46,7 @@ describe 'one::oned::config' do
             :backup_dir => '/srv/backup',
             :create_backup_dir => 'NO'
         } }
-        it { should not_contain_file('/srv/backup') }
+        it { should_not contain_file('/srv/backup') }
         it { should contain_file('/var/lib/one/bin/one_db_backup.sh') }
         it { should contain_cron('one_db_backup') }
       end
