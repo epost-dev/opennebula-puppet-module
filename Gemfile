@@ -6,9 +6,20 @@ end
 
 gem 'rspec', '<3.0.0'
 
+if puppetversion = ENV['PUPPET_GEM_VERSION']
+  gem 'puppet', puppetversion, :require => false
+  if puppetversion == '3.1.1'
+    rspec_puppetversion = '=2.5.0'
+  else
+    rspec_puppetversion = '~>2.6.4'
+  end
+else
+  gem 'puppet', '< 4', :require => false
+end
+
 group :development, :test do
   gem 'rake', '< 12'
-  gem 'rspec-puppet',            :require => false
+  gem 'rspec-puppet',  rspec_puppetversion,          :require => false
   gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'puppet-lint',             :require => false
@@ -39,14 +50,6 @@ else
   gem 'facter', :require => false
 end
 
-if puppetversion = ENV['PUPPET_GEM_VERSION']
-  gem 'puppet', puppetversion, :require => false
-  if puppetversion < '3.0'
-    gem 'hiera-puppet', :require => false
-  end
-else
-  gem 'puppet', '< 4', :require => false
-end
 
 # puppet lint plugins
 # https://puppet.community/plugins/#puppet-lint
