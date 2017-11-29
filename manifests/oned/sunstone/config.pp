@@ -17,18 +17,21 @@
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
 class one::oned::sunstone::config (
-  $listen_ip               = $one::sunstone_listen_ip,
-  $enable_support          = $one::enable_support,
-  $enable_marketplace      = $one::enable_marketplace,
-  $tmpdir                  = $one::sunstone_tmpdir,
-  $sessions                = $one::sunstone_sessions,
-  $vnc_proxy_port          = $one::vnc_proxy_port,
-  $vnc_proxy_support_wss   = $one::vnc_proxy_support_wss,
-  $vnc_proxy_cert          = $one::vnc_proxy_cert,
-  $vnc_proxy_key           = $one::vnc_proxy_key,
-  $vnc_proxy_ipv6          = $one::vnc_proxy_ipv6,
-  $sunstone_logo_png       = $one::sunstone_logo_png,
-  $sunstone_logo_small_png = $one::sunstone_logo_small_png,
+  $listen_ip                     = $one::sunstone_listen_ip,
+  $enable_support                = $one::enable_support,
+  $enable_marketplace            = $one::enable_marketplace,
+  $tmpdir                        = $one::sunstone_tmpdir,
+  $sessions                      = $one::sunstone_sessions,
+  $vnc_proxy_port                = $one::vnc_proxy_port,
+  $vnc_proxy_support_wss         = $one::vnc_proxy_support_wss,
+  $vnc_proxy_cert                = $one::vnc_proxy_cert,
+  $vnc_proxy_key                 = $one::vnc_proxy_key,
+  $vnc_proxy_ipv6                = $one::vnc_proxy_ipv6,
+  $sunstone_logo_png             = $one::sunstone_logo_png,
+  $sunstone_logo_small_png       = $one::sunstone_logo_small_png,
+  $sunstone_views_template       = $one::sunstone_views_template,
+  $sunstone_views_admin_template = $one::sunstone_views_admin_template,
+  $sunstone_views_user_template  = $one::sunstone_views_user_template,
 ){
   File {
     owner   => 'root',
@@ -48,17 +51,17 @@ class one::oned::sunstone::config (
   file { '/etc/one/sunstone-views.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template('one/sunstone-views.yaml.erb'),
+    content => template($sunstone_views_template),
   } ->
   file { '/etc/one/sunstone-views/admin.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template('one/sunstone-views-admin.yaml.erb'),
+    content => template($sunstone_views_admin_template),
   } ->
   file { '/etc/one/sunstone-views/user.yaml':
     ensure  => file,
     mode    => '0640',
-    content => template('one/sunstone-views-user.yaml.erb'),
+    content => template($sunstone_views_user_template),
   }
 
   if $sunstone_logo_png != 'undef' or $sunstone_logo_small_png != 'undef' {

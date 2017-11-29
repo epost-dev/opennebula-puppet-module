@@ -6,8 +6,8 @@ describe 'one::oned::sunstone::config', :type => :class do
   OS_FACTS.each do |f|
     context "On #{f[:operatingsystem]} #{f[:operatingsystemmajrelease]}" do
       let(:facts) { f }
-      let (:hiera_config) { hiera_config }
-      let (:pre_condition) { 'include one' }
+      let(:hiera_config) { hiera_config }
+      let(:pre_condition) { 'include one' }
 
       context 'general' do
         it { should contain_class('one::oned::sunstone::config') }
@@ -19,7 +19,7 @@ describe 'one::oned::sunstone::config', :type => :class do
         }
       end
       context 'with sunstone listen ip set' do
-        let (:params) { {:listen_ip => '1.2.3.4'} }
+        let(:params) { {:listen_ip => '1.2.3.4'} }
         it { should contain_file('/etc/one/sunstone-server.conf') \
         .with_content(/:host: 1.2.3.4/m)
         }
@@ -31,7 +31,7 @@ describe 'one::oned::sunstone::config', :type => :class do
         }
       end
       context 'with support enabled' do
-        let (:params) { {:enable_support => 'yes'} }
+        let(:params) { {:enable_support => 'yes'} }
 
         expected_routes = ':routes:
     - oneflow
@@ -44,13 +44,19 @@ describe 'one::oned::sunstone::config', :type => :class do
         }
       end
       context 'with support disabled' do
-        let (:params) { {:enable_support => 'no'} }
+        let(:params) { {:enable_support => 'no'} }
 
         unexpected_routes ='
     - vcenter
     - support'
 
         it { should_not contain_file('/etc/one/sunstone-server.conf').with_content(/#{unexpected_routes}/m) }
+      end
+
+      context 'with default sunstone views' do
+        it { should contain_file('/etc/one/sunstone-views.yaml').with_content(/- admin/m) }
+        it { should contain_file('/etc/one/sunstone-views/admin.yaml').with_content(/enabled_tabs:/m) }
+        it { should contain_file('/etc/one/sunstone-views/user.yaml').with_content(/enabled_tabs:/m) }
       end
     end
   end

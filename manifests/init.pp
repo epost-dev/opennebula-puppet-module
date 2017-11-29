@@ -186,6 +186,18 @@
 # $sunstone_tmpdir - default /var/tmp
 #   define a different tmp dir for sunstone
 #
+# $sunstone_views_template - default 'one/sunstone-views.yaml.erb'
+#   provide sunstone views configuration
+#   fully optional and only used if $sunstone is set to true
+#
+# $sunstone_views_admin_template - default 'one/sunstone-views-admin.yaml.erb'
+#   provide sunstone admin view configuration
+#   fully optional and only used if $sunstone is set to true
+#
+# $sunstone_views_user_template - default 'one/sunstone-views-user.yaml.erb'
+#   provide sunstone user view configuration
+#   fully optional and only used if $sunstone is set to true
+#
 # $sunstone_logo_png - default use ONE logo
 #   use custom logo on sunstone login page
 #   used as the 'source' for image file resource
@@ -392,6 +404,9 @@ class one (
   $enable_support                 = $one::params::enable_support,
   $enable_marketplace             = $one::params::enable_marketplace,
   $sunstone_tmpdir                = $one::params::sunstone_tmpdir,
+  $sunstone_views_template        = $one::params::sunstone_views_template,
+  $sunstone_views_admin_template  = $one::params::sunstone_views_admin_template,
+  $sunstone_views_user_template   = $one::params::sunstone_views_user_template,
   $vnc_proxy_port                 = $one::params::vnc_proxy_port,
   $vnc_proxy_support_wss          = $one::params::vnc_proxy_support_wss,
   $vnc_proxy_cert                 = $one::params::vnc_proxy_cert,
