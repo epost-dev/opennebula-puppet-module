@@ -60,6 +60,11 @@ class one::oned::sunstone::config (
     ensure  => file,
     mode    => '0640',
     content => template("one/${::one::template_path}/sunstone-views-user.yaml.erb"),
+  } ->
+  file {'/etc/one/sunstone-views/cloud.yaml':
+    ensure  => file,
+    mode    => '0640',
+    content => template("one/${::one::template_path}/sunstone-views-cloud.yaml.erb"),
   }
 
   if $sunstone_logo_png != 'undef' or $sunstone_logo_small_png != 'undef' {
