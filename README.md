@@ -91,10 +91,10 @@ Create onevnet addressrange
         onevnet_name  => '<name>',            # this has to be an existing onevnet - will be autorequired if declared
         ar_id         => '<INT>',             # read only value
         protocol      => ip4 | ip6 | ip4_6 | ether,
-        size          => '10',
+        ip_size       => '10',
         mac           => '02:00:0a:00:00:96', # optional
         # attributes for ip4 and ip4_6:
-        ip            => '10.0.2.20'
+        ip_start      => '10.0.2.20'
         # attributes for ip6:
         globalprefix  => '2001:a::',          # optional
         ulaprefix     => 'fd01:a:b::',        # optional
