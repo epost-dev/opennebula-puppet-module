@@ -32,7 +32,7 @@ group :development, :test do
       gem 'nokogiri',  '<= 1.5.10'
       gem 'highline', '<= 1.7.0'
     else
-      gem 'nokogiri',             :require => false
+      gem 'nokogiri', "< 1.10",  :require => false
     end
 end
 
