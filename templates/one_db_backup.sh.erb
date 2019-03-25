@@ -13,7 +13,7 @@ BACKUP_KEEP='<%= @backup_keep %>'
 if [ -d $BACKUP_DIR ]; then
     mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $BACKUP_OPTS -r $BACKUP_DIR/$BACKUP_FILE -B $DB_BACKUP
     gzip $BACKUP_DIR/$BACKUP_FILE
-    find $BACKUP_DIR -type f $BACKUP_KEEP -delete
+    find $BACKUP_DIR -maxdepth 1 -type f $BACKUP_KEEP -delete
 else
     echo 'Backup directory does not exist.'
     exit 1

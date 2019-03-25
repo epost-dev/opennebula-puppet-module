@@ -18,7 +18,6 @@ else
 end
 
 group :development, :test do
-  gem 'rake', '< 12'
   gem 'rspec-puppet',  rspec_puppetversion,          :require => false
   gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
@@ -29,11 +28,13 @@ group :development, :test do
     gem 'addressable', '< 2.4'
   end
   if RUBY_VERSION =~ /1.8/
-      gem 'nokogiri',  '<= 1.5.10'
-      gem 'highline', '<= 1.7.0'
-    else
-      gem 'nokogiri',             :require => false
-    end
+    gem 'nokogiri',  '<= 1.5.10'
+    gem 'highline', '<= 1.7.0'
+    gem 'rake', '10.5.0'
+  else
+    gem 'nokogiri', "< 1.10",  :require => false
+    gem 'rake', '< 12'
+  end
 end
 
 group :integration do
