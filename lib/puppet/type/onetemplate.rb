@@ -478,4 +478,22 @@ Puppet::Type.newtype(:onetemplate) do
     end
   end
 
+  newproperty(:sched_requirements) do
+    desc "Boolean expression that rules out provisioning hosts from list of machines suitable to run this VM."
+  end
+
+  newproperty(:sched_rank) do
+    desc "This field sets which attribute will be used to sort the suitable hosts for this VM. Basically, " +
+    "it defines which hosts are more suitable than others."
+  end
+
+  newproperty(:sched_ds_requirements) do
+    desc "Boolean expression that rules out entries from the pool of datastores suitable to run this VM."
+  end
+
+  newproperty(:sched_ds_rank) do
+    desc "States which attribute will be used to sort the suitable datastores for this VM. Basically, " +
+    "it defines which datastores are more suitable than others."
+  end
+
 end
