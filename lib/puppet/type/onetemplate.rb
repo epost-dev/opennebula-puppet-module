@@ -27,7 +27,7 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:description) do
     desc "Description of template."
     validate do |value|
-      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+      fail("Invalid description: #{value}") unless value =~ /^([A-Za-z]).*/
     end
   end
 

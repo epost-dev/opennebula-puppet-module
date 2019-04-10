@@ -80,9 +80,10 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
   def create
     xml_content = build_xml
 
-    Tempfile.create("onetemplate-#{resource[:name]}") {|fp|
+    Tempfile.open("onetemplate-#{resource[:name]}") {|fp|
       self.debug "Creating template using #{xml_content}"
       fp.write(xml_content)
+      fp.flush
       onetemplate('create', fp.path)
     }
     @property_hash[:ensure] = :present
@@ -103,20 +104,21 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
   def self.instances
     templates = Nokogiri::XML(onetemplate('list', '-x')).root.xpath('/VMTEMPLATE_POOL/VMTEMPLATE')
     templates.collect do |template|
-      new(
+      data = {
         :name        => template.xpath('./NAME').text,
         :ensure      => :present,
         :description => template.xpath('./TEMPLATE/DESCRIPTION').text,
-        :context     => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+        :context     => Hash[template.xpath('./TEMPLATE/CONTEXT/*').map { |e| [e.name.downcase, e.text] } ],
         :cpu         => (template.xpath('./TEMPLATE/CPU').text unless template.xpath('./TEMPLATE/CPU').nil?),
-        :disks       => Hash[template.xpath('./TEMPLATE/DISK/*').map { |e| [e.name.downcase, e.text.downcase] } ],
-        :features    => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text.downcase]] } ],
-        :graphics    => Hash[template.xpath('./TEMPLATE/GRAPHICS/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+        :disks       => template.xpath('./TEMPLATE/DISK').map {|node| Hash[node.xpath('*').map {|e| [e.name.downcase, e.text] } ]},
+        :features    => Hash[template.xpath('./TEMPLATE/FEATURES/*').map { |e| [e.name.downcase, { e.text => e.text, 'true' => true, 'false' => false }[e.text]] } ],
+        :graphics    => Hash[template.xpath('./TEMPLATE/GRAPHICS/*').map { |e| [e.name.downcase, e.text] } ],
         :memory      => (template.xpath('./TEMPLATE/MEMORY').text unless template.xpath('./TEMPLATE/MEMORY').nil?),
-        :nics        => Hash[template.xpath('./TEMPLATE/NIC/*').map { |e| [e.name.downcase, e.text.downcase] } ],
-        :os          => Hash[template.xpath('./TEMPLATE/OS/*').map { |e| [e.name.downcase, e.text.downcase] } ],
+        :nics        => template.xpath('./TEMPLATE/NIC').map { |node| Hash[node.xpath('*').map {|e| [e.name.downcase, e.text] } ]},
+        :os          => Hash[template.xpath('./TEMPLATE/OS/*').map { |e| [e.name.downcase, e.text] } ],
         :vcpu        => (template.xpath('./TEMPLATE/VCPU').text unless template.xpath('./TEMPLATE/VCPU').nil?)
-      )
+      }
+      new(data)
     end
   end
 
@@ -131,9 +133,10 @@ Puppet::Type.type(:onetemplate).provide(:cli) do
   def flush
     xml_content = build_xml
 
-    Tempfile.create("onetemplate-#{resource[:name]}") {|fp|
-      self.debug "Creating template using #{xml_content}"
+    Tempfile.open("onetemplate-#{resource[:name]}") {|fp|
+      self.debug "Updating template using #{xml_content}"
       fp.write(xml_content)
+      fp.flush
       onetemplate('update', resource[:name], fp.path, '--append') unless @property_hash.empty?
     }
   end
