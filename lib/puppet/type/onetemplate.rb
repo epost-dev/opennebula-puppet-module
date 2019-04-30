@@ -27,7 +27,7 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:description) do
     desc "Description of template."
     validate do |value|
-      fail("Invalid name: #{value}") unless value =~ /^([A-Za-z]).*/
+      fail("Invalid description: #{value}") unless value =~ /^([A-Za-z]).*/
     end
   end
 
@@ -47,7 +47,7 @@ Puppet::Type.newtype(:onetemplate) do
   # OS and Boot Options Section
   newproperty(:os) do
     desc "A hash for OS and Boot Options Section"
-    defaultto {}
+    defaultto {{}}
     validate do |value|
       # TODO: validate each key
       valid_keys = [
@@ -74,7 +74,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_kernel is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['kernel'] = value
       nil
     end
@@ -87,7 +86,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_initrd is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['initrd'] = value
       nil
     end
@@ -100,7 +98,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_arch is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['arch'] = value
       nil
     end
@@ -112,7 +109,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_root is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['root'] = value
       nil
     end
@@ -124,7 +120,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_kernel_cmd is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['kernel_cmd'] = value
       nil
     end
@@ -136,7 +131,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_bootloader is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['bootloader'] = value
       nil
     end
@@ -148,7 +142,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('os_boot is deprecated, please use os hash instead.')
     end
     munge do |value|
-      resource[:os] ||= {}
       resource[:os]['boot'] = value
       nil
     end
@@ -157,7 +150,7 @@ Puppet::Type.newtype(:onetemplate) do
   # Features Section
   newproperty(:features) do
     desc "A hash for Features Section"
-    defaultto {}
+    defaultto {{}}
     validate do |value|
       # TODO: validate each key
       valid_keys = [
@@ -181,7 +174,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('acpi is deprecated, please use features hash instead.')
     end
     munge do |value|
-      resource[:features] ||= {}
       resource[:features]['acpi'] = value
       nil
     end
@@ -194,7 +186,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('pae is deprecated, please use features hash instead.')
     end
     munge do |value|
-      resource[:features] ||= {}
       resource[:features]['pae'] = value
       nil
     end
@@ -207,7 +198,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('pci_bridge is deprecated, please use features hash instead.')
     end
     munge do |value|
-      resource[:features] ||= {}
       resource[:features]['pci_bridge'] = value
       nil
     end
@@ -215,8 +205,8 @@ Puppet::Type.newtype(:onetemplate) do
 
   # Disks Section
   newproperty(:disks, :array_matching => :all) do
-    desc "An array of hash for Disks Section"
-    defaultto []
+    desc "An array of hashes for Disks Section"
+    defaultto {[]}
     validate do |value|
       if value.is_a?( Hash)
         # TODO: validate for either persistent or volatile disk and each key
@@ -255,13 +245,13 @@ Puppet::Type.newtype(:onetemplate) do
       else
         value
       end
-    end
+     end
   end
 
   # Network Section
   newproperty(:nics, :array_matching => :all) do
     desc "An array of hash for Network Section"
-    defaultto []
+    defaultto {[]}
     validate do |value|
       if value.is_a?(Hash)
         # TODO: validate each key
@@ -288,12 +278,12 @@ Puppet::Type.newtype(:onetemplate) do
     munge do |value|
       if ! value.is_a?(Hash)
         Puppet.deprecation_warning('nics should be a hash.')
-        {
+        value = {
           'network' => value
         }
-      else
-        value
       end
+      value['model'] = 'virtio' unless value['model']
+      value
     end
   end
 
@@ -308,7 +298,12 @@ Puppet::Type.newtype(:onetemplate) do
   # I/O Devices Section
   newproperty(:graphics) do
     desc "A hash for I/O Devices Section"
-    defaultto {}
+    defaults = {
+      'type'   => 'vnc',
+      'listen' => '0.0.0.0'
+    }
+
+    defaultto {defaults}
     validate do |value|
       # TODO: validate each key
       valid_keys = [
@@ -325,12 +320,10 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:graphics_type) do
     desc "Graphics type - vnc or sdl"
 
-    defaultto "vnc"
     validate do |value|
       Puppet.deprecation_warning('graphics_type is deprecated, please use graphics hash instead.')
     end
     munge do |value|
-      resource[:graphics] ||= {}
       resource[:graphics]['type'] = value
       nil
     end
@@ -339,12 +332,10 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:graphics_listen) do
     desc "IP to listen on."
 
-    defaultto "0.0.0.0"
     validate do |value|
       Puppet.deprecation_warning('graphics_listen is deprecated, please use graphics hash instead.')
     end
     munge do |value|
-      resource[:graphics] ||= {}
       resource[:graphics]['listen'] = value
       nil
     end
@@ -356,7 +347,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('graphics_port is deprecated, please use graphics hash instead.')
     end
     munge do |value|
-      resource[:graphics] ||= {}
       resource[:graphics]['port'] = value
       nil
     end
@@ -368,7 +358,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('graphics_passwd is deprecated, please use graphics hash instead.')
     end
     munge do |value|
-      resource[:graphics] ||= {}
       resource[:graphics]['passwd'] = value
       nil
     end
@@ -380,7 +369,6 @@ Puppet::Type.newtype(:onetemplate) do
       Puppet.deprecation_warning('graphics_keymap is deprecated, please use graphics hash instead.')
     end
     munge do |value|
-      resource[:graphics] ||= {}
       resource[:graphics]['keymap'] = value
       nil
     end
@@ -389,14 +377,13 @@ Puppet::Type.newtype(:onetemplate) do
   # Context Section
   newproperty(:context) do
     desc "Pass context hash to vm."
-    defaultto {}
+    defaultto {{}}
   end
 
   # network & SSH section
   newproperty(:context_ssh) do
     desc "Activate SSH contextualization"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['ssh'] = value
       nil
     end
@@ -405,7 +392,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_ssh_pubkey) do
     desc "Root SSH pub key contextualization"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['ssh_pubkey'] = value
       nil
     end
@@ -414,7 +400,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_network) do
     desc "Activate network contextualization"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['network'] = value
       nil
     end
@@ -423,7 +408,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_onegate) do
     desc "Activate OneGate token in contextualization"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['onegate'] = value
       nil
     end
@@ -433,7 +417,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_files, :array_matching => :all) do
     desc "Array of additional contextualization files"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['files'] = value
       nil
     end
@@ -442,7 +425,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_variables) do
     desc "Hash of additional contextualization variables"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context].merge!(value)
       nil
     end
@@ -453,7 +435,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_placement_host) do
     desc "Host where to place the vm using this template"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['placement_host'] = value
       nil
     end
@@ -462,7 +443,6 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_placement_cluster) do
     desc "Cluster where to place the vm using this template"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['placement_cluster'] = value
       nil
     end
@@ -472,10 +452,27 @@ Puppet::Type.newtype(:onetemplate) do
   newproperty(:context_policy) do
     desc "Activate policy how to distribute vm using this template"
     munge do |value|
-      resource[:context] ||= {}
       resource[:context]['policy'] = value
       nil
     end
+  end
+
+  newproperty(:sched_requirements) do
+    desc "Boolean expression that rules out provisioning hosts from list of machines suitable to run this VM."
+  end
+
+  newproperty(:sched_rank) do
+    desc "This field sets which attribute will be used to sort the suitable hosts for this VM. Basically, " +
+    "it defines which hosts are more suitable than others."
+  end
+
+  newproperty(:sched_ds_requirements) do
+    desc "Boolean expression that rules out entries from the pool of datastores suitable to run this VM."
+  end
+
+  newproperty(:sched_ds_rank) do
+    desc "States which attribute will be used to sort the suitable datastores for this VM. Basically, " +
+    "it defines which datastores are more suitable than others."
   end
 
 end
