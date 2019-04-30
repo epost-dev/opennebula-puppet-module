@@ -49,7 +49,7 @@ describe res_type do
 
   it 'should have property :nics' do
       @template[:nics] = ['core', 'backup']
-      @template[:nics].should == [{"network"=>"core"}, {"network"=>"backup"}]
+      @template[:nics].should == [{"model"=>"virtio", "network"=>"core"}, {"model"=>"virtio", "network"=>"backup"}]
   end
 
   it 'should have property :context' do
