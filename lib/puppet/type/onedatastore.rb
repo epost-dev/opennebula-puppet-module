@@ -90,8 +90,8 @@ Puppet::Type.newtype(:onedatastore) do
     desc 'Temporary scratch space. Must be big enough to store raw image size plus sparse version'
   end
 
-  newproperty(:safe_dirs, :array_matching => :all) do
-    desc 'Array of safe directories'
+  newproperty(:safe_dirs) do
+    desc 'List of safe directories, space separated'
   end
 
 
