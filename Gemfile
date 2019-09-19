@@ -6,24 +6,35 @@ end
 
 gem 'rspec', '<3.0.0'
 
-group :development, :test do
-  if RUBY_VERSION < '1.9.3'
-    gem 'rake', '< 11'
-    gem 'retriable', '< 2'
-    gem 'addressable', '< 2.4'
+if puppetversion = ENV['PUPPET_GEM_VERSION']
+  gem 'puppet', puppetversion, :require => false
+  if puppetversion == '3.1.1'
+    rspec_puppetversion = '=2.5.0'
   else
-    gem 'rake', :require => false
+    rspec_puppetversion = '~>2.6.4'
   end
-  gem 'rspec-puppet',            :require => false
+else
+  gem 'puppet', '< 4', :require => false
+end
+
+group :development, :test do
+  gem 'rspec-puppet',  rspec_puppetversion,          :require => false
   gem 'rspec-puppet-utils',      :require => false
   gem 'puppetlabs_spec_helper',  :require => false
-  gem 'puppet-lint', :git => 'https://github.com/rodjek/puppet-lint.git', :tag => "1.1.0", :require => false
+  gem 'puppet-lint',             :require => false
   gem 'simplecov',               :require => false
+  if RUBY_VERSION < '1.9.3'
+    gem 'retriable', '< 2'
+    gem 'addressable', '< 2.4'
+  end
   if RUBY_VERSION =~ /1.8/
-      gem 'nokogiri',  '<= 1.5.10'
-    else
-      gem 'nokogiri',             :require => false
-    end
+    gem 'nokogiri',  '<= 1.5.10'
+    gem 'highline', '<= 1.7.0'
+    gem 'rake', '10.5.0'
+  else
+    gem 'nokogiri', "< 1.10",  :require => false
+    gem 'rake', '< 12'
+  end
 end
 
 group :integration do
@@ -40,68 +51,26 @@ else
   gem 'facter', :require => false
 end
 
-if puppetversion = ENV['PUPPET_GEM_VERSION']
-  gem 'puppet', puppetversion, :require => false
-  if puppetversion < '3.0'
-    gem 'hiera-puppet', :require => false
-  end
-else
-  gem 'puppet', '< 4', :require => false
-end
 
 # puppet lint plugins
 # https://puppet.community/plugins/#puppet-lint
-gem 'puppet-lint-appends-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-appends-check.git',
-    :require => false
-gem 'puppet-lint-classes_and_types_beginning_with_digits-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-classes_and_types_beginning_with_digits-check.git',
-    :require => false
-gem 'puppet-lint-empty_string-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-empty_string-check.git',
-    :require => false
-gem 'puppet-lint-file_ensure-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-file_ensure-check.git',
-    :require => false
-gem 'puppet-lint-leading_zero-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-leading_zero-check.git',
-    :require => false
-gem 'puppet-lint-numericvariable',
-    :git => 'https://github.com/fiddyspence/puppetlint-numericvariable.git',
-    :require => false
-gem 'puppet-lint-resource_reference_syntax',
-    :git => 'https://github.com/tuxmea/puppet-lint-resource_reference_syntax.git',
-    :require => false
-gem 'puppet-lint-security-plugins',
-    :git => 'https://github.com/floek/puppet-lint-security-plugins.git',
-    :require => false
-gem 'puppet-lint-spaceship_operator_without_tag-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-spaceship_operator_without_tag-check.git',
-    :require => false
-gem 'puppet-lint-strict_indent-check',
-    :git => 'https://github.com/relud/puppet-lint-strict_indent-check.git',
-    :require => false
-gem 'puppet-lint-trailing_comma-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-trailing_comma-check.git',
-    :require => false
-gem 'puppet-lint-trailing_newline-check',
-    :git => 'https://github.com/rodjek/puppet-lint-trailing_newline-check.git',
-    :require => false
-gem 'puppet-lint-undef_in_function-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-undef_in_function-check.git',
-    :require => false
-gem 'puppet-lint-unquoted_string-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-unquoted_string-check.git',
-    :require => false
-gem 'puppet-lint-usascii_format-check',
-    :git => 'https://github.com/jpmasters/puppet-lint-usascii_format-check.git',
-    :require => false
-gem 'puppet-lint-variable_contains_upcase',
-    :git => 'https://github.com/fiddyspence/puppetlint-variablecase.git',
-    :require => false
-gem 'puppet-lint-version_comparison-check',
-    :git => 'https://github.com/puppet-community/puppet-lint-version_comparison-check.git',
-    :require => false
+gem 'puppet-lint-appends-check'                                 , :require => false
+gem 'puppet-lint-classes_and_types_beginning_with_digits-check' , :require => false
+gem 'puppet-lint-empty_string-check'                            , :require => false
+gem 'puppet-lint-file_ensure-check'                             , :require => false
+gem 'puppet-lint-leading_zero-check'                            , :require => false
+gem 'puppet-lint-numericvariable'                               , :require => false
+gem 'puppet-lint-resource_reference_syntax'                     , :require => false
+gem 'puppet-lint-security-plugins'                              , :require => false
+gem 'puppet-lint-spaceship_operator_without_tag-check'          , :require => false
+gem 'puppet-lint-strict_indent-check'                           , :require => false
+gem 'puppet-lint-trailing_comma-check'                          , :require => false
+gem 'puppet-lint-trailing_newline-check'                        , :require => false
+gem 'puppet-lint-undef_in_function-check'                       , :require => false
+gem 'puppet-lint-unquoted_string-check'                         , :require => false
+gem 'puppet-lint-usascii_format-check'                          , :require => false
+gem 'puppet-lint-variable_contains_upcase'                      , :require => false
+gem 'puppet-lint-version_comparison-check'                      , :require => false
 
 # disabled lint plugins
 #gem 'puppet-lint-file_source_rights-check',
