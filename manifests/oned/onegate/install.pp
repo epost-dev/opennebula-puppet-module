@@ -16,7 +16,7 @@
 # Apache License Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0.html
 #
-class one::oned::onegate::install {
+class one::oned::onegate::install inherits one {
   package { $one::oned_onegate_packages:
     ensure => $one::package_ensure,
   }

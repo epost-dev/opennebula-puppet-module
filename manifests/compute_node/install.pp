@@ -20,7 +20,7 @@
 class one::compute_node::install(
   $node_packages = $one::node_packages,
   $package_ensure = $one::package_ensure,
-) {
+) inherits one {
   package { $node_packages:
     ensure => $package_ensure,
   }

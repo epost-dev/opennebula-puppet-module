@@ -23,7 +23,7 @@ class one::oned::install(
   $oned_packages      = $one::oned_packages,
   $hook_scripts_pkgs  = $one::hook_scripts_pkgs,
   $package_ensure     = $one::package_ensure,
-) {
+) inherits one {
 
   validate_bool($use_gems)
   Package {

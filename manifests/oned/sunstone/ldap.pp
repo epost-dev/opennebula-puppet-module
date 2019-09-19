@@ -21,7 +21,7 @@ class one::oned::sunstone::ldap (
   $oned_ldap_mappings = $one::oned_ldap_mappings,
   $oned_ldap_mapping_filename = $one::oned_ldap_mapping_filename,
   $package_ensure             = $one::package_ensure,
-) {
+) inherits one {
   package { $oned_sunstone_ldap_pkg:
     ensure => $package_ensure,
   } ->

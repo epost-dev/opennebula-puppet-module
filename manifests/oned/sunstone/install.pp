@@ -19,7 +19,7 @@
 class one::oned::sunstone::install (
   $oned_sunstone_packages = $one::oned_sunstone_packages,
   $package_ensure         = $one::package_ensure,
-){
+) inherits one {
   package { $oned_sunstone_packages:
     ensure => $package_ensure,
   }
