@@ -1,9 +1,13 @@
 fixtures:
     repositories:
-        stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
-        apt: 
+        stdlib:
+          repo: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+          ref: "4.22.0"
+        apt:
           repo: "https://github.com/puppetlabs/puppetlabs-apt.git"
           ref: "1.8.0"
-        inifile: "https://github.com/puppetlabs/puppetlabs-inifile"
+        inifile:
+          repo: "https://github.com/puppetlabs/puppetlabs-inifile"
+          ref: "2.1.0"
     symlinks:
         one: "#{source_dir}"
